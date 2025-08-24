@@ -1,5 +1,5 @@
 import { createGlobalStyle } from "styled-components";
-import SUITVariable from "src/assets/fonts/SUIT-Variable.woff2";
+import SUITVariable from "../assets/fonts/SUIT-Variable.woff2";
 
 export const GlobalStyle = createGlobalStyle`
     @font-face {
@@ -47,3 +47,5 @@ export const GlobalStyle = createGlobalStyle`
         border: none;
     }
 `;
+
+export default GlobalStyle;
