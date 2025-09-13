@@ -1,8 +1,12 @@
 const theme = {
   colors: {
-    Primary100: "#00664F",
-    Primary50: "#659788",
-    Primary20: "#B3D4CA",
+    Primary100: "#16915E",
+    Primary60:"#2A926C",
+    Primary50: "#00A76A",
+    Primary30: "57B190",
+    Primary20: "#74A08F",
+    Primary10:"#DBF3EC",
+    Primary5: "#EEFBF7",
     SubColor1: "#1A7E33",
     SubColor2: "#BBEC57",
 
