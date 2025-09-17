@@ -32,6 +32,7 @@ const theme = {
       title15: "15px",
       body14: "14px",
       label14: "14px",
+      label12: "12px",
     },
 
     lineHeight: {
