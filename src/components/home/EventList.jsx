@@ -7,7 +7,7 @@ function EventList({ id, title, date, place, poster, onGoing, scraped }) {
       <Container>
         <img src={poster} alt={title} />
         <TextArea>
-          <h4>{title}</h4>
+          <div className="titleBox">{title}</div>
           <p>{place}</p>
           <p>{date}</p>
         </TextArea>
@@ -51,11 +51,19 @@ const TextArea = styled.div`
   display: flex;
   flex-direction: column;
 
-  h4 {
+  .titleBox {
     color: ${({ theme }) => theme.colors.gray10};
     font-size: ${({ theme }) => theme.font.fontSize.title15};
     font-weight: ${({ theme }) => theme.font.fontWeight.semiBold};
     line-height: ${({ theme }) => theme.font.lineHeight.normal};
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    max-height: 43px;
   }
 
   p {

@@ -15,7 +15,7 @@ function Scrap() {
     result: [
       {
         id: 1,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        title: "Pile up strands - 섬유예술 전공 과제전시회 어쩌고저쩌고 텍스트",
         date: "2025.11.20-12.01",
         place: "이화여대 조형예술관 A동  2,4층",
         poster: poster1,
