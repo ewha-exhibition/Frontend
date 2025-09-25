@@ -16,7 +16,7 @@ export const GlobalStyle = createGlobalStyle`
         box-sizing: border-box;
     }
         body {
-        font-family: 'NanumSquareNeo-Variable';
+        font-family: 'SUIT-Variable';
         font-style: normal;
         line-height: 1.4;
         letter-spacing: -0.025em; 
