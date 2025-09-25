@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Bookmark from "../assets/icons/Bookmark.svg?react";
+import Bookmark from "../../assets/icons/Bookmark.svg?react";
 
 function EventList({ id, title, date, place, poster, onGoing, scraped }) {
   return (
