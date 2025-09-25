@@ -1,16 +1,16 @@
 import styled from "styled-components";
-import theme from "../../style/Theme";
+import theme from "../../style/Theme.jsx";
 import HomeIcon from "../../assets/icons/HomeIcon.svg?react";
 import ScrapIcon from "../../assets/icons/Bookmark.svg?react";
-import GuestbookIcon from "../../assets/icons/Guestbook.svg?react";
+import GuestBookIcon from "../../assets/icons/GuestBook.svg?react";
 import MyPageIcon from "../../assets/icons/MyPage.svg?react";
 
 //TODO: active tab state 관리 필요
-export default function TopBar() {
+export default function TabBar() {
   const tabs = [
     { key: "home", label: "홈", Icon: HomeIcon },
     { key: "scrap", label: "스크랩", Icon: ScrapIcon },
-    { key: "guestbook", label: "방명록", Icon: GuestbookIcon },
+    { key: "guestbook", label: "방명록", Icon: GuestBookIcon },
     { key: "my", label: "마이", Icon: MyPageIcon },
   ];
 
