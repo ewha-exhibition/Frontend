@@ -1,12 +1,10 @@
 import styled from "styled-components";
 import theme from "../style/Theme.jsx";
-
 import EventList from "../components/home/EventList.jsx";
-
-import Menu from "../assets/icons/Menu.svg?react";
-import Search from "../assets/icons/Search.svg?react";
-import Bookmark from "../assets/icons/Bookmark_nw.svg?react";
-
+import TabBar from "../components/home/TabBar.jsx";
+import MenuIcon from "../assets/icons/Menu.svg?react";
+import SearchIcon from "../assets/icons/Search.svg?react";
+import BookmarkIcon from "../assets/icons/Bookmark_nw.svg?react";
 import poster1 from "../assets/mock/poster1.jpg";
 import poster2 from "../assets/mock/poster2.jpg";
 import poster3 from "../assets/mock/poster3.jpg";
@@ -18,7 +16,7 @@ function TopTenItem({ rank, title, poster }) {
         <Overlay />
         <Bar>
           <Rank>{rank}</Rank>
-          <Bookmark width={16} height={19} />
+          <BookmarkIcon width={16} height={19} />
         </Bar>
       </Poster>
       <Title>{title}</Title>
@@ -26,118 +24,122 @@ function TopTenItem({ rank, title, poster }) {
   );
 }
 
-//TODO: Event의 공연, 전시, 기타 속성 추가
+//TODO: Event의 공연, 전시, 기타 속성 추가!
 //TODO: 클릭 시 선택된 카테고리 스타일 변경 (isSelected 추가)
 
 export default function Home() {
-
   const mock_data_top10 = {
-      response: 200,
-      result: [
-        {
-          id: 1,
-          rank: 1,
-          title: "Pile up strands - 섬유예술 전공 과제전시회",
-          poster: poster1,
-        },
-        {
-          id: 2,
-          rank: 2,
-          title: "Pile up strands - 섬유예술 전공 과제전시회",
-          poster: poster2,
-        },
-        {
-          id: 3,
-          rank: 3,
-          title: "Pile up strands - 섬유예술 전공 과제전시회",
-          poster: poster3,
-        },
-        {
-          id: 4,
-          rank: 4,
-          title: "Pile up strands - 섬유예술 전공 과제전시회",
-          poster: poster1,
-        },
-        {
-          id: 5,
-          rank: 5,
-          title: "Pile up strands - 섬유예술 전공 과제전시회",
-          poster: poster2,
-        },
-        {
-          id: 6,
-          rank: 6,
-          title: "Pile up strands - 섬유예술 전공 과제전시회",
-          poster: poster3,
-        },
-        {
-          id: 7,
-          rank: 7,
-          title: "Pile up strands - 섬유예술 전공 과제전시회",
-          poster: poster1,
-        },
-        {
-          id: 8,
-          rank: 8,
-          title: "Pile up strands - 섬유예술 전공 과제전시회",
-          poster: poster2,
-        },
-        {
-          id: 9,
-          rank: 9,
-          title: "Pile up strands - 섬유예술 전공 과제전시회",
-          poster: poster3,
-        },
-        {
-          id: 10,
-          rank: 10,
-          title: "Pile up strands - 섬유예술 전공 과제전시회",
-          poster: poster1,
-        },
-      ],
-    };
-    const mock_data_event = {
-        response: 200,
-        result: [
-          {
-            id: 1,
-            title: "Pile up strands - 섬유예술 전공 과제전시회",
-            date: "2025.11.20-12.01",
-            place: "이화여대 조형예술관 A동  2,4층",
-            poster: poster1,
-            scraped: true,
-            onGoing: true,
-          },
-          {
-            id: 2,
-            title: "Pile up strands - 섬유예술 전공 과제전시회",
-            date: "2025.09.10-09.11",
-            place: "이화여대 조형예술관 A동  2,4층",
-            poster: poster2,
-            scraped: true,
-            onGoing: false,
-          },
-          {
-            id: 3,
-            title: "Pile up strands - 섬유예술 전공 과제전시회",
-            date: "2025.11.20-12.01",
-            place: "이화여대 조형예술관 A동  2,4층",
-            poster: poster3,
-            scraped: true,
-            onGoing: true,
-          },
-        ],
-      };
+    response: 200,
+    result: [
+      {
+        id: 1,
+        rank: 1,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        poster: poster1,
+      },
+      {
+        id: 2,
+        rank: 2,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        poster: poster2,
+      },
+      {
+        id: 3,
+        rank: 3,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        poster: poster3,
+      },
+      {
+        id: 4,
+        rank: 4,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        poster: poster1,
+      },
+      {
+        id: 5,
+        rank: 5,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        poster: poster2,
+      },
+      {
+        id: 6,
+        rank: 6,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        poster: poster3,
+      },
+      {
+        id: 7,
+        rank: 7,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        poster: poster1,
+      },
+      {
+        id: 8,
+        rank: 8,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        poster: poster2,
+      },
+      {
+        id: 9,
+        rank: 9,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        poster: poster3,
+      },
+      {
+        id: 10,
+        rank: 10,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        poster: poster1,
+      },
+      {
+        id: 11,
+        rank: 11,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        poster: poster1,
+      },
+    ],
+  };
+  const mock_data_event = {
+    response: 200,
+    result: [
+      {
+        id: 1,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        date: "2025.11.20-12.01",
+        place: "이화여대 조형예술관 A동  2,4층",
+        poster: poster1,
+        scraped: true,
+        onGoing: true,
+      },
+      {
+        id: 2,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        date: "2025.09.10-09.11",
+        place: "이화여대 조형예술관 A동  2,4층",
+        poster: poster2,
+        scraped: true,
+        onGoing: false,
+      },
+      {
+        id: 3,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        date: "2025.11.20-12.01",
+        place: "이화여대 조형예술관 A동  2,4층",
+        poster: poster3,
+        scraped: true,
+        onGoing: true,
+      },
+    ],
+  };
   return (
     <Container>
       <Header>
         <Logo>綠’ KNOCK</Logo>
-        <Menu width={24} height={24} />
+        <MenuIcon width={24} height={24} />
       </Header>
-
       <SearchBar>
         <p>이화인들의 공연, 전시를 검색해보세요!</p>
-        <Search width={24} height={24} />
+        <SearchIcon width={24} height={24} />
       </SearchBar>
 
       <Content>
@@ -146,36 +148,45 @@ export default function Home() {
           <p>오늘의 TOP 10</p>
         </TopTenHeadline>
         <TopTenList>
-           {mock_data_top10?.result.map((data) => (
-          <TopTenItem
-            key={data.id}
-            title={data.title}
-            rank={data.rank}
-            poster={data.poster}
-          />
-        ))}
+          {mock_data_top10?.result.map((data) => (
+            <TopTenItem
+              key={data.id}
+              title={data.title}
+              rank={data.rank}
+              poster={data.poster}
+            />
+          ))}
         </TopTenList>
-        <EventWrapper> 
+        <EventWrapper>
           <CategoryWrapper>
-              <CategoryButton><p>전체</p></CategoryButton>
-              <CategoryButton><p>공연</p></CategoryButton>
-              <CategoryButton><p>전시</p></CategoryButton>
-              <CategoryButton><p>기타</p></CategoryButton>
-            </CategoryWrapper>
-            <EventListWrapper>
-              {mock_data_event?.result.map((data) => ( 
-              <EventList 
-              key={data.id} 
-              title={data.title} 
-              date={data.date} 
-              place={data.place} 
-              poster={data.poster} 
-              onGoing={data.onGoing} 
-              /> 
-              ))}
-            </EventListWrapper>
+            <CategoryButton>
+              <p>전체</p>
+            </CategoryButton>
+            <CategoryButton>
+              <p>공연</p>
+            </CategoryButton>
+            <CategoryButton>
+              <p>전시</p>
+            </CategoryButton>
+            <CategoryButton>
+              <p>기타</p>
+            </CategoryButton>
+          </CategoryWrapper>
+          <EventListWrapper>
+            {mock_data_event?.result.map((data) => (
+              <EventList
+                key={data.id}
+                title={data.title}
+                date={data.date}
+                place={data.place}
+                poster={data.poster}
+                onGoing={data.onGoing}
+              />
+            ))}
+          </EventListWrapper>
         </EventWrapper>
       </Content>
+      <TabBar />
     </Container>
   );
 }
@@ -185,8 +196,8 @@ const Container = styled.div`
   width: 100vw;
   min-height: 100vh;
   display: grid;
-  grid-template-rows: auto auto 1fr; 
-  background: #00664f;
+  grid-template-rows: auto auto 1fr; //Nav, Search, ContentBody(Top10, EventList)
+  background: #00664f; //디자인 시스템에 정의되지 않음
 `;
 
 const Header = styled.div`
@@ -198,7 +209,6 @@ const Header = styled.div`
   height: 46px;
   margin: 0 auto;
   padding: 14px 20px;
- 
 `;
 
 //letter-spacing: 0.165 to 0.17
@@ -208,7 +218,7 @@ const Logo = styled.div`
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-  letter-spacing: -0.17px; 
+  letter-spacing: -0.17px;
 `;
 
 //padding: 18.812 to 19
@@ -217,9 +227,9 @@ const SearchBar = styled.div`
   display: inline-flex;
   justify-content: space-between;
   align-items: center;
-  gap: 92px; 
+  gap: 92px;
   margin: 9px 21px 24px 20px;
-  padding: 8px 18px 8px 19px; 
+  padding: 8px 18px 8px 19px;
   border-radius: 20px;
   border: 1.5px solid #74a08f;
   p {
@@ -231,7 +241,7 @@ const SearchBar = styled.div`
 const Content = styled.div`
   position: relative;
   display: grid;
-  grid-template-rows: auto auto 1fr; 
+  grid-template-rows: auto auto 1fr;
 `;
 const TopTenHeadline = styled.div`
   display: inline-flex;
@@ -255,13 +265,13 @@ const TopTenList = styled.div`
 //width: 107.078 to 107
 //gap: 7.812 to 7.8
 const Card = styled.div`
-   flex: 1 1 calc(100% / 3);   
-    max-width: 200px;           
-    min-width: 107px;         
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 7.8px;
+  flex: 1 1 calc(100% / 3);
+  max-width: 200px;
+  min-width: 107px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 7.8px;
 `;
 const Poster = styled.div`
   aspect-ratio: 107 / 151.42;
@@ -308,7 +318,7 @@ const Rank = styled.span`
 //REVIEW: Title - 39px height
 const Title = styled.p`
   width: 100%;
-  height: 39px; 
+  height: 39px;
   ${theme.textStyles.titleSemiBold};
   color: ${theme.colors.gray10};
   display: -webkit-box;
@@ -335,14 +345,14 @@ const EventWrapper = styled.div`
   align-items: center;
   padding: 0px 20px;
 `;
-const CategoryWrapper= styled.div`
+const CategoryWrapper = styled.div`
   display: flex;
-  justify-content: center;  
+  justify-content: center;
   align-items: space-between;
   margin-bottom: 8px;
   z-index: 1;
 `;
-const CategoryButton= styled.div`
+const CategoryButton = styled.div`
   display: flex;
   width: 78px;
   padding: 6px 15px;
@@ -350,8 +360,8 @@ const CategoryButton= styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 300px;
-  border: 1px solid ${theme.colors.gray4}; 
-    p {
+  border: 1px solid ${theme.colors.gray4};
+  p {
     ${theme.textStyles.label1Medium};
     color: ${theme.colors.gray9};
   }
@@ -360,5 +370,5 @@ const CategoryButton= styled.div`
 const EventListWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;   
-  `;
+  padding: 0px 20px;
+`;
