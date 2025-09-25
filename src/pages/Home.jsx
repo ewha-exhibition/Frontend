@@ -24,7 +24,7 @@ function TopTenItem({ rank, title, poster }) {
   );
 }
 
-//TODO: Event의 공연, 전시, 기타 속성 추가
+//TODO: Event의 공연, 전시, 기타 속성 추가!
 //TODO: 클릭 시 선택된 카테고리 스타일 변경 (isSelected 추가)
 
 export default function Home() {
@@ -88,6 +88,12 @@ export default function Home() {
       {
         id: 10,
         rank: 10,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        poster: poster1,
+      },
+      {
+        id: 11,
+        rank: 11,
         title: "Pile up strands - 섬유예술 전공 과제전시회",
         poster: poster1,
       },
