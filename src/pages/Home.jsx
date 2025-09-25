@@ -1,9 +1,8 @@
 import styled from "styled-components";
-import PropTypes from "prop-types";
 import theme from "../style/Theme.jsx";
-import Menu from "../assets/icons/Menu.svg";
-import Search from "../assets/icons/Search.svg";
-import Bookmark from "../assets/icons/Bookmark.svg";
+import MenuIcon from "../assets/icons/MenuIcon.svg";
+import SearchIcon from "../assets/icons/SearchIcon.svg";
+import BookmarkIcon from "../assets/icons/BookmarkIcon.svg";
 
 function TopTenItem({ rank, title, bg }) {
   return (
@@ -13,7 +12,7 @@ function TopTenItem({ rank, title, bg }) {
         <InfoBar>
           <RankBadge>{rank}</RankBadge>
           <BookmarkStyle>
-            <img src={Bookmark} width={16} height={19} />
+            <img src={BookmarkIcon} width={16} height={19} />
           </BookmarkStyle>
         </InfoBar>
       </PosterImage>
@@ -31,11 +30,11 @@ export default function Home() {
     <Wrap>
       <TopNavigationBar>
         <Logo>綠’ KNOCK</Logo>
-        <img src={Menu} height={24} />
+        <img src={MenuIcon} height={24} />
       </TopNavigationBar>
       <SearchBar>
         <p>이화인들의 공연, 전시를 검색해보세요!</p>
-        <img src={Search} height={24} />
+        <img src={SearchIcon} height={24} />
       </SearchBar>
       <ContentBody>
         <WhiteSection />
@@ -55,7 +54,7 @@ const Wrap = styled.div`
   width: 100vw;
   min-height: 100vh;
   display: grid;
-  grid-template-rows: auto auto 1fr; //Nav, Search, ContentBody(Top10, EventList)
+  grid-template-rows: auto auto 1fr; //Nav, SearchIcon, ContentBody(Top10, EventList)
   background: #00664f; //디자인 시스템에 정의되지 않음
 `;
 

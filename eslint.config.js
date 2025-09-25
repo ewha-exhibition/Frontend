@@ -43,6 +43,7 @@ export default defineConfig([
       "react/react-in-jsx-scope": "off", //React 17 이후 불필요
       "react/jsx-no-target-blank": ["off", { allowReferrer: true }], // <a href="..." target="_blank" rel="noreferrer"> 보안 규칙 해제
       "react/self-closing-comp": "warn", //<div></div> 대신 <div/> 권장
+      "react/prop-types": "off", //PropTypes 사용하지 않음 (0925 추가)
 
       // 추가 JS 규칙
       "no-shadow": "warn", // 같은 이름 변수 재선언 경고 발생
