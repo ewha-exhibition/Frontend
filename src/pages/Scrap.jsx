@@ -47,7 +47,7 @@ function Scrap() {
     <Container>
       <Header>
         <Title>스크랩</Title>
-        <Hamburger height={24} />
+        <Hamburger height={24} width={24}/>
       </Header>
 
       <Content>
@@ -73,6 +73,7 @@ const Container = styled.div`
   padding: 20px 20px 0px 20px;
 `;
 const Header = styled.div`
+  width: 100%;
   height: 47px;
   display: flex;
   align-items: center;
