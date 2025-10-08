@@ -43,8 +43,8 @@ jobs:
         with:
           project: SCRUM
           issuetype: Task
-          summary: '${{ github.event.issue.title }}'
-          description: '${{ steps.md2jira.outputs.output-text }}'
+          summary: "${{ github.event.issue.title }}"
+          description: "${{ steps.md2jira.outputs.output-text }}"
           fields: |
             {
               "parent": { "key": "${{ steps.issue-parser.outputs.issueparser_parentKey }}" }
@@ -74,6 +74,18 @@ jobs:
       - name: Update issue title
         uses: actions-cool/issues-helper@v3
         with:
-          actions: 'update-issue'
+          actions: "update-issue"
           token: ${{ secrets.GITHUB_TOKEN }}
           title: "${{ steps.create.outputs.issue }} ${{ github.event.issue.title }}"
+      
+      # Create a comment in the GitHub Issue with the branch name (최종 브랜치명 확인용)
+      - name: Comment branch info on issue
+        uses: actions-cool/issues-helper@v3
+        with:
+        
+          actions: "create-comment"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            ✅ Jira Issue created: **${{ steps.create.outputs.issue }}**
+            🌿 Branch created: **${{ steps.make-branch.outputs.final_branch }}**
+            🔗 [View branch on GitHub](https://github.com/${{ github.repository }}/tree/${{ steps.make-branch.outputs.final_branch }})
