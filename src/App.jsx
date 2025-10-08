@@ -2,9 +2,10 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import Home from "./pages/Home.jsx";
 import Scrap from "./pages/Scrap.jsx";
-import CreateReview from "./pages/CreateReview.jsx";
+import CreateReview from "./pages/review/CreateReview.jsx";
 import GuestBook from "./pages/guestBook/GuestBook.jsx";
 import Detail from "./pages/Detail.jsx";
+import MyPage from "./pages/myPage/MyPage.jsx";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
       <Route path="/createReview" element={<CreateReview />} />
       <Route path="/guestBook" element={<GuestBook />} />
       <Route path="/detail" element={<Detail />} />
+      <Route path="/mypage" element={<MyPage />} />
     </Routes>
   );
 }

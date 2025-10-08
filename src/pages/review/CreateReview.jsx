@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-import Topbar from "../components/Topbar";
-import TextBox from "../components/review/TextBox";
+import Topbar from "../../components/Topbar";
+import TextBox from "../../components/review/TextBox";
 
 function CreateReview() {
   return (

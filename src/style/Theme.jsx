@@ -31,6 +31,7 @@ const theme = {
       headline18: "18px",
       title15: "15px",
       body14: "14px",
+      label16: "16px",
       label14: "14px",
       label12: "12px",
     },
