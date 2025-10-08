@@ -6,7 +6,10 @@ export const GlobalStyle = createGlobalStyle`
         font-family: 'SUIT-Variable';
         font-style: normal;
         font-weight: 100 900;
-        src: url(${SUITVariable}) format('SUIT-Variable');
+        src:
+            local('SUIT Variable'),        
+            url(${SUITVariable}) format('woff2');
+            font-display: swap;              /* iOS에서 FOIT 방지 */
     }
 
     * {
