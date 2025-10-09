@@ -2,11 +2,11 @@ const theme = {
   colors: {
     Primary100: "#16915E",
     Primary70: "#16915E",
-    Primary60:"#2A926C",
+    Primary60: "#2A926C",
     Primary50: "#00A76A",
     Primary30: "57B190",
     Primary20: "#74A08F",
-    Primary10:"#DBF3EC",
+    Primary10: "#DBF3EC",
     Primary5: "#EEFBF7",
     SubColor2: "#1A7E33",
     SubColor1: "#BBEC57",

@@ -91,12 +91,6 @@ export default function Home() {
         title: "Pile up strands - 섬유예술 전공 과제전시회",
         poster: poster1,
       },
-      {
-        id: 11,
-        rank: 11,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        poster: poster1,
-      },
     ],
   };
   const mock_data_event = {
@@ -192,22 +186,30 @@ export default function Home() {
 }
 
 //NOTE: Header, Search, Content(Top10, EventList)
+//width: 100%; 가로 스크롤 시, 화면 밖으로 나가는 문제 해결
 const Container = styled.div`
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
   display: grid;
-  grid-template-rows: auto auto 1fr; //Nav, Search, ContentBody(Top10, EventList)
-  background: #00664f; //디자인 시스템에 정의되지 않음
+  grid-template-rows: auto auto 1fr;
+  background: #00664f;
+  padding-top: 46px;
+  padding-bottom: 50px;
 `;
 
 const Header = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #00664f;
+  z-index: 100;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-sizing: border-box;
   width: 100%;
   height: 46px;
-  margin: 0 auto;
   padding: 14px 20px;
 `;
 
@@ -264,10 +266,10 @@ const TopTenList = styled.div`
 
 //width: 107.078 to 107
 //gap: 7.812 to 7.8
+//flex: 0 0 auto; 가로 스크롤 시, 화면 밖으로 나가는 문제 해결
 const Card = styled.div`
-  flex: 1 1 calc(100% / 3);
-  max-width: 200px;
-  min-width: 107px;
+  flex: 0 0 auto;
+  width: 107px;
   position: relative;
   display: flex;
   flex-direction: column;

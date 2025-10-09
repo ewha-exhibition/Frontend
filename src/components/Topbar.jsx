@@ -23,6 +23,7 @@ function Topbar({ title, icon }) {
 
 export default Topbar;
 
+//상단 고정
 const Container = styled.div`
   width: 100%;
   height: 46px;
@@ -30,6 +31,13 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color: ${({ theme }) => theme.colors.white};
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
 
   h3 {
     color: ${({ theme }) => theme.colors.gray10};
