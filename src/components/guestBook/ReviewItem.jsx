@@ -2,15 +2,28 @@ import styled from "styled-components";
 
 import PhotoArea from "./PhotoArea";
 
-function ReivewItem({ key, poster, title, id, review, pic }) {
+import Trash from "../../assets/icons/Trash.svg?react";
+
+function ReivewItem({
+  poster,
+  title,
+  id,
+  review,
+  pic,
+  loginId,
+  memberId,
+}) {
   return (
     <Container>
-      <TitleArea>
-        <img src={poster} alt="포스터 이미지" />
-        <p>{title}</p>
-      </TitleArea>
-      <TextArea>{review}</TextArea>
+      <Upper>
+        <TitleArea>
+          <img src={poster} alt="포스터 이미지" />
+          <p>{title}</p>
+        </TitleArea>
+        {loginId === memberId && <Trash width={16} height={16} />}
+      </Upper>
 
+      <TextArea>{review}</TextArea>
       {pic && pic.length > 0 && <PhotoArea pics={pic} />}
     </Container>
   );
@@ -27,6 +40,10 @@ const Container = styled.div`
   gap: 8px;
 
   border-bottom: 1px solid ${({ theme }) => theme.colors.gray2};
+`;
+const Upper = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 const TitleArea = styled.div`
   display: flex;

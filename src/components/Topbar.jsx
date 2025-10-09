@@ -9,6 +9,8 @@ function Topbar({ title, icon }) {
       <ChevronLeft height={14} width={24} />
       <h3>{title}</h3>
       {icon === "Link" && <Link height={18} width={24} />}
+
+      {icon === "none" && <div style={{ height: 18, width: 24 }}/>}
     </Container>
   );
 }
@@ -18,7 +20,7 @@ export default Topbar;
 const Container = styled.div`
   width: 100%;
   height: 46px;
-  padding: 0 15px;
+  padding: 14px 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;

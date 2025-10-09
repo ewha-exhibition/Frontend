@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import MypageHeader from "../../components/myPage/MypageHeader";
-import Banner from "./Banner";
+import Banner from "../../components/myPage/Banner";
 
 import Kakao from "../../assets/icons/Kakao.png";
 import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
@@ -17,7 +17,7 @@ function MyPage() {
   //라우팅 설정하고 경로 수정
   const firstTabs = [
     { name: "관람 내역", path: "watched" },
-    { name: "작성한 후기", path: "reviews" },
+    { name: "작성한 후기", path: "myReviews" },
     { name: "작성한 질문", path: "questions" },
     { name: "작성한 기대평", path: "expectations" },
   ];
@@ -29,7 +29,7 @@ function MyPage() {
 
   return (
     <Container>
-      <MypageHeader color={theme.colors.Primary50} authorized={false} />
+      <MypageHeader color={theme.colors.Primary50} authorized={login} />
       <Banner />
       <Content>
         {login ? (
@@ -171,7 +171,8 @@ const SubTitle = styled.div`
 
 const History = styled.div`
   width: 100%;
-  height: 130px;
+  height: 150px;
+  margin: 6px 0;
 
   display: flex;
   flex-direction: column;
