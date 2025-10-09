@@ -8,6 +8,7 @@ import Detail from "./pages/Detail.jsx";
 
 import MyPage from "./pages/myPage/MyPage.jsx";
 import MyReviews from "./pages/myPage/MyReviews.jsx";
+import Watched from "./pages/myPage/Watched.jsx";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
 
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/mypage/myReviews" element={<MyReviews />} />
+      <Route path="/mypage/watched" element={<Watched />} />
     </Routes>
   );
 }
