@@ -1,20 +1,25 @@
 import styled from "styled-components";
-import Bookmark from "../assets/icons/Bookmark.svg?react";
-import HaveSeen from "./buttons/HaveSeen";
+import WriteReview from "../buttons/WriteReview";
 
-function Scraped({ id, title, date, place, poster, onGoing }) {
+function WatchedHis({ id, title, date, place, poster, haveReview, onGoing }) {
   return (
     <Component>
       <Container>
-        <img src={poster} alt={title} />
+        <ImgWrapper>
+          <img src={poster} alt={title} />
+          {!onGoing && (
+            <Overlay>
+              <span>종료</span>
+            </Overlay>
+          )}
+        </ImgWrapper>
         <TextArea>
           <div className="titleBox">{title}</div>
           <p>{place}</p>
           <p>{date}</p>
         </TextArea>
-        <Bookmark width={24} height={24} />{" "}
         <BtnArea>
-          <HaveSeen />
+          <WriteReview haveReview={haveReview} />
         </BtnArea>
       </Container>
       <Br />
@@ -22,7 +27,7 @@ function Scraped({ id, title, date, place, poster, onGoing }) {
   );
 }
 
-export default Scraped;
+export default WatchedHis;
 
 const Component = styled.div`
   width: 100%;
@@ -37,14 +42,6 @@ const Container = styled.div`
   padding-top: 12px;
   display: flex;
   gap: 12px 20px;
-
-  img {
-    width: 92px;
-    height: 130px;
-    border-radius: 3px;
-    object-fit: contain;
-    background-color: ${({ theme }) => theme.colors.gray2};
-  }
 `;
 const Br = styled.div`
   width: 100%;
@@ -62,7 +59,7 @@ const TextArea = styled.div`
     line-height: ${({ theme }) => theme.font.lineHeight.normal};
 
     display: -webkit-box;
-    -webkit-line-clamp: 2; 
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -80,4 +77,33 @@ const BtnArea = styled.div`
   position: absolute;
   right: 0px;
   bottom: 0px;
+`;
+const ImgWrapper = styled.div`
+  position: relative;
+  width: 92px;
+  height: 130px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+    object-fit: contain;
+    background-color: ${({ theme }) => theme.colors.gray2};
+  }
+`;
+const Overlay = styled.div`
+  position: absolute;
+  inset: 0;
+  background-color: rgba(17, 17, 17, 0.3);
+  border-radius: 3px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  span {
+    color: ${({ theme }) => theme.colors.white};
+    font-size: ${({ theme }) => theme.font.fontSize.label12};
+    font-weight: ${({ theme }) => theme.font.fontWeight.semiBold};
+  }
 `;
