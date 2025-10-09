@@ -1,15 +1,14 @@
 import styled from "styled-components";
-import { useState } from "react";
 
+import Topbar from "../../components/Topbar";
 import ReivewItem from "../../components/guestBook/ReviewItem";
 
 import poster1 from "../../assets/mock/poster1.jpg";
 import poster2 from "../../assets/mock/poster2.jpg";
 import poster3 from "../../assets/mock/poster3.jpg";
 
-function Review() {
-  const loginId = 13
-  
+function MyReviews() {
+  const loginId = 10;
   const mockData = {
     status: 200,
     result: [
@@ -17,7 +16,7 @@ function Review() {
         poster: poster1,
         title: "2025 조형예술대학 메이데이 전시",
         id: 1,
-        memberId: 13,
+        memberId: 10,
         review:
           "퀄리티 대박! 너무 알찬 전시 잘 구경하고 갑니다! 무료 굿즈도 너무 감사합니다~ 금손벗들 졸업 축하드려요~  ",
         pic: [{ src: poster1 }, { src: poster2 }, { src: poster3 }],
@@ -54,39 +53,48 @@ function Review() {
           "퀄리티 대박! 너무 알찬 전시 잘 구경하고 갑니다! 무료 굿즈도 너무 감사합니다~ 금손벗들 졸업 축하드려요~ ",
         pic: [{ src: poster1 }],
       },
-            {
+      {
         poster: poster1,
         title: "2025 조형예술대학 메이데이 전시",
         id: 5,
         memberId: 10,
         review:
           "퀄리티 대박! 너무 알찬 전시 잘 구경하고 갑니다! 무료 굿즈도 너무 감사합니다~ 금손벗들 졸업 축하드려요~ ",
-        pic: [
-          { src: poster1 },
-          { src: poster2 },
-        ],
+        pic: [{ src: poster1 }, { src: poster2 }],
       },
     ],
   };
 
   return (
     <Container>
-      {mockData?.result.map((data) => (
-        <ReivewItem
-          key={data.id}
-          poster={data.poster}
-          title={data.title}
-          id={data.id}
-          review={data.review}
-          pic={data.pic}
-          loginId={loginId}
-          memberId={data.memberId}
-        />
-      ))}
+      <Topbar title={"작성한 후기"} icon={"none"} />
+      <Content>
+        {mockData?.result.map((data) => (
+          <ReivewItem
+            key={data.id}
+            poster={data.poster}
+            title={data.title}
+            id={data.id}
+            review={data.review}
+            pic={data.pic}
+            loginId={loginId}
+            memberId={data.memberId}
+          />
+        ))}
+      </Content>
     </Container>
   );
 }
 
-export default Review;
+export default MyReviews;
 
-const Container = styled.div``;
+const Container = styled.div`
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+`;
+const Content = styled.div`
+
+`;
