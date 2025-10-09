@@ -8,8 +8,8 @@ const theme = {
     Primary20: "#74A08F",
     Primary10:"#DBF3EC",
     Primary5: "#EEFBF7",
-    SubColor1: "#1A7E33",
-    SubColor2: "#BBEC57",
+    SubColor2: "#1A7E33",
+    SubColor1: "#BBEC57",
 
     gray1: "#f7f8fa",
     gray2: "#f2f3f6",

@@ -11,6 +11,7 @@ import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
 function MyPage() {
   const theme = useTheme();
   const [login, setLogin] = useState(false);
+  //disabled 하는 기능 필요
 
   const navigate = useNavigate();
 
@@ -155,7 +156,7 @@ const TabItem = styled.div`
 
   color: ${({ theme }) => theme.colors.gray9};
   font-size: ${({ theme }) => theme.font.fontSize.title15};
-  font-weight: ${({ theme }) => theme.font.fontWeight.medium};
+  font-weight: ${({ theme }) => theme.font.fontWeight.semiBold};
   line-height: ${({ theme }) => theme.font.lineHeight.normal};
 `;
 const Br = styled.div`
