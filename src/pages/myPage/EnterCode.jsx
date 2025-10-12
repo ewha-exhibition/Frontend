@@ -23,11 +23,10 @@ function EnterCode() {
         </CustomInput>
         <Noti>
           <p>초대코드란?</p>
-          <li>처음 홍보글을 등록한 사용자에게 부여되는 코드</li>
-          <li>초대코드 입력 시 등록자와 똑같은 주최자 권한 부여</li>
+          <li>공연/전시 홍보글을 등록한 사람에게 주어지는 공유용 코드예요.</li>
           <li>
-            주최자 권한 = 홍보글 수정 및 삭제, 홍보글에 달린 질문/응원/후기에
-            댓글을 작성 가능
+            초대코드를 입력하면 글 등록자와 같은 권한(글 수정, 삭제, 대댓글 작성
+            등)을 가질 수 있어요.
           </li>
         </Noti>
         <BottomBtn activated={isActivated} text={"확인"} />
@@ -41,6 +40,7 @@ export default EnterCode;
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
+  padding-top: 46px;
 `;
 const Content = styled.div`
   padding: 26px 20px;

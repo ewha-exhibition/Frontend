@@ -278,7 +278,7 @@ const ShowList = styled.div`
     height: 130px;
     aspect-ratio: 46/65;
     border-radius: 3px;
-    background: ${({ theme }) => theme.colors.gray2};
+ 
   }
   p {
     display: -webkit-box;
