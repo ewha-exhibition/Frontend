@@ -1,30 +1,33 @@
 import { useState } from "react";
 import styled from "styled-components";
+
 import TopBar from "../components/Topbar";
 import BookingBar from "../components/detail/BookingBar";
 import ConfirmModal from "../components/detail/ConfirmModal";
+import { Cheer, Review, Question } from "../components/detail/Comment";
 
+//Icons
 import locationIcon from "../assets/icons/Location.svg";
 import ticketIcon from "../assets/icons/Ticket.svg";
 import userIcon from "../assets/icons/User.svg";
 import calenderIcon from "../assets/icons/Calender.svg";
 import clockIcon from "../assets/icons/Clock.svg";
-//Comment
 import sendIcon from "../assets/icons/Send.svg";
-import deleteIcon from "../assets/icons/DeleteComment.svg";
-import PhotoArea from "../components/guestBook/PhotoArea";
-import poster from "../assets/mock/poster1.jpg";
+
+//Mocks
+import poster1 from "../assets/mock/poster1.jpg";
 import poster2 from "../assets/mock/poster2.jpg";
+import { replace } from "react-router-dom";
 
 //TODO: 상단바 고정, 카테고리바 일정 스크롤 시 고정
-//poster, title
-//info: icon + explain
-//category: title + (count)
-//ongoing + price -> 하단바 결정
-//hook: count, selected(default = "상세정보"), scrap
+//TODO: hook: 댓글 수 count, scrap
 
 export default function Detail() {
   const [currentCategory, setCurrentCategory] = useState("detail");
+  const [currentUser, setCurrentUser] = useState({
+    id: 1,
+    nickname: "호스트1",
+  });
 
   //삭제 확인 모달
   const [modalState, setModalState] = useState({
@@ -45,6 +48,7 @@ export default function Detail() {
     { key: "cheer", label: "응원", count: 5 },
     { key: "review", label: "후기", count: 0 },
   ];
+
   //NOTE: onGoing, price -> 하단바 결정
   const mock_data = {
     id: 1,
@@ -54,37 +58,74 @@ export default function Detail() {
     host: "섬유예술전공",
     date: "2025.06.13~06.25",
     time: "9:00-16:00",
-    poster: poster,
+    poster: poster1,
     explain:
       "뮤지컬 동아리 뮤랩 3번째 정기공연에 초대합니다! 내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용",
     images: [
-      { id: 1, img: poster },
-      { id: 2, img: poster },
-      { id: 3, img: poster },
+      { id: 1, img: poster1 },
+      { id: 2, img: poster1 },
+      { id: 3, img: poster1 },
     ],
     scraped: false,
     onGoing: false,
   };
-  const mockReview = {
-    status: 200,
-    result: [
-      {
+
+  const mockCheers = [
+    {
+      id: 1,
+      nickname: "사용자1",
+      date: "2023.06.01",
+      text: "졸업 축하드려요!!",
+      reply: {
         id: 1,
-        review:
-          "퀄리티 대박! 너무 알찬 전시 잘 구경하고 갑니다! 무료 굿즈도 너무 감사합니다~ 금손벗들 졸업 축하드려요~  ",
-        pic: [{ src: poster2 }, { src: poster2 }, { src: poster2 }],
+        nickname: "호스트1",
+        date: "2025.06.02",
+        text: "감사합니다:)",
       },
-      {
-        id: 2,
-        review:
-          "연극 배우들의 연기가 실감 나서 감동했어요.연극 배우들의 연기가 실감 나서 감동했어요.연극 배우들의 연기가 실감 나서 감동했어요.연극 배우들의 연기가 실감 나서 감동했어요.연극 배우들의 연기가 실감 나서 감동했어요.연극 배우들의 연기가 실감 나서 감동했어요.",
-        pic: [],
+    },
+    {
+      id: 2,
+      nickname: "사용자2",
+      date: "2023.06.02",
+      text: "너무 기대돼요 😊",
+      reply: {},
+    },
+  ];
+  const mockQuestions = [
+    {
+      id: 1,
+      nickname: "사용자1",
+      date: "2023.06.01",
+      text: "전시 관람은 무료인가요?",
+      reply: {},
+    },
+    {
+      id: 2,
+      nickname: "사용자2",
+      date: "2023.06.02",
+      text: "예약은 필요한가요?",
+      reply: {
+        id: 1,
+        nickname: "호스트2",
+        date: "2025.06.02",
+        text: "안녕하세요! 현장에서 즉시 입장 가능합니다 :)",
       },
-    ],
-  };
+    },
+  ];
+  const mockReviews = [
+    {
+      id: 1,
+      nickname: "사용자1",
+      date: "2023.06.01",
+      text: "정말 감동적인 전시였어요.",
+      photos: [{ src: poster1 }, { src: poster2 }],
+    },
+  ];
   return (
     <Container>
       <TopBar title={null} icon={"Link"} />
+
+      {/* 공연 정보 */}
       <Header>
         <img className="img" src={mock_data.poster} alt={mock_data.title} />
         <h1 className="h1">{mock_data.title}</h1>
@@ -113,6 +154,8 @@ export default function Detail() {
           </div>
         </Summary>
       </Header>
+
+      {/* 하단 카테고리 탭 */}
       <Categories>
         {categories.map(({ key, label, count }) => (
           <Category
@@ -125,7 +168,9 @@ export default function Detail() {
           </Category>
         ))}
       </Categories>
+
       <Content>
+        {/* 상세 정보 */}
         {currentCategory === "detail" && (
           <DetailSection>
             <p className="p">
@@ -137,6 +182,7 @@ export default function Detail() {
           </DetailSection>
         )}
 
+        {/* 질문 */}
         {currentCategory === "question" && (
           <CommentSection>
             <InputBox>
@@ -149,62 +195,18 @@ export default function Detail() {
               </div>
               <img className="send" src={sendIcon} alt={"전송"} />
             </InputBox>
-            <CommentBox>
-              <CommentHeader>
-                <div className="info">
-                  <p className="nickname">익명</p>
-                  <p className="date">2023.06.01</p>
-                </div>
-                <img
-                  className="delete"
-                  src={deleteIcon}
-                  alt={"삭제"}
-                  onClick={() => openModal("question")}
-                />
-              </CommentHeader>
-              <CommentContent>
-                <p className="tag">질문</p>
-                <p className="text">
-                  안녕하세요! 전시 관람은 무료인가요?
-                  으아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ
-                </p>
-              </CommentContent>
-            </CommentBox>
-            <CommentBox>
-              <CommentHeader>
-                <div className="info">
-                  <p className="nickname">익명</p>
-                  <p className="date">2023.06.01</p>
-                </div>
-                <img className="delete" src={deleteIcon} alt={"삭제"} />
-              </CommentHeader>
-              <CommentContent>
-                <p className="tag">질문</p>
-                <p className="text">안녕하세요! 전시 관람은 무료인가요?</p>
-              </CommentContent>
-              <div className="withAnswer">
-                <Arrow />
-                <AnswerBox>
-                  <CommentHeader>
-                    <div className="info">
-                      <p className="nickname">팀명</p>
-                      <p className="date">2023.06.01</p>
-                    </div>
-                    <img className="delete" src={deleteIcon} alt={"삭제"} />
-                  </CommentHeader>
-                  <CommentContent>
-                    <p className="tag">답변</p>
-                    <p className="text">
-                      안녕하세요! 전시 관람은 무료인가요?
-                      으아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ
-                    </p>
-                  </CommentContent>
-                </AnswerBox>
-              </div>
-            </CommentBox>
+            {mockQuestions.map((question) => (
+              <Question
+                key={question.id}
+                comment={question}
+                openModal={openModal}
+                currentUser={currentUser}
+              />
+            ))}
           </CommentSection>
         )}
 
+        {/* 응원 */}
         {currentCategory === "cheer" && (
           <CommentSection>
             <InputBox>
@@ -217,105 +219,27 @@ export default function Detail() {
               </div>
               <img className="send" src={sendIcon} alt={"전송"} />
             </InputBox>
-            <CommentBox>
-              <CommentHeader>
-                <div className="info">
-                  <p className="nickname">벗1</p>
-                  <p className="date">2023.06.01</p>
-                </div>
-                <img
-                  className="delete"
-                  src={deleteIcon}
-                  alt={"삭제"}
-                  onClick={() => openModal("cheer")}
-                />
-              </CommentHeader>
-              <CommentContent>
-                <p className="text">힘내세요오!!</p>
-              </CommentContent>
-            </CommentBox>
-            <CommentBox>
-              <CommentHeader>
-                <div className="info">
-                  <p className="nickname">벗2</p>
-                  <p className="date">2023.06.01</p>
-                </div>
-                <img className="delete" src={deleteIcon} alt={"삭제"} />
-              </CommentHeader>
-              <CommentContent>
-                <p className="text">
-                  으아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ
-                </p>
-              </CommentContent>
-              <div className="withAnswer">
-                <Arrow />
-                <AnswerBox>
-                  <CommentHeader>
-                    <div className="info">
-                      <p className="nickname">팀명</p>
-                      <p className="date">2023.06.01</p>
-                    </div>
-                    <img className="delete" src={deleteIcon} alt={"삭제"} />
-                  </CommentHeader>
-                  <CommentContent>
-                    <p className="text">감사</p>
-                  </CommentContent>
-                </AnswerBox>
-              </div>
-            </CommentBox>
+            {mockCheers.map((cheer) => (
+              <Cheer
+                key={cheer.id}
+                comment={cheer}
+                openModal={openModal}
+                currentUser={currentUser}
+              />
+            ))}
           </CommentSection>
         )}
 
+        {/* 후기 */}
         {currentCategory === "review" && (
           <CommentSection>
             <div className="review">
               <DropShape>관람 후 느낀 점을 니눠주세요!</DropShape>
               <WriteReviewButton>후기 작성하기</WriteReviewButton>
             </div>
-            <CommentBox>
-              <CommentHeader>
-                <div className="info">
-                  <p className="nickname">벗1</p>
-                  <p className="date">2023.06.01</p>
-                </div>
-                <img
-                  className="delete"
-                  src={deleteIcon}
-                  alt={"삭제"}
-                  onClick={() => openModal("review")}
-                />
-              </CommentHeader>
-              <p className="text">힘내세요오!!</p>
-              <PhotoArea
-                pics={[{ src: poster }, { src: poster2 }, { src: poster }]}
-              />
-            </CommentBox>
-            <CommentBox>
-              <CommentHeader>
-                <div className="info">
-                  <p className="nickname">벗1</p>
-                  <p className="date">2023.06.01</p>
-                </div>
-                <img className="delete" src={deleteIcon} alt={"삭제"} />
-              </CommentHeader>
-              <p className="text">힘내세요오!!</p>
-              <PhotoArea pics={[{ src: poster }]} />
-              <div className="withAnswer">
-                <Arrow />
-                <AnswerBox>
-                  <CommentHeader>
-                    <div className="info">
-                      <p className="nickname">팀명</p>
-                      <p className="date">2023.06.01</p>
-                    </div>
-                    <img className="delete" src={deleteIcon} alt={"삭제"} />
-                  </CommentHeader>
-                  <CommentContent>
-                    <p className="text">감사</p>
-                  </CommentContent>
-                </AnswerBox>
-              </div>
-            </CommentBox>
+            {mockReviews.map((review) => (
+              <Review key={review.id} comment={review} openModal={openModal} />
+            ))}
           </CommentSection>
         )}
       </Content>
@@ -393,10 +317,8 @@ const Categories = styled.div`
 const Category = styled.div`
   display: inline-flex;
   padding: 7.5px 8px;
-  font-family: SUIT;
-  font-size: 15px;
-  font-weight: ${({ theme }) => theme.font.fontWeight.semiBold};
-  line-height: 135%;
+  ${({ theme }) => theme.textStyles.titleSemiBold};
+
   color: ${({ isSelected, theme }) =>
     isSelected ? theme.colors.blackMain : theme.colors.gray6};
   border-bottom: ${({ isSelected, theme }) =>
@@ -409,6 +331,7 @@ const Content = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.colors.gray1};
 `;
+
 //상세정보
 const DetailSection = styled.div`
   padding: 19px 19px 120px 19px;
@@ -425,7 +348,6 @@ const DetailSection = styled.div`
 `;
 
 //질문, 응원, 후기
-//REVIEW: label2Medium
 const CommentSection = styled.div`
   display: flex;
   flex-direction: column;
@@ -483,108 +405,6 @@ const Input = styled.input`
   }
 `;
 
-const CommentBox = styled.div`
-  width: 100%;
-  padding: 17px 0;
-
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.gray3};
-
-  .withAnswer {
-    display: flex;
-    flex-direction: row;
-    margin-top: 12px;
-    gap: 10px;
-  }
-`;
-//REVIEW: label3Regular
-const CommentHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  .info {
-    display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    gap: 6px;
-  }
-  .nickname {
-    width: fit-content;
-    color: ${({ theme }) => theme.colors.gray10};
-    font-family: SUIT;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 130%;
-  }
-  .date {
-    width: fit-content;
-    color: ${({ theme }) => theme.colors.gray6};
-    ${({ theme }) => theme.textStyles.label2Regular};
-  }
-  .delete {
-    width: 16px;
-    height: 16px;
-    align-self: flex-end;
-  }
-`;
-//REVIEW: label2Medium
-//REVIEW: body1Regular
-//REVIEW: SubColor1
-const CommentContent = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  width: 100%;
-  gap: 8px;
-
-  .tag {
-    width: 36px;
-    height: 20px;
-    padding: 3px 6px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: ${({ theme }) => theme.colors.SubColor1};
-    color: ${({ theme }) => theme.colors.Primary60};
-    ${({ theme }) => theme.textStyles.label2Medium};
-    border-radius: 3px;
-  }
-  .text {
-    width: 100%;
-    color: ${({ theme }) => theme.colors.gray9};
-    ${({ theme }) => theme.textStyles.body1Regular};
-    word-break: break-word;
-    white-space: pre-wrap;
-  }
-`;
-
-const AnswerBox = styled.div`
-  width: 100%;
-  padding: 12px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  justify-content: space-between;
-  background: ${({ theme }) => theme.colors.white};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.gray3};
-  border-radius: 8px;
-`;
-
-const Arrow = styled.div`
-  width: 12px;
-  height: 12px;
-  margin-top: 8px;
-  border-left: 2px solid ${({ theme }) => theme.colors.gray5};
-  border-bottom: 2px solid ${({ theme }) => theme.colors.gray5};
-  border-radius: 2px;
-`;
-//REVIEW: label2SemiBold
 const DropShape = styled.div`
   width: 165px;
   height: 23px;
@@ -595,9 +415,8 @@ const DropShape = styled.div`
   border-radius: 120px 250px 0px 120px;
   background: ${({ theme }) => theme.colors.Primary60};
 
-  ${({ theme }) => theme.textStyles.label2Semibold};
+  ${({ theme }) => theme.textStyles.label2SemiBold};
   color: ${({ theme }) => theme.colors.white};
-  font-size: 12px;
 `;
 const WriteReviewButton = styled.button`
   width: 336px;
