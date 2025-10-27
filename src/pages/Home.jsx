@@ -4,7 +4,7 @@ import EventList from "../components/home/EventList.jsx";
 import TabBar from "../components/home/TabBar.jsx";
 import MenuIcon from "../assets/icons/Menu.svg?react";
 import SearchIcon from "../assets/icons/Search.svg?react";
-import BookmarkIcon from "../assets/icons/Bookmark_nw.svg?react";
+import BookmarkIcon from "../assets/icons/Bookmark.svg?react";
 import poster1 from "../assets/mock/poster1.jpg";
 import poster2 from "../assets/mock/poster2.jpg";
 import poster3 from "../assets/mock/poster3.jpg";
@@ -132,7 +132,7 @@ export default function Home() {
         <MenuIcon width={24} height={24} />
       </Header>
       <SearchBar>
-        <p>이화인들의 공연, 전시를 검색해보세요!</p>
+        <placeholder>이화인들의 공연, 전시를 검색해보세요!</placeholder>
         <SearchIcon width={24} height={24} />
       </SearchBar>
 
@@ -154,16 +154,16 @@ export default function Home() {
         <EventWrapper>
           <CategoryWrapper>
             <CategoryButton>
-              <p>전체</p>
+              <label>전체</label>
             </CategoryButton>
             <CategoryButton>
-              <p>공연</p>
+              <label>공연</label>
             </CategoryButton>
             <CategoryButton>
-              <p>전시</p>
+              <label>전시</label>
             </CategoryButton>
             <CategoryButton>
-              <p>기타</p>
+              <label>기타</label>
             </CategoryButton>
           </CategoryWrapper>
           <EventListWrapper>
@@ -186,7 +186,7 @@ export default function Home() {
 }
 
 //NOTE: Header, Search, Content(Top10, EventList)
-//width: 100%; 가로 스크롤 시, 화면 밖으로 나가는 문제 해결
+
 const Container = styled.div`
   width: 100%;
   min-height: 100vh;
@@ -215,7 +215,7 @@ const Header = styled.div`
 
 //letter-spacing: 0.165 to 0.17
 const Logo = styled.div`
-  color: ${theme.colors.white};
+  color: ${({ theme }) => theme.colors.white};
   font-size: 18px;
   font-style: normal;
   font-weight: 400;
@@ -234,9 +234,9 @@ const SearchBar = styled.div`
   padding: 8px 18px 8px 19px;
   border-radius: 20px;
   border: 1.5px solid #74a08f;
-  p {
-    ${theme.textStyles.label2Regular}
-    color: ${theme.colors.Primary10};
+  placeholder {
+    ${({ theme }) => theme.textStyles.label2Regular};
+    color: ${({ theme }) => theme.colors.Primary10};
   }
 `;
 //NOTE: Content - Top10, EventList
@@ -250,8 +250,8 @@ const TopTenHeadline = styled.div`
   align-items: center;
   padding: 21px 12px;
   p {
-    ${theme.textStyles.titleSemiBold}
-    color: ${theme.colors.white};
+    ${({ theme }) => theme.textStyles.titleSemiBold};
+    color: ${({ theme }) => theme.colors.white};
   }
 `;
 const TopTenList = styled.div`
@@ -278,7 +278,7 @@ const Card = styled.div`
 const Poster = styled.div`
   aspect-ratio: 107 / 151.42;
   border-radius: 3px;
-  background-color: ${theme.colors.gray10};
+  background-color: ${({ theme }) => theme.colors.gray10};
   background-image: url(${(props) => props.poster});
   background-size: cover;
   background-position: top;
@@ -309,7 +309,7 @@ const Bar = styled.div`
 
 // 순위
 const Rank = styled.span`
-  color: ${theme.colors.white};
+  color: ${({ theme }) => theme.colors.white};
   text-shadow: 0 0 10px #000;
   font-family: SUIT;
   font-size: 16px;
@@ -321,8 +321,8 @@ const Rank = styled.span`
 const Title = styled.p`
   width: 100%;
   height: 39px;
-  ${theme.textStyles.titleSemiBold};
-  color: ${theme.colors.gray10};
+  ${({ theme }) => theme.textStyles.titleSemiBold};
+  color: ${({ theme }) => theme.colors.gray10};
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -335,7 +335,7 @@ const WhiteBox = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: ${theme.colors.white};
+  background: ${({ theme }) => theme.colors.white};
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   flex: 1;
@@ -362,11 +362,10 @@ const CategoryButton = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 300px;
-  border: 1px solid ${theme.colors.gray4};
-  p {
-    ${theme.textStyles.label1Medium};
-    color: ${theme.colors.gray9};
-  }
+  border: 1px solid  ${({ theme }) => theme.colors.gray4};
+  label {
+     ${({ theme }) => theme.textStyles.label2Medium};
+    color:  ${({ theme }) => theme.colors.gray9};
 `;
 
 const EventListWrapper = styled.div`
