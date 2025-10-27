@@ -5,7 +5,7 @@ import Scrap from "./pages/Scrap.jsx";
 import CreateReview from "./pages/review/CreateReview.jsx";
 import GuestBook from "./pages/guestBook/GuestBook.jsx";
 import Detail from "./pages/Detail.jsx";
-
+import EnrollEvent from "./pages/EnrollEvent.jsx";
 import MyPage from "./pages/myPage/MyPage.jsx";
 import MyReviews from "./pages/myPage/MyReviews.jsx";
 import Watched from "./pages/myPage/Watched.jsx";
@@ -21,12 +21,13 @@ export default function App() {
       <Route path="/createReview" element={<CreateReview />} />
       <Route path="/guestBook" element={<GuestBook />} />
       <Route path="/detail" element={<Detail />} />
+      <Route path="/enrollEvent" element={<EnrollEvent />} />
 
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/mypage/myReviews" element={<MyReviews />} />
       <Route path="/mypage/watched" element={<Watched />} />
       <Route path="/mypage/enterCode" element={<EnterCode />} />
-      <Route path="/mypage/myShows" element={<MyShow/>} />
+      <Route path="/mypage/myShows" element={<MyShow />} />
     </Routes>
   );
 }
