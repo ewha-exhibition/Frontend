@@ -89,10 +89,11 @@ const StyledCalender = createGlobalStyle`
   /* 텍스트 Input */
   .react-datepicker__input-container {
     position: relative
-
   }
   .react-datepicker__input-container input {
-    width: 335px;
+    margin-top: 8px;
+
+    width: 100%;
     height: 43px;
     padding: 8px 12px;
     border-radius: 4px;
