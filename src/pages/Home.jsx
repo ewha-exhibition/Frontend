@@ -2,12 +2,12 @@ import styled from "styled-components";
 import theme from "../style/Theme.jsx";
 import EventList from "../components/home/EventList.jsx";
 import TabBar from "../components/home/TabBar.jsx";
-import MenuIcon from "../assets/icons/Menu.svg?react";
 import SearchIcon from "../assets/icons/Search.svg?react";
 import BookmarkIcon from "../assets/icons/Bookmark.svg?react";
 import poster1 from "../assets/mock/poster1.jpg";
 import poster2 from "../assets/mock/poster2.jpg";
 import poster3 from "../assets/mock/poster3.jpg";
+import MenuTrigger from "../components/menu/MenuTrigger.jsx";
 
 function TopTenItem({ rank, title, poster }) {
   return (
@@ -129,7 +129,7 @@ export default function Home() {
     <Container>
       <Header>
         <Logo>綠’ KNOCK</Logo>
-        <MenuIcon width={24} height={24} />
+        <MenuTrigger />
       </Header>
       <SearchBar>
         <placeholder>이화인들의 공연, 전시를 검색해보세요!</placeholder>
