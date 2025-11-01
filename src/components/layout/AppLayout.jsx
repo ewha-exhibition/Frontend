@@ -1,17 +1,11 @@
-// src/components/layout/AppLayout.jsx
-import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import TabBar from "../home/TabBar.jsx";
 
 export default function AppLayout({ children }) {
   return (
     <PageShell>
       <AppShell>
         <Inner>{children}</Inner>
-        <BottomBar>
-          <TabBar />
-        </BottomBar>
       </AppShell>
     </PageShell>
   );
@@ -42,14 +36,4 @@ const Inner = styled.main`
   max-width: min(540px, 100vw);
   margin: 0 auto;
   padding-bottom: 50px;
-`;
-
-/* 하단 탭바 공통 */
-const BottomBar = styled.div`
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(540px, 100vw);
-  z-index: 100;
 `;
