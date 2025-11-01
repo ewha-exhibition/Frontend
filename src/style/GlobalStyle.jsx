@@ -23,6 +23,17 @@ export const GlobalStyle = createGlobalStyle`
         font-style: normal;
         line-height: 1.4;
         letter-spacing: -0.025em; 
+        margin: 0;
+        background: #fff;
+        display: flex;
+        justify-content: center;  
+        align-items: flex-start; 
+    }
+    
+    #root {
+        width: 100%;
+        display: flex;
+        justify-content: center;
     }
 
     p, h1, h2, h3 {
