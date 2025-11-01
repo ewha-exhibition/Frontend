@@ -1,7 +1,5 @@
+// pages/Scrap.jsx
 import styled from "styled-components";
-
-import Hamburger from "../assets/icons/HamburgerMenu.svg?react";
-
 import Scraped from "../components/Scraped";
 
 import poster1 from "../assets/mock/poster1.jpg";
@@ -44,10 +42,7 @@ function Scrap() {
 
   return (
     <Container>
-      <Header>
-        <Title>스크랩</Title>
-        <Hamburger height={24} width={24} />
-      </Header>
+      <PageTitle>스크랩</PageTitle>
 
       <Content>
         {mock_data?.result.map((data) => (
@@ -64,30 +59,24 @@ function Scrap() {
     </Container>
   );
 }
+
 export default Scrap;
 
 const Container = styled.div`
-  width: 100vw;
-  height: 100vh;
-  padding: 0px 20px 0px 20px;
-`;
-const Header = styled.div`
-  width: 100%;
-  height: 47px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  margin-bottom: 6px;
+  width: 100%;  
+  min-height: calc(100vh - 46px - 50px);
+  padding: 12px 20px 0 20px;
+  background: #fff;
 `;
 
-const Title = styled.h3`
+const PageTitle = styled.h3`
+  margin: 0 0 12px;
+  ${({ theme }) => theme.textStyles.headline1Bold};
   color: ${({ theme }) => theme.colors.gray10};
-  font-size: ${({ theme }) => theme.font.fontSize.headline20};
-  font-weight: ${({ theme }) => theme.font.fontWeight.bold};
 `;
 
 const Content = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 16px;
 `;

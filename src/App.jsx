@@ -1,5 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { MenuProvider } from "./components/menu/MenuProvider.jsx";
+import AppLayout from "./components/layout/AppLayout.jsx";
 
 import Home from "./pages/Home.jsx";
 import Scrap from "./pages/Scrap.jsx";
@@ -16,19 +17,21 @@ import MyShow from "./pages/myPage/MyShow.jsx";
 export default function App() {
   return (
     <MenuProvider>
-      <Routes>
-        <Route path="/" element={<Home />} />
+      <AppLayout>
+        <Routes>
+          <Route path="/" element={<Home />} />
 
-        <Route path="/scrap" element={<Scrap />} />
-        <Route path="/createReview" element={<CreateReview />} />
-        <Route path="/guestBook" element={<GuestBook />} />
-        <Route path="/detail" element={<Detail />} />
+          <Route path="/scrap" element={<Scrap />} />
+          <Route path="/createReview" element={<CreateReview />} />
+          <Route path="/guestBook" element={<GuestBook />} />
+          <Route path="/detail" element={<Detail />} />
 
-        <Route path="/mypage" element={<MyPage />} />
-        <Route path="/mypage/myReviews" element={<MyReviews />} />
-        <Route path="/mypage/watched" element={<Watched />} />
-        <Route path="/mypage/enterCode" element={<EnterCode />} />
-      </Routes>
+          <Route path="/mypage" element={<MyPage />} />
+          <Route path="/mypage/myReviews" element={<MyReviews />} />
+          <Route path="/mypage/watched" element={<Watched />} />
+          <Route path="/mypage/enterCode" element={<EnterCode />} />
+        </Routes>
+      </AppLayout>
     </MenuProvider>
   );
 }

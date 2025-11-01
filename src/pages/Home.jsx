@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import theme from "../style/Theme.jsx";
 import EventList from "../components/home/EventList.jsx";
-import TabBar from "../components/home/TabBar.jsx";
 import SearchIcon from "../assets/icons/Search.svg?react";
 import BookmarkIcon from "../assets/icons/Bookmark.svg?react";
 import poster1 from "../assets/mock/poster1.jpg";
@@ -131,10 +130,12 @@ export default function Home() {
         <Logo>綠’ KNOCK</Logo>
         <MenuTrigger />
       </Header>
-      <SearchBar>
-        <placeholder>이화인들의 공연, 전시를 검색해보세요!</placeholder>
-        <SearchIcon width={24} height={24} />
-      </SearchBar>
+      <SearchBarContainer>
+        <SearchBar>
+          <p>이화인들의 공연, 전시를 검색해보세요!</p>
+          <SearchIcon width={24} height={24} />
+        </SearchBar>
+      </SearchBarContainer>
 
       <Content>
         <WhiteBox />
@@ -180,7 +181,6 @@ export default function Home() {
           </EventListWrapper>
         </EventWrapper>
       </Content>
-      <TabBar />
     </Container>
   );
 }
@@ -188,29 +188,32 @@ export default function Home() {
 //NOTE: Header, Search, Content(Top10, EventList)
 
 const Container = styled.div`
+  position: relative;
   width: 100%;
-  min-height: 100vh;
-  display: grid;
-  grid-template-rows: auto auto 1fr;
-  background: #00664f;
-  padding-top: 46px;
-  padding-bottom: 50px;
+  max-width: 540px;
+  margin: 0 auto;
+  background: linear-gradient(
+    to bottom,
+    #00664f 0%,
+    #00664f 250px,
+    #ffffff 250px,
+    #ffffff 100%
+  );
 `;
 
 const Header = styled.div`
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(540px, 100vw);
   background: #00664f;
-  z-index: 100;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
   height: 46px;
   padding: 14px 20px;
+  z-index: 100;
 `;
 
 //letter-spacing: 0.165 to 0.17
@@ -223,14 +226,18 @@ const Logo = styled.div`
   letter-spacing: -0.17px;
 `;
 
+const SearchBarContainer = styled.div`
+  padding: 9px 20px 24px 20px;
+`;
+
 //padding: 18.812 to 19
 //gap: 92.19 to 92
 const SearchBar = styled.div`
+  width: 100%;
   display: inline-flex;
   justify-content: space-between;
   align-items: center;
-  gap: 92px;
-  margin: 9px 21px 24px 20px;
+
   padding: 8px 18px 8px 19px;
   border-radius: 20px;
   border: 1.5px solid #74a08f;
@@ -239,6 +246,7 @@ const SearchBar = styled.div`
     color: ${({ theme }) => theme.colors.Primary10};
   }
 `;
+
 //NOTE: Content - Top10, EventList
 const Content = styled.div`
   position: relative;
