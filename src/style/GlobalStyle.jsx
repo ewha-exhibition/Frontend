@@ -2,6 +2,11 @@ import { createGlobalStyle } from "styled-components";
 import SUITVariable from "../assets/fonts/SUIT-Variable.woff2";
 
 export const GlobalStyle = createGlobalStyle`
+    :root {
+        /* OS가 다크모드여도 라이트로만 렌더링되게 */
+        color-scheme: light;
+    }
+
     @font-face {
         font-family: 'SUIT-Variable';
         font-style: normal;

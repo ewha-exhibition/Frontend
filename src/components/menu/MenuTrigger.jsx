@@ -1,9 +1,18 @@
 import styled from "styled-components";
 import { useMenu } from "./MenuProvider.jsx";
-import MenuSvg from "../../assets/icons/Menu.svg?react";
+import MenuSvg from "../../assets/icons/Menu.svg?react"; // 기본(흰색)
+import HamburgerSvg from "../../assets/icons/HamburgerMenu.svg?react"; // 검정색
 
-export default function MenuTrigger({ size = 24, ariaLabel = "메뉴 열기" }) {
+export default function MenuTrigger({
+  size = 24,
+  ariaLabel = "메뉴 열기",
+  variant = "default", // "default" | "black" 로 옵션 구분
+}) {
   const { open, toggleMenu } = useMenu();
+
+  // variant에 따라 아이콘 선택
+  const Icon = variant === "black" ? HamburgerSvg : MenuSvg;
+
   return (
     <IconButton
       type="button"
@@ -12,7 +21,7 @@ export default function MenuTrigger({ size = 24, ariaLabel = "메뉴 열기" }) 
       aria-expanded={open}
       onClick={toggleMenu}
     >
-      <MenuSvg width={size} height={size} />
+      <Icon width={size} height={size} />
     </IconButton>
   );
 }

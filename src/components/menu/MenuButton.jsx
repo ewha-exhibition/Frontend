@@ -1,13 +1,13 @@
 import { useId, useState } from "react";
 import styled from "styled-components";
 import Modal from "./Modal.jsx";
-import MenuSvg from "../../assets/icons/Menu.svg?react"; // 경로는 프로젝트 구조에 맞게
+import MenuSvg from "../../assets/icons/Menu.svg?react";
 
 export default function MenuButton({
   ariaLabel = "메뉴 열기",
   menuTitle = "메뉴",
-  menuContent, 
-  size = 24,   
+  menuContent,
+  size = 24,
 }) {
   const [open, setOpen] = useState(false);
   const dialogId = useId();
@@ -34,10 +34,18 @@ export default function MenuButton({
           <PanelBody>
             {menuContent ?? (
               <DefaultList>
-                <li><a href="/">홈</a></li>
-                <li><a href="/search">검색</a></li>
-                <li><a href="/bookmarks">북마크</a></li>
-                <li><a href="/mypage">마이페이지</a></li>
+                <li>
+                  <a href="/">홈</a>
+                </li>
+                <li>
+                  <a href="/search">검색</a>
+                </li>
+                <li>
+                  <a href="/bookmarks">북마크</a>
+                </li>
+                <li>
+                  <a href="/mypage">마이페이지</a>
+                </li>
               </DefaultList>
             )}
           </PanelBody>
@@ -81,7 +89,9 @@ const CloseBtn = styled.button`
   color: #666;
   padding: 6px 8px;
   border-radius: 8px;
-  &:hover { background: #f4f4f4; }
+  &:hover {
+    background: #f4f4f4;
+  }
 `;
 
 const PanelBody = styled.div`
@@ -92,6 +102,11 @@ const DefaultList = styled.ul`
   list-style: none;
   padding: 0 8px;
   margin: 0;
-  li { padding: 10px 6px; }
-  a { color: inherit; text-decoration: none; }
+  li {
+    padding: 10px 6px;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 `;

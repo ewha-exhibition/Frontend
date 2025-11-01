@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import styled, { keyframes } from "styled-components";
 import theme from "../../style/Theme.jsx";
+import MenuBanner from "../../assets/icons/MenuBanner.png"; 
 
 export default function HamburgerMenu({ open, onClose }) {
   useEffect(() => {
@@ -17,6 +18,7 @@ export default function HamburgerMenu({ open, onClose }) {
   }, [open, onClose]);
 
   if (!open) return null;
+
   return createPortal(
     <Backdrop onClick={onClose} role="presentation">
       <Sheet
@@ -45,9 +47,13 @@ export default function HamburgerMenu({ open, onClose }) {
             </MenuItem>
           </MenuList>
 
-          <Banner as="a" href="/guide/pwa" aria-label="홈 화면에 추가 가이드">
-            <BannerText>홈 화면에 추가해서 앱처럼 사용하는 방법!</BannerText>
-          </Banner>
+          <BannerLink
+            href="https://..." // TO DO: 여기에 공유 페이지 링크 넣기
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <BannerImg src={MenuBanner} alt="이벤트 배너" />
+          </BannerLink>
         </MenuContainer>
       </Sheet>
     </Backdrop>,
@@ -114,19 +120,15 @@ const MenuItem = styled.button`
   line-height: 130%;
 `;
 
-const Banner = styled.button`
-  all: unset;
-  display: flex;
-  height: 70px;
-  align-items: center;
-  justify-content: center;
-  background: ${theme.colors.Primary10};
+const BannerLink = styled.a`
+  display: block;
+  width: 100%;
+  text-decoration: none;
 `;
 
-const BannerText = styled.p`
-  margin: 0;
-  ${theme.textStyles.label1Medium};
-  color: ${theme.colors.Primary60};
-  text-decoration: underline;
-  text-underline-offset: 2px;
+const BannerImg = styled.img`
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
 `;
