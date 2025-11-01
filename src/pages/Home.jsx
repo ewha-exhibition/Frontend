@@ -192,6 +192,10 @@ const Container = styled.div`
   width: 100%;
   max-width: 540px;
   margin: 0 auto;
+
+  /* 헤더가 fixed(46px)라서 그만큼 위를 비워줘야 함 */
+  padding-top: 46px;
+
   background: linear-gradient(
     to bottom,
     #00664f 0%,
