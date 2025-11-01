@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useState } from "react";
 
 import MenuTrigger from "../../components/menu/MenuTrigger";
+import TabBar from "../../components/home/TabBar";
 import Review from "./Review";
 import Cheering from "./Cheering";
 
@@ -33,6 +34,7 @@ function GuestBook() {
         {now === "review" && <Review />}
         {now === "cheering" && <Cheering />}
       </Content>
+      <TabBar />
     </Container>
   );
 }

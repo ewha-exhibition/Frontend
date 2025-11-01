@@ -2,6 +2,7 @@
 import styled from "styled-components";
 import Scraped from "../components/Scraped";
 import MenuTrigger from "../components/menu/MenuTrigger";
+import TabBar from "../components/home/TabBar";
 
 import poster1 from "../assets/mock/poster1.jpg";
 import poster2 from "../assets/mock/poster2.jpg";
@@ -60,6 +61,7 @@ function Scrap() {
           />
         ))}
       </Content>
+      <TabBar />
     </Container>
   );
 }

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import styled, { keyframes } from "styled-components";
 import theme from "../../style/Theme.jsx";
-import MenuBanner from "../../assets/icons/MenuBanner.png"; 
+import MenuBanner from "../../assets/icons/MenuBanner.png";
 
 export default function HamburgerMenu({ open, onClose }) {
   useEffect(() => {
@@ -33,9 +33,6 @@ export default function HamburgerMenu({ open, onClose }) {
 
         <MenuContainer>
           <MenuList>
-            <MenuItem as="a" href="/login">
-              로그인
-            </MenuItem>
             <MenuItem as="a" href="/mypage">
               마이페이지
             </MenuItem>

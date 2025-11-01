@@ -7,6 +7,7 @@ import poster1 from "../assets/mock/poster1.jpg";
 import poster2 from "../assets/mock/poster2.jpg";
 import poster3 from "../assets/mock/poster3.jpg";
 import MenuTrigger from "../components/menu/MenuTrigger.jsx";
+import TabBar from "../components/home/TabBar.jsx";
 
 function TopTenItem({ rank, title, poster }) {
   return (
@@ -181,6 +182,7 @@ export default function Home() {
           </EventListWrapper>
         </EventWrapper>
       </Content>
+      <TabBar></TabBar>
     </Container>
   );
 }
@@ -362,11 +364,12 @@ const EventWrapper = styled.div`
 const CategoryWrapper = styled.div`
   display: flex;
   justify-content: center;
-  align-items: space-between;
   margin-bottom: 8px;
   z-index: 1;
+  width: 100%;
 `;
 const CategoryButton = styled.div`
+  flex: 1;  
   display: flex;
   width: 78px;
   padding: 6px 15px;
@@ -383,5 +386,5 @@ const CategoryButton = styled.div`
 const EventListWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0px 20px;
+  padding: 0px 0px;
 `;
