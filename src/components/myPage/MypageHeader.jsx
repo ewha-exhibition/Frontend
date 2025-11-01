@@ -1,12 +1,12 @@
 import styled from "styled-components";
 
-import MenuIcon from "../../assets/icons/Menu.svg?react";
+import MenuTrigger from "../menu/MenuTrigger";
 
 function MypageHeader({ color, authorized, nickname }) {
   return (
     <Container color={color}>
       {authorized ? <Nickname>{nickname} 님</Nickname> : <Logo>綠’ KNOCK</Logo>}
-      <MenuIcon width={24} height={24} />
+      <MenuTrigger />
     </Container>
   );
 }

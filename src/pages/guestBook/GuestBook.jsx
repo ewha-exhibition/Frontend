@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import { useState } from "react";
 
-import Hamburger from "../../assets/icons/HamburgerMenu.svg?react";
-
+import MenuTrigger from "../../components/menu/MenuTrigger";
 import Review from "./Review";
 import Cheering from "./Cheering";
 
@@ -13,7 +12,7 @@ function GuestBook() {
     <Container>
       <Header>
         <Title>방명록</Title>
-        <Hamburger height={24} width={24} />
+        <MenuTrigger variant="black" />
       </Header>
 
       <Tab>

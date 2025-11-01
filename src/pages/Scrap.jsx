@@ -1,6 +1,7 @@
 // pages/Scrap.jsx
 import styled from "styled-components";
 import Scraped from "../components/Scraped";
+import MenuTrigger from "../components/menu/MenuTrigger";
 
 import poster1 from "../assets/mock/poster1.jpg";
 import poster2 from "../assets/mock/poster2.jpg";
@@ -42,7 +43,10 @@ function Scrap() {
 
   return (
     <Container>
-      <PageTitle>스크랩</PageTitle>
+      <Header>
+        <PageTitle>스크랩</PageTitle>
+        <MenuTrigger variant="black" />
+      </Header>
 
       <Content>
         {mock_data?.result.map((data) => (
@@ -62,8 +66,18 @@ function Scrap() {
 
 export default Scrap;
 
+const Header = styled.div`
+  width: 100%;
+  height: 47px;
+  padding: 0px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+`;
+
 const Container = styled.div`
-  width: 100%;  
+  width: 100%;
   min-height: calc(100vh - 46px - 50px);
   padding: 12px 20px 0 20px;
   background: #fff;
