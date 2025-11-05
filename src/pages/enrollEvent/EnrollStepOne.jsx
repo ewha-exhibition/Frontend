@@ -185,7 +185,7 @@ const CheckBoxArea = styled.div`
     span{
         color: ${({ theme }) => theme.colors.gray7};
         font-size: ${({ theme }) => theme.font.fontSize.body14};
-        font-weight: ${({ theme }) => theme.font.fontWeight.regulr};
+        font-weight: ${({ theme }) => theme.font.fontWeight.regular};
         line-height: ${({ theme }) => theme.font.lineHeight.wide};
     }
 `
