@@ -7,7 +7,7 @@ import Scrap from "./pages/Scrap.jsx";
 import CreateReview from "./pages/review/CreateReview.jsx";
 import GuestBook from "./pages/guestBook/GuestBook.jsx";
 import Detail from "./pages/Detail.jsx";
-import EnrollEvent from "./pages/EnrollEvent.jsx";
+import EnrollEvent from "./pages/enrollEvent/EnrollEvent.jsx";
 import MyPage from "./pages/myPage/MyPage.jsx";
 import MyReviews from "./pages/myPage/MyReviews.jsx";
 import Watched from "./pages/myPage/Watched.jsx";

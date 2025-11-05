@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { useState, useRef, useEffect } from "react";
 
-import AttachedPicture from "../components/AttachedPicture";
-import PreviewIcon from "../assets/icons/Eyes.svg?react";
-import CameraIcon from "../assets/icons/Camera.svg?react";
-import mockPicture from "../assets/mock/poster1.jpg";
-import mockPicture2 from "../assets/mock/poster2.jpg";
+import AttachedPicture from "../../components/AttachedPicture";
+import PreviewIcon from "../../assets/icons/Eyes.svg?react";
+import CameraIcon from "../../assets/icons/Camera.svg?react";
+import mockPicture from "../../assets/mock/poster1.jpg";
+import mockPicture2 from "../../assets/mock/poster2.jpg";
 
 //NOTE: header 고정 필요
 export default function RegisterDetail() {

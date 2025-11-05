@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { useState } from "react";
 
-import Topbar from "../components/Topbar";
-import EnrollStepOne from "./enrollEvent/EnrollStepOne";
-import DetailExplanation from "./DetailExplanation";
+import Topbar from "../../components/Topbar";
+import EnrollStepOne from "./EnrollStepOne";
+import EnrollStepTwo from "./EnrollStepTwo";
 
 export default function EnrollEvent() {
   const [step, setStep] = useState(1);
@@ -26,7 +26,7 @@ export default function EnrollEvent() {
 
       <Content>
         {step === 1 && <EnrollStepOne />}
-        {step === 2 && <DetailExplanation />}
+        {step === 2 && <EnrollStepTwo />}
 
         <NextButton onClick={handleNextStep}>다음으로</NextButton>
       </Content>
