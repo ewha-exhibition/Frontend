@@ -1,13 +1,15 @@
 import styled from "styled-components";
 import { useState } from "react";
+
 import Topbar from "../components/Topbar";
+import EnrollStepOne from "./enrollEvent/EnrollStepOne";
 import DetailExplanation from "./DetailExplanation";
+
 export default function EnrollEvent() {
   const [step, setStep] = useState(1);
   const handleNextStep = () => {
     setStep((prev) => (prev === 1 ? 2 : 1));
   };
-
   return (
     <Container>
       <Topbar title={""} icon={"none"} />
@@ -21,17 +23,21 @@ export default function EnrollEvent() {
           <Label $active={step === 2}>상세설명</Label>
         </Step>
       </Header>
+
       <Content>
+        {step === 1 && <EnrollStepOne />}
         {step === 2 && <DetailExplanation />}
+
         <NextButton onClick={handleNextStep}>다음으로</NextButton>
       </Content>
     </Container>
   );
 }
+
 const Container = styled.div`
   width: 100vw;
-  height: 100vh;
   padding-top: 46px;
+
   display: flex;
   flex-direction: column;
 `;
@@ -85,12 +91,12 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 16px 20px;
+  margin: 16px 20px 105px 20px;
 `;
 
 const NextButton = styled.button`
   display: flex;
-  width: 335px;
+  width: 100%;
   height: 50px;
   justify-content: center;
   align-items: center;

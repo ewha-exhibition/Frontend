@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { useState } from "react";
 
-import Hamburger from "../../assets/icons/HamburgerMenu.svg?react";
-
+import MenuTrigger from "../../components/menu/MenuTrigger";
+import TabBar from "../../components/home/TabBar";
 import Review from "./Review";
 import Cheering from "./Cheering";
 
@@ -13,7 +13,7 @@ function GuestBook() {
     <Container>
       <Header>
         <Title>방명록</Title>
-        <Hamburger height={24} width={24} />
+        <MenuTrigger variant="black" />
       </Header>
 
       <Tab>
@@ -34,6 +34,7 @@ function GuestBook() {
         {now === "review" && <Review />}
         {now === "cheering" && <Cheering />}
       </Content>
+      <TabBar />
     </Container>
   );
 }
@@ -41,7 +42,7 @@ function GuestBook() {
 export default GuestBook;
 
 const Container = styled.div`
-  width: 100vw;
+  width: 100%;
   height: 100vh;
 `;
 
