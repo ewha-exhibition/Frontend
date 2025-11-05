@@ -15,7 +15,6 @@ function Topbar({ title, icon }) {
       <ChevronLeft height={14} width={24} onClick={goBack} />
       <h3>{title}</h3>
       {icon === "Link" && <Link height={18} width={24} />}
-
       {icon === "none" && <div style={{ height: 18, width: 24 }} />}
     </Container>
   );

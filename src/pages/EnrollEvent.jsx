@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useState } from "react";
 import Topbar from "../components/Topbar";
-
+import DetailExplanation from "./DetailExplanation";
 export default function EnrollEvent() {
   const [step, setStep] = useState(1);
   const handleNextStep = () => {
@@ -22,7 +22,7 @@ export default function EnrollEvent() {
         </Step>
       </Header>
       <Content>
-        <p> 각 페이지 내용 </p>
+        {step === 2 && <DetailExplanation />}
         <NextButton onClick={handleNextStep}>다음으로</NextButton>
       </Content>
     </Container>
@@ -84,7 +84,8 @@ const Label = styled.p`
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 16px 20px; 65px 20px;
+  align-items: center;
+  margin: 16px 20px;
 `;
 
 const NextButton = styled.button`

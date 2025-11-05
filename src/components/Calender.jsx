@@ -99,8 +99,8 @@ const StyledCalender = createGlobalStyle`
     border: 1px solid ${({ theme }) => theme.colors.gray5};
     ${({ theme }) => theme.textStyles.label1Medium};
     color: ${({ theme }) => theme.colors.gray10};
-
   }
+  S
   .react-datepicker__calendar-icon {
     position: absolute;
     right: 32px;
@@ -109,7 +109,6 @@ const StyledCalender = createGlobalStyle`
     width: 24px;
     height: 24px;
     fill: ${({ theme }) => theme.colors.gray7};
-
   }
 
   /* 팝업 */
