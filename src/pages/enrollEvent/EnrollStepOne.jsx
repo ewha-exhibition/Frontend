@@ -34,8 +34,10 @@ function EnrollStepOne(){
                 <Label>장소 *</Label>
                 <ExplainTxt>
                     <p>장소 이름만 입력해주세요</p>
-                    <p>서울 서대문구 이화여대길 52 (X) - 상세설명에 작성 가능 </p>
-                    <p>이화여대 대강당 (O) </p>
+                    <ul>
+                        <li>서울 서대문구 이화여대길 52 (X) - 상세설명에 작성 가능</li>
+                        <li>이화여대 대강당 (O) </li>
+                    </ul>
                 </ExplainTxt>
                 <InputBox max={25} placeholder={"장소명"}/>
             </Section>
@@ -92,9 +94,12 @@ function EnrollStepOne(){
                 <Label>주최 단체명 *</Label>
                 <ExplainTxt>
                     <p>한글만 사용, 최대한 짧게 작성해주세요</p>
-                    <p>이화여대 아마추어 오케스트라 에세이오스 ESAOS (X)</p>
-                    <p>에세이오스 (O)</p>
-                    <p>이화여대 디자인학부 (O) </p>
+                    <ul>
+                        <li>이화여대 아마추어 오케스트라 에세이오스 ESAOS (X)</li>
+                        <li>에세이오스 (O)</li>
+                        <li>이화여대 디자인학부 (O) </li>
+                    </ul>
+
                 </ExplainTxt>
                 <InputBox max={23} placeholder={"최대한 짧게 작성해주세요"}/>
             </Section>
@@ -122,6 +127,22 @@ const ExplainTxt = styled.div`
         font-size: ${({ theme }) => theme.font.fontSize.label12};
         font-weight: ${({ theme }) => theme.font.fontWeight.regular};
         line-height: ${({ theme }) => theme.font.lineHeight.wide};
+    }
+    ul{
+        list-style-position: outside;
+        list-style-type: disc;
+        padding-inline-start: 20px;
+        margin: 0px;
+    }
+
+    li{
+        color: ${({ theme }) => theme.colors.gray6};
+        font-size: ${({ theme }) => theme.font.fontSize.label12};
+        font-weight: ${({ theme }) => theme.font.fontWeight.regular};
+        line-height: ${({ theme }) => theme.font.lineHeight.wide};
+    }
+    li::marker {
+        font-size: 0.8em;
     }
 `
 const Section2 = styled.div`
@@ -162,9 +183,9 @@ const CheckBoxArea = styled.div`
     align-items: center;
 
     span{
-        color: ${({ theme }) => theme.colors.gray8};
+        color: ${({ theme }) => theme.colors.gray7};
         font-size: ${({ theme }) => theme.font.fontSize.body14};
-        font-weight: ${({ theme }) => theme.font.fontWeight.regular};
+        font-weight: ${({ theme }) => theme.font.fontWeight.regulr};
         line-height: ${({ theme }) => theme.font.lineHeight.wide};
     }
 `
