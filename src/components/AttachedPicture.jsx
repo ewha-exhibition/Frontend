@@ -2,8 +2,8 @@ import styled from "styled-components";
 import { useState } from "react";
 
 import DeleteIcon from "../assets/icons/X.svg?react";
-import MoveIcon from "../assets/icons/CaretLeft.svg?react";
-
+import MoveUpIcon from "../assets/icons/ChevronUp.svg?react";
+import MoveDownIcon from "../assets/icons/ChevronDown.svg?react";
 //image: 사진 파일 (서버 전송)
 // *상세설명 페이지에서 관리한다
 //picture: 변환된 사진 주소 (미리보기)
@@ -20,8 +20,8 @@ export default function AttachedPicture({
       <ControlBar>
         <DeleteIcon className="button" onClick={onDelete} />
         <div className="movingButton">
-          <MoveIcon className="button" onClick={onMoveUp} />
-          <MoveIcon className="downButton" onClick={onMoveDown} />
+          <MoveUpIcon className="button" onClick={onMoveUp} />
+          <MoveDownIcon className="button" onClick={onMoveDown} />
         </div>
       </ControlBar>
     </Frame>
@@ -58,12 +58,5 @@ const ControlBar = styled.div`
     display: flex;
     flex-direction: row;
     gap: 12px;
-  }
-
-  .downButton {
-    width: 24px;
-    height: 24px;
-    color: ${({ theme }) => theme.colors.gray8};
-    transform: scaleY(-1);
   }
 `;
