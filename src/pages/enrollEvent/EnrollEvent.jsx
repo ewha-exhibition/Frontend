@@ -5,6 +5,9 @@ import Topbar from "../../components/Topbar";
 import EnrollStepOne from "./EnrollStepOne";
 import EnrollStepTwo from "./EnrollStepTwo";
 
+//NOTE: 등록하기 버튼 추가 예정
+//REVIEW: 회색 정보 박스 위치가 애매함, 고정하긴 했는데...
+
 export default function EnrollEvent() {
   const [step, setStep] = useState(1);
   const handleNextStep = () => {
@@ -25,10 +28,13 @@ export default function EnrollEvent() {
       </Header>
 
       <Content>
-        {step === 1 && <EnrollStepOne />}
+        {step === 1 && (
+          <>
+            <EnrollStepOne />
+            <NextButton onClick={handleNextStep}>다음으로</NextButton>
+          </>
+        )}
         {step === 2 && <EnrollStepTwo />}
-
-        <NextButton onClick={handleNextStep}>다음으로</NextButton>
       </Content>
     </Container>
   );
