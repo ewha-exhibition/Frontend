@@ -59,7 +59,7 @@ const NavItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 4px 0;
+  padding: 4px 18px;
   gap: 1px;
   color: ${({ theme }) => theme.colors.gray5};
 

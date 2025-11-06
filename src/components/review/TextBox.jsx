@@ -51,7 +51,6 @@ const TextArea = styled.textarea`
   width: 100%;
   resize: none;
   overflow: hidden;
-
   border: none;
   background: none;
 

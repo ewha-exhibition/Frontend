@@ -1,13 +1,13 @@
 import styled from "styled-components";
-import theme from "../style/Theme.jsx";
+import MenuTrigger from "../components/menu/MenuTrigger.jsx";
+import TabBar from "../components/home/TabBar.jsx";
 import EventList from "../components/home/EventList.jsx";
 import SearchIcon from "../assets/icons/Search.svg?react";
 import BookmarkIcon from "../assets/icons/Bookmark.svg?react";
+import Logo from "../assets/icons/Logo.svg?react";
 import poster1 from "../assets/mock/poster1.jpg";
 import poster2 from "../assets/mock/poster2.jpg";
 import poster3 from "../assets/mock/poster3.jpg";
-import MenuTrigger from "../components/menu/MenuTrigger.jsx";
-import TabBar from "../components/home/TabBar.jsx";
 
 function TopTenItem({ rank, title, poster }) {
   return (
@@ -128,12 +128,12 @@ export default function Home() {
   return (
     <Container>
       <Header>
-        <Logo>綠’ KNOCK</Logo>
+        <Logo />
         <MenuTrigger />
       </Header>
       <SearchBarContainer>
         <SearchBar>
-          <p>이화인들의 공연, 전시를 검색해보세요!</p>
+          <placeholder>이화인들의 공연, 전시를 검색해보세요!</placeholder>
           <SearchIcon width={24} height={24} />
         </SearchBar>
       </SearchBarContainer>
@@ -141,7 +141,8 @@ export default function Home() {
       <Content>
         <WhiteBox />
         <TopTenHeadline>
-          <p>오늘의 TOP 10</p>
+          <h6>오늘의 TOP 10</h6>
+          <p>스크랩 수 기준</p>
         </TopTenHeadline>
         <TopTenList>
           {mock_data_top10?.result.map((data) => (
@@ -182,7 +183,7 @@ export default function Home() {
           </EventListWrapper>
         </EventWrapper>
       </Content>
-      <TabBar></TabBar>
+      <TabBar />
     </Container>
   );
 }
@@ -222,16 +223,6 @@ const Header = styled.div`
   z-index: 100;
 `;
 
-//letter-spacing: 0.165 to 0.17
-const Logo = styled.div`
-  color: ${({ theme }) => theme.colors.white};
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  letter-spacing: -0.17px;
-`;
-
 const SearchBarContainer = styled.div`
   padding: 9px 20px 24px 20px;
 `;
@@ -260,12 +251,19 @@ const Content = styled.div`
   grid-template-rows: auto auto 1fr;
 `;
 const TopTenHeadline = styled.div`
-  display: inline-flex;
-  align-items: center;
-  padding: 21px 12px;
-  p {
+  display: flex;
+  padding: 12px 20px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  h6 {
     ${({ theme }) => theme.textStyles.titleSemiBold};
     color: ${({ theme }) => theme.colors.white};
+  }
+  p {
+    ${({ theme }) => theme.textStyles.label2Medium};
+    color: ${({ theme }) => theme.colors.gray5};
   }
 `;
 const TopTenList = styled.div`
@@ -369,7 +367,7 @@ const CategoryWrapper = styled.div`
   width: 100%;
 `;
 const CategoryButton = styled.div`
-  flex: 1;  
+  flex: 1;
   display: flex;
   width: 78px;
   padding: 6px 15px;
@@ -377,10 +375,11 @@ const CategoryButton = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 300px;
-  border: 1px solid  ${({ theme }) => theme.colors.gray4};
+  border: 1px solid ${({ theme }) => theme.colors.gray4};
   label {
-     ${({ theme }) => theme.textStyles.label2Medium};
-    color:  ${({ theme }) => theme.colors.gray9};
+    ${({ theme }) => theme.textStyles.label2Medium};
+    color: ${({ theme }) => theme.colors.gray9};
+  }
 `;
 
 const EventListWrapper = styled.div`
