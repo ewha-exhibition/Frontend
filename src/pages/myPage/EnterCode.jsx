@@ -38,8 +38,8 @@ function EnterCode() {
 export default EnterCode;
 
 const Container = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: calc(100vh - 90px);
   padding-top: 46px;
 `;
 const Content = styled.div`

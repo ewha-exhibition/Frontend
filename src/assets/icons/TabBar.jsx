@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useNavigate, useLocation } from "react-router-dom";
+//import { useNavigate, useLocation } from "react-router-dom";
 import theme from "../../style/Theme.jsx";
 import HomeIcon from "../../assets/icons/HomeIcon.svg?react";
 import ScrapIcon from "../../assets/icons/Bookmark.svg?react";
@@ -17,12 +17,14 @@ export default function TabBar() {
 
   return (
     <NavBar>
-      {tabs.map(({ key, label, Icon }) => (
-        <NavItem key={key}>
-          <Icon width={24} height={24} />
-          <p>{label}</p>
-        </NavItem>
-      ))}
+      <BottomBar>
+        {tabs.map(({ key, label, Icon }) => (
+          <NavItem key={key}>
+            <Icon width={24} height={24} />
+            <p>{label}</p>
+          </NavItem>
+        ))}
+      </BottomBar>
     </NavBar>
   );
 }
@@ -61,4 +63,13 @@ const NavItem = styled.div`
   svg {
     fill: ${theme.colors.gray5};
   }
+`;
+
+const BottomBar = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(540px, 100vw);
+  z-index: 100;
 `;

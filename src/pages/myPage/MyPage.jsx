@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import MypageHeader from "../../components/myPage/MypageHeader";
 import Banner from "../../components/myPage/Banner";
+import TabBar from "../../components/home/TabBar";
 
 import Kakao from "../../assets/icons/Kakao.png";
 import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
@@ -154,6 +155,7 @@ function MyPage() {
           </TabList>
         </ListArea>
       </Content>
+      <TabBar />
     </Container>
   );
 }
@@ -161,7 +163,7 @@ function MyPage() {
 export default MyPage;
 
 const Container = styled.div`
-  width: 100vw;
+  width: 100%;
   height: 100vh;
 
   background-color: ${({ theme }) => theme.colors.gray1};
@@ -278,7 +280,6 @@ const ShowList = styled.div`
     height: 130px;
     aspect-ratio: 46/65;
     border-radius: 3px;
- 
   }
   p {
     display: -webkit-box;

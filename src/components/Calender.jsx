@@ -1,73 +1,93 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import DatePicker from "react-datepicker";
 import { ko } from "date-fns/locale";
 import { styled, createGlobalStyle } from "styled-components";
 
-import LeftIcon from "../assets/icons/ChevronLeft.svg";
-import RightIcon from "../assets/icons/ChevronRight.svg";
+import LeftIcon from "../assets/icons/ChevronLeft.svg?react";
+import RightIcon from "../assets/icons/ChevronRight.svg?react";
+import CalendarIcon from "../assets/icons/Calender.svg?react";
 
 //NOTE: 기간 선택, 완료 버튼 기능 구현 필요
 
 export default function Calender() {
-  // 기간 선택: 확정, 임시
+  // 캘린더에서 기간 선택: 확정, 임시
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [tempStart, setTempStart] = useState(null);
   const [tempEnd, setTempEnd] = useState(null);
-
   const handleChange = (dates) => {
     const [start, end] = dates;
     setTempStart(start);
     setTempEnd(end);
   };
 
+  //달력 열고 닫기
+  const [isOpen, setIsOpen] = useState(false);
+  const datePickerRef = useRef(null);
+  const toggleCalendar = () => {
+    if (isOpen) {
+      datePickerRef.current?.setOpen(false);
+    } else {
+      datePickerRef.current?.setOpen(true);
+    }
+  };
+
+  //선택 완료
   const handleSubmit = () => {};
 
-  // 캘린더 열림/닫힘 콜백
-  const handleCalendarClose = () => console.log("Calendar closed");
-  const handleCalendarOpen = () => console.log("Calendar opened");
+  //캘린더: 기간선택 활성화, 비활성화
+  const [isSelectingPeriod, setIsSelectingPeriod] = useState(false);
 
   return (
     <>
       <StyledCalender />
-      <DatePicker
-        popperProps={{ strategy: "fixed" }}
-        popperContainer={({ children }) => (
-          <div style={{ position: "relative", zIndex: 100 }}>{children}</div>
-        )}
-        // 커스텀 헤더  (REVIEW: 아이콘 크기 통일 필요)
-        renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => (
-          <Header>
-            <NavButton onClick={decreaseMonth}>
-              <img src={LeftIcon} alt="이전 달" width={12} height={12} />
-            </NavButton>
-            <MonthLabel>{`${date.getFullYear()}년 ${
-              date.getMonth() + 1
-            }월`}</MonthLabel>
-            <NavButton onClick={increaseMonth}>
-              <img src={RightIcon} alt="다음 달" width={20} height={20} />
-            </NavButton>
-          </Header>
-        )}
-        selected={tempStart}
-        startDate={tempStart}
-        endDate={tempEnd}
-        onChange={handleChange}
-        selectsRange
-        showIcon
-        toggleCalendarOnIconClick
-        shouldCloseOnSelect={false}
-        onCalendarClose={handleCalendarClose}
-        onCalendarOpen={handleCalendarOpen}
-        dateFormat="yyyy.MM.dd"
-        locale={ko}
-        placeholderText="-"
-      >
-        <FooterContainer>
-          <SelectPeriodButton>기간 선택</SelectPeriodButton>
-          <CompleteButton>완료</CompleteButton>
-        </FooterContainer>
-      </DatePicker>
+      <DatePickerWrapper>
+        <DatePicker
+          ref={datePickerRef}
+          popperProps={{ strategy: "fixed" }}
+          popperContainer={({ children }) => (
+            <div style={{ position: "relative", zIndex: 100 }}>{children}</div>
+          )}
+          renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => (
+            <Header>
+              <NavButton onClick={decreaseMonth}>
+                <LeftIcon width={12} height={12} />
+              </NavButton>
+              <MonthLabel>{`${date.getFullYear()}년 ${
+                date.getMonth() + 1
+              }월`}</MonthLabel>
+              <NavButton onClick={increaseMonth}>
+                <RightIcon width={12} height={13} color="#000000" />
+              </NavButton>
+            </Header>
+          )}
+          selected={tempStart}
+          startDate={tempStart}
+          endDate={tempEnd}
+          onChange={handleChange}
+          selectsRange
+          dateFormat="yyyy.MM.dd"
+          locale={ko}
+          placeholderText="-"
+          showIcon={false}
+          shouldCloseOnSelect={false}
+        >
+          <FooterContainer>
+            <SelectPeriodButton
+              $selected={isSelectingPeriod}
+              onClick={() => setIsSelectingPeriod((prev) => !prev)}
+            >
+              기간 선택
+            </SelectPeriodButton>
+            <CompleteButton>완료</CompleteButton>
+          </FooterContainer>
+        </DatePicker>
+
+        {/* ✅ 커스텀 아이콘 (달력 열기/닫기) */}
+        <CalendarButton onClick={toggleCalendar}>
+          <CalendarIcon />
+        </CalendarButton>
+      </DatePickerWrapper>
     </>
   );
 }
@@ -85,6 +105,17 @@ const StyledCalender = createGlobalStyle`
     width: 1px !important;
     white-space: nowrap !important;
   }
+  .react-datepicker__aria-live {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
 
   /* 텍스트 Input */
   .react-datepicker__input-container {
@@ -100,8 +131,8 @@ const StyledCalender = createGlobalStyle`
     border: 1px solid ${({ theme }) => theme.colors.gray5};
     ${({ theme }) => theme.textStyles.label1Medium};
     color: ${({ theme }) => theme.colors.gray10};
-
   }
+  S
   .react-datepicker__calendar-icon {
     position: absolute;
     right: 32px;
@@ -110,7 +141,6 @@ const StyledCalender = createGlobalStyle`
     width: 24px;
     height: 24px;
     fill: ${({ theme }) => theme.colors.gray7};
-
   }
 
   /* 팝업 */
@@ -120,7 +150,6 @@ const StyledCalender = createGlobalStyle`
 
   .react-datepicker {
     width: 346px; 
-    height: auto; 
     background: ${({ theme }) => theme.colors.white};
     
     border: none;
@@ -149,6 +178,11 @@ const StyledCalender = createGlobalStyle`
     width: 100%;
   }
 
+  /*항상 6주 균등 분할 */
+  .react-datepicker__month {
+    display: grid;
+    grid-template-rows: repeat(6, 1fr); 
+}
   /* 요일 행 */
   .react-datepicker__day-names {
     display: flex;
@@ -208,16 +242,42 @@ const StyledCalender = createGlobalStyle`
   .react-datepicker__day--today {
     font-weight: 800; 
     border: none; 
-  
   }
-
   .react-datepicker__children-container {
     width: 100%; 
     padding: 15px 10px 10px 10px; 
     border-top: 1px solid ${({ theme }) => theme.colors.gray4}; 
-    margin-top: 10px; }
+    margin-top: 10px; 
+  }
+  /* 다른 달의  날짜 */
+  .react-datepicker__day--outside-month {
+   color: ${({ theme }) => theme.colors.gray4};
+}
 `;
 
+//컨테이너
+const DatePickerWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+//커스텀 캘린더 버튼
+const CalendarButton = styled.button`
+  position: absolute;
+  right: 12px;
+  top: 31px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+
+  svg {
+    width: 24px;
+    height: 24px;
+    color: ${({ theme }) => theme.colors.gray7};
+  }
+`;
 // 커스텀 헤더 스타일
 const Header = styled.div`
   display: flex;
@@ -247,12 +307,18 @@ const FooterContainer = styled.div`
   align-items: center;
   width: 100%;
 `;
+
+//버튼 글자색이 토글 시 바뀌지 않는 문제 해결
 const SelectPeriodButton = styled.button`
   padding: 8px 10px;
-  background-color: ${({ theme }) => theme.colors.gray9};
   border-radius: 3px;
-  color: ${({ theme }) => theme.colors.white};
   ${({ theme }) => theme.textStyles.label2Medium};
+  background-color: ${({ $selected, theme }) =>
+    $selected ? theme.colors.gray9 : theme.colors.gray3};
+  color: ${({ $selected, theme }) =>
+    $selected
+      ? `${theme.colors.white} !important`
+      : `${theme.colors.gray9} !important`};
 `;
 const CompleteButton = styled.button`
   padding: 8px 12px;

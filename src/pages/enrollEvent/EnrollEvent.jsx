@@ -1,14 +1,18 @@
 import styled from "styled-components";
 import { useState } from "react";
 
-import Topbar from "../components/Topbar";
-import EnrollStepOne from "./enrollEvent/EnrollStepOne";
+import Topbar from "../../components/Topbar";
+import EnrollStepOne from "./EnrollStepOne";
+import EnrollStepTwo from "./EnrollStepTwo";
+
+//NOTE: 등록하기 버튼 추가 예정
+//REVIEW: 회색 정보 박스 위치가 애매함, 고정하긴 했는데...
 
 export default function EnrollEvent() {
   const [step, setStep] = useState(1);
   const handleNextStep = () => {
     setStep((prev) => (prev === 1 ? 2 : 1));
-  };  
+  };
   return (
     <Container>
       <Topbar title={""} icon={"none"} />
@@ -24,12 +28,14 @@ export default function EnrollEvent() {
       </Header>
 
       <Content>
-        {step === 1 && <EnrollStepOne/>}
-
-
-        <NextButton onClick={handleNextStep}>다음으로</NextButton>
+        {step === 1 && (
+          <>
+            <EnrollStepOne />
+            <NextButton onClick={handleNextStep}>다음으로</NextButton>
+          </>
+        )}
+        {step === 2 && <EnrollStepTwo />}
       </Content>
-
     </Container>
   );
 }
@@ -37,7 +43,7 @@ export default function EnrollEvent() {
 const Container = styled.div`
   width: 100vw;
   padding-top: 46px;
-  
+
   display: flex;
   flex-direction: column;
 `;
@@ -91,7 +97,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 16px 20px; 105px 20px;
+  margin: 16px 20px 105px 20px;
 `;
 
 const NextButton = styled.button`

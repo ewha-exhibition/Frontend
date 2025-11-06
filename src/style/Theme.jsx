@@ -78,12 +78,23 @@
     },
 
     body1Regular: {
-      fontSize: "14px",
+      fontSize: "12px",
       lineHeight: "150%",
       fontWeight: 400,
       letterSpacing: "-1%",
     },
-
+    body2Regular: {
+      fontSize: "12px",
+      lineHeight: "150%",
+      fontWeight: 400,
+      letterSpacing: "-1%",
+    },
+    label0SemiBold: {
+      fontSize: "16px",
+      lineHeight: "130%",
+      fontWeight: 600,
+      letterSpacing: "0%",
+    },
     label1SemiBold: {
       fontSize: "14px",
       lineHeight: "130%",

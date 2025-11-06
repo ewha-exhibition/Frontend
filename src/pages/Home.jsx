@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import theme from "../style/Theme.jsx";
-import EventList from "../components/home/EventList.jsx";
+import MenuTrigger from "../components/menu/MenuTrigger.jsx";
 import TabBar from "../components/home/TabBar.jsx";
-import MenuIcon from "../assets/icons/Menu.svg?react";
+import EventList from "../components/home/EventList.jsx";
 import SearchIcon from "../assets/icons/Search.svg?react";
 import BookmarkIcon from "../assets/icons/Bookmark.svg?react";
+import Logo from "../assets/icons/Logo.svg?react";
 import poster1 from "../assets/mock/poster1.jpg";
 import poster2 from "../assets/mock/poster2.jpg";
 import poster3 from "../assets/mock/poster3.jpg";
@@ -128,18 +128,21 @@ export default function Home() {
   return (
     <Container>
       <Header>
-        <Logo>綠’ KNOCK</Logo>
-        <MenuIcon width={24} height={24} />
+        <Logo />
+        <MenuTrigger />
       </Header>
-      <SearchBar>
-        <placeholder>이화인들의 공연, 전시를 검색해보세요!</placeholder>
-        <SearchIcon width={24} height={24} />
-      </SearchBar>
+      <SearchBarContainer>
+        <SearchBar>
+          <placeholder>이화인들의 공연, 전시를 검색해보세요!</placeholder>
+          <SearchIcon width={24} height={24} />
+        </SearchBar>
+      </SearchBarContainer>
 
       <Content>
         <WhiteBox />
         <TopTenHeadline>
-          <p>오늘의 TOP 10</p>
+          <h6>오늘의 TOP 10</h6>
+          <p>스크랩 수 기준</p>
         </TopTenHeadline>
         <TopTenList>
           {mock_data_top10?.result.map((data) => (
@@ -188,49 +191,50 @@ export default function Home() {
 //NOTE: Header, Search, Content(Top10, EventList)
 
 const Container = styled.div`
+  position: relative;
   width: 100%;
-  min-height: 100vh;
-  display: grid;
-  grid-template-rows: auto auto 1fr;
-  background: #00664f;
+  max-width: 540px;
+  margin: 0 auto;
+
+  /* 헤더가 fixed(46px)라서 그만큼 위를 비워줘야 함 */
   padding-top: 46px;
-  padding-bottom: 50px;
+
+  background: linear-gradient(
+    to bottom,
+    #00664f 0%,
+    #00664f 250px,
+    #ffffff 250px,
+    #ffffff 100%
+  );
 `;
 
 const Header = styled.div`
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(540px, 100vw);
   background: #00664f;
-  z-index: 100;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
   height: 46px;
   padding: 14px 20px;
+  z-index: 100;
 `;
 
-//letter-spacing: 0.165 to 0.17
-const Logo = styled.div`
-  color: ${({ theme }) => theme.colors.white};
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  letter-spacing: -0.17px;
+const SearchBarContainer = styled.div`
+  padding: 9px 20px 24px 20px;
 `;
 
 //padding: 18.812 to 19
 //gap: 92.19 to 92
 const SearchBar = styled.div`
+  width: 100%;
   display: inline-flex;
   justify-content: space-between;
   align-items: center;
-  gap: 92px;
-  margin: 9px 21px 24px 20px;
+
   padding: 8px 18px 8px 19px;
   border-radius: 20px;
   border: 1.5px solid #74a08f;
@@ -239,6 +243,7 @@ const SearchBar = styled.div`
     color: ${({ theme }) => theme.colors.Primary10};
   }
 `;
+
 //NOTE: Content - Top10, EventList
 const Content = styled.div`
   position: relative;
@@ -246,12 +251,19 @@ const Content = styled.div`
   grid-template-rows: auto auto 1fr;
 `;
 const TopTenHeadline = styled.div`
-  display: inline-flex;
-  align-items: center;
-  padding: 21px 12px;
-  p {
+  display: flex;
+  padding: 12px 20px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  h6 {
     ${({ theme }) => theme.textStyles.titleSemiBold};
     color: ${({ theme }) => theme.colors.white};
+  }
+  p {
+    ${({ theme }) => theme.textStyles.label2Medium};
+    color: ${({ theme }) => theme.colors.gray5};
   }
 `;
 const TopTenList = styled.div`
@@ -350,11 +362,12 @@ const EventWrapper = styled.div`
 const CategoryWrapper = styled.div`
   display: flex;
   justify-content: center;
-  align-items: space-between;
   margin-bottom: 8px;
   z-index: 1;
+  width: 100%;
 `;
 const CategoryButton = styled.div`
+  flex: 1;
   display: flex;
   width: 78px;
   padding: 6px 15px;
@@ -362,14 +375,15 @@ const CategoryButton = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 300px;
-  border: 1px solid  ${({ theme }) => theme.colors.gray4};
+  border: 1px solid ${({ theme }) => theme.colors.gray4};
   label {
-     ${({ theme }) => theme.textStyles.label2Medium};
-    color:  ${({ theme }) => theme.colors.gray9};
+    ${({ theme }) => theme.textStyles.label2Medium};
+    color: ${({ theme }) => theme.colors.gray9};
+  }
 `;
 
 const EventListWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0px 20px;
+  padding: 0px 0px;
 `;

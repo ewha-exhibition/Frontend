@@ -17,7 +17,6 @@ import sendIcon from "../assets/icons/Send.svg";
 //Mocks
 import poster1 from "../assets/mock/poster1.jpg";
 import poster2 from "../assets/mock/poster2.jpg";
-import { replace } from "react-router-dom";
 
 //TODO: 상단바 고정, 카테고리바 일정 스크롤 시 고정
 //TODO: hook: 댓글 수 count, scrap
@@ -258,7 +257,7 @@ export default function Detail() {
 }
 
 const Container = styled.div`
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   padding-top: 46px;
 `;
