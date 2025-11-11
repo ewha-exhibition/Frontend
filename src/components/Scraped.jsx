@@ -56,6 +56,8 @@ const TextArea = styled.div`
   flex-direction: column;
 
   .titleBox {
+    max-width: 190px;
+    
     color: ${({ theme }) => theme.colors.gray10};
     font-size: ${({ theme }) => theme.font.fontSize.title15};
     font-weight: ${({ theme }) => theme.font.fontWeight.semiBold};
