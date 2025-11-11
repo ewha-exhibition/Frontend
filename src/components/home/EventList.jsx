@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Bookmark from "../../assets/icons/Bookmark.svg?react";
+import BookmarkOL from "../../assets/icons/BookmarkOL.svg?react";
 
 function EventList({ id, title, date, place, poster, onGoing, scraped }) {
   return (
@@ -11,7 +12,11 @@ function EventList({ id, title, date, place, poster, onGoing, scraped }) {
           <p>{place}</p>
           <p>{date}</p>
         </TextArea>
-        <Bookmark width={24} height={24} />
+        {scraped ? (
+            <GreenBookmark width={24} height={24} />
+          ) : (
+            <BookmarkOL width={24} height={24} />
+        )}
       </Container>
       <Br />
     </Component>
@@ -20,6 +25,9 @@ function EventList({ id, title, date, place, poster, onGoing, scraped }) {
 
 export default EventList;
 
+const GreenBookmark = styled(Bookmark)`
+  color: ${({ theme }) => theme.colors.Primary50};
+`
 const Component = styled.div`
   width: 100%;
   display: flex;

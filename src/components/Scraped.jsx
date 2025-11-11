@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import Bookmark from "../assets/icons/Bookmark.svg?react";
+import BookmarkOL from "../assets/icons/BookmarkOL.svg?react";
 import HaveSeen from "./buttons/HaveSeen";
 
-function Scraped({ id, title, date, place, poster, onGoing }) {
+function Scraped({ id, title, date, place, poster, onGoing, scraped }) {
   return (
     <Component>
       <Container>
@@ -12,7 +13,12 @@ function Scraped({ id, title, date, place, poster, onGoing }) {
           <p>{place}</p>
           <p>{date}</p>
         </TextArea>
-        <Bookmark width={24} height={24} />{" "}
+        {scraped ? (
+            <GreenBookmark width={24} height={24} />
+          ) : (
+            <BookmarkOL width={24} height={24} />
+        )}
+
         <BtnArea>
           <HaveSeen />
         </BtnArea>
@@ -24,6 +30,9 @@ function Scraped({ id, title, date, place, poster, onGoing }) {
 
 export default Scraped;
 
+const GreenBookmark = styled(Bookmark)`
+  color: ${({ theme }) => theme.colors.Primary50};
+`
 const Component = styled.div`
   width: 100%;
   display: flex;
