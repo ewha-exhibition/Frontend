@@ -112,7 +112,7 @@ function MyPage() {
               <div key={tab.path}>
                 <TabItem onClick={() => navigate(`/mypage/${tab.path}`)}>
                   {tab.name}
-                  <ChevronRight height={24} width={24} />
+                  <StyledChevron/>
                 </TabItem>
 
                 {login && tab.path === "watched" && (
@@ -149,7 +149,7 @@ function MyPage() {
                 onClick={() => navigate(`/mypage/${tab.path}`)}
               >
                 {tab.name}
-                <ChevronRight height={24} width={24} />
+                <StyledChevron />
               </TabItem>
             ))}
           </TabList>
@@ -162,6 +162,11 @@ function MyPage() {
 
 export default MyPage;
 
+const StyledChevron = styled(ChevronRight)`
+  height: 16px;
+  width: 10px;
+  color: ${({ theme }) => theme.colors.gray6};
+`
 const Container = styled.div`
   width: 100%;
   height: 100vh;
@@ -174,7 +179,7 @@ const Content = styled.div`
 const Login = styled.div`
   display: flex;
   gap: 10px;
-  padding: 40px 20px 0 20px;
+  padding: 64px 20px 64px 20px;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -244,7 +249,7 @@ const SubTitle = styled.div`
 
 const History = styled.div`
   width: 100%;
-  height: 150px;
+  height: 151px;
   margin: 6px 0;
 
   display: flex;

@@ -39,6 +39,15 @@ function Scrap() {
         scraped: true,
         onGoing: true,
       },
+      {
+        id: 4,
+        title: "Pile up strands - 섬유예술 전공 과제전시회",
+        date: "2025.11.20-12.01",
+        place: "이화여대 조형예술관 A동  2,4층",
+        poster: poster3,
+        scraped: true,
+        onGoing: true,
+      },
     ],
   };
 
@@ -58,6 +67,7 @@ function Scrap() {
             place={data.place}
             poster={data.poster}
             onGoing={data.onGoing}
+            scraped={data.scraped}
           />
         ))}
       </Content>
