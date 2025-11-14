@@ -1,5 +1,7 @@
 // pages/Scrap.jsx
 import styled from "styled-components";
+import useCustomFetch from "../utils/hooks/useCustomFetch";
+
 import Scraped from "../components/Scraped";
 import MenuTrigger from "../components/menu/MenuTrigger";
 import TabBar from "../components/home/TabBar";
@@ -9,6 +11,30 @@ import poster2 from "../assets/mock/poster2.jpg";
 import poster3 from "../assets/mock/poster3.jpg";
 
 function Scrap() {
+  const {
+    data: scrapData,
+    error,
+    loading,
+  } = useCustomFetch(`/scraps?pageNum=1&limit=10`);
+  console.log(scrapData?.data.exhibitions);
+
+  const { fetchData } = useCustomFetch();
+
+  const handleDeleteBookmark = async (id) => {
+    try {
+      const response = await fetchData(`/scraps/${id}`, "DELETE", null);
+
+      if (response?.status === 200) {
+        console.log("북마크 삭제 완료");
+        window.location.reload();
+      } else {
+        console.error("삭제 실패:", response);
+      }
+    } catch (error) {
+      console.error("북마크 삭제 중 오류:", error);
+    }
+  };
+
   const mock_data = {
     response: 200,
     result: [
@@ -59,15 +85,16 @@ function Scrap() {
       </Header>
 
       <Content>
-        {mock_data?.result.map((data) => (
+        {scrapData?.data.exhibitions.map((data) => (
           <Scraped
-            key={data.id}
-            title={data.title}
-            date={data.date}
+            key={data.exhibitionId}
+            title={data.exhibitionName}
+            endDate={data.endDate}
+            startDate={data.startDate}
             place={data.place}
-            poster={data.poster}
-            onGoing={data.onGoing}
-            scraped={data.scraped}
+            poster={data.posterUrl}
+            scraped={true}
+            onDelete={handleDeleteBookmark}
           />
         ))}
       </Content>

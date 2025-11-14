@@ -1,4 +1,4 @@
- const theme = {
+const theme = {
   colors: {
     //Primary100: "#16915E",
     Primary70: "#16915E",
