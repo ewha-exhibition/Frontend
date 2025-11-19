@@ -1,14 +1,13 @@
 // pages/Scrap.jsx
 import styled from "styled-components";
+import { useState } from "react";
+
 import useCustomFetch from "../utils/hooks/useCustomFetch";
 
-import Scraped from "../components/Scraped";
+import Scraped from "../components/scrap/Scraped";
 import MenuTrigger from "../components/menu/MenuTrigger";
 import TabBar from "../components/home/TabBar";
-
-import poster1 from "../assets/mock/poster1.jpg";
-import poster2 from "../assets/mock/poster2.jpg";
-import poster3 from "../assets/mock/poster3.jpg";
+import ViewedModal from "../components/scrap/ViewedModal";
 
 function Scrap() {
   const {
@@ -35,50 +34,22 @@ function Scrap() {
     }
   };
 
-  const mock_data = {
-    response: 200,
-    result: [
-      {
-        id: 1,
-        title: "Pile up strands - 섬유예술 전공 과제전시회 어쩌고저쩌고 텍스트",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster1,
-        scraped: true,
-        onGoing: true,
-      },
-      {
-        id: 2,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.09.10-09.11",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster2,
-        scraped: true,
-        onGoing: false,
-      },
-      {
-        id: 3,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster3,
-        scraped: true,
-        onGoing: true,
-      },
-      {
-        id: 4,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster3,
-        scraped: true,
-        onGoing: true,
-      },
-    ],
+  const [showViewedModal, setShowViewedModal] = useState(false);
+  const handleViewedChange = (newSeen) => {
+    if (newSeen === true) {
+      setShowViewedModal(true);
+    }
   };
 
   return (
     <Container>
+      {showViewedModal && (
+        <ViewedModal onClose={() => setShowViewedModal(false)}>
+          <p>관람내역에 저장되었어요</p>
+          <p>관람 후 느낀 점을 남겨주세요!</p>
+        </ViewedModal>
+      )}
+
       <Header>
         <PageTitle>스크랩</PageTitle>
         <MenuTrigger variant="black" />
@@ -88,13 +59,17 @@ function Scrap() {
         {scrapData?.data.exhibitions.map((data) => (
           <Scraped
             key={data.exhibitionId}
+            exhibitionId={data.exhibitionId}
             title={data.exhibitionName}
             endDate={data.endDate}
             startDate={data.startDate}
             place={data.place}
             poster={data.posterUrl}
             scraped={true}
+            viewed={data.viewed}
+            reviewed={data.reviewed}
             onDelete={handleDeleteBookmark}
+            onViewedChange={handleViewedChange}
           />
         ))}
       </Content>
@@ -124,7 +99,7 @@ const Container = styled.div`
 
 const PageTitle = styled.h3`
   margin: 0 0 12px;
-  ${({ theme }) => theme.textStyles.headline1Bold};
+  font-weight: ${({ theme }) => theme.textStyles.headline1Bold};
   color: ${({ theme }) => theme.colors.gray10};
 `;
 
