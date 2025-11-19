@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import XIcon from "../../assets/icons/X.svg?react";
 
 export default function ViewedModal({
+  exhibitionId,
   title = "관람 완료",
   children,
   onClose,
 }) {
   const navigate = useNavigate();
   const toReview = () =>{
-    navigate(`/createReview`);
+    navigate(`/createReview/${exhibitionId}`);
   }
 
   return (

@@ -13,12 +13,12 @@ function HaveSeen({ viewed, exhibitionId, onViewedChange }) {
     try {
       const response = await fetchData(
         `/scraps/${exhibitionId}/viewed?viewed=${newSeen}`,
-        "PATCH",
+        "PATCH"
       );
       if (response?.status === 200) {
         setSeen(newSeen);
         if (onViewedChange) {
-          onViewedChange(newSeen);
+          onViewedChange({ newSeen, exhibitionId });
         }
       } else {
         console.error("업데이트 실패:", response);

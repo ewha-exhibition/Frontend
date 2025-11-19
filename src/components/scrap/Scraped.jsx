@@ -35,35 +35,6 @@ function Scraped({
   const onGoing = checkOnGoing(endDate);
   //console.log(onGoing);
 
-  function useDeleteBookmark(refetchScraps) {
-    const { fetchData } = useCustomFetch();
-
-    const deleteBookmark = useCallback(
-      async (exhibitionId) => {
-        try {
-          const response = await fetchData(
-            `/scraps/${exhibitionId}`,
-            "DELETE",
-            null
-          );
-
-          if (response?.status === 200) {
-            console.log("북마크 삭제 완료");
-            if (refetchScraps) {
-              await refetchScraps();
-            }
-          } else {
-            console.error("삭제 실패:", response);
-          }
-        } catch (error) {
-          console.error("북마크 삭제 중 오류:", error);
-        }
-      },
-      [fetchData, refetchScraps]
-    );
-
-    return { deleteBookmark };
-  }
 
   return (
     <Component>

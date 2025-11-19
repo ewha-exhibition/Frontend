@@ -35,16 +35,22 @@ function Scrap() {
   };
 
   const [showViewedModal, setShowViewedModal] = useState(false);
-  const handleViewedChange = (newSeen) => {
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleViewedChange = ({ newSeen, exhibitionId }) => {
     if (newSeen === true) {
       setShowViewedModal(true);
+      setSelectedId(exhibitionId);
     }
   };
 
   return (
     <Container>
       {showViewedModal && (
-        <ViewedModal onClose={() => setShowViewedModal(false)}>
+        <ViewedModal
+          onClose={() => setShowViewedModal(false)}
+          exhibitionId={selectedId}
+        >
           <p>관람내역에 저장되었어요</p>
           <p>관람 후 느낀 점을 남겨주세요!</p>
         </ViewedModal>
