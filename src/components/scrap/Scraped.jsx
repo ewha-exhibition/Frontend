@@ -1,19 +1,23 @@
-import useCustomFetch from "../utils/hooks/useCustomFetch";
-
 import styled from "styled-components";
-import Bookmark from "../assets/icons/Bookmark.svg?react";
-import BookmarkOL from "../assets/icons/BookmarkOL.svg?react";
-import HaveSeen from "./buttons/HaveSeen";
+
+import useCustomFetch from "../../utils/hooks/useCustomFetch";
+
+import Bookmark from "../../assets/icons/Bookmark.svg?react";
+import BookmarkOL from "../../assets/icons/BookmarkOL.svg?react";
+import HaveSeen from "../buttons/HaveSeen";
 
 function Scraped({
-  id,
+  exhibitionId,
   title,
   startDate,
   endDate,
   place,
   poster,
   scraped,
+  reviewed,
+  viewed,
   onDelete,
+  onViewedChange,
 }) {
   function formatDate(dateString) {
     return dateString.replace(/-/g, ".");
@@ -29,33 +33,8 @@ function Scraped({
   }
 
   const onGoing = checkOnGoing(endDate);
-  console.log(onGoing);
+  //console.log(onGoing);
 
-  function useDeleteBookmark(refetchScraps) {
-    const { fetchData } = useCustomFetch();
-
-    const deleteBookmark = useCallback(
-      async (id) => {
-        try {
-          const response = await fetchData(`/scraps/${id}`, "DELETE", null);
-
-          if (response?.status === 200) {
-            console.log("북마크 삭제 완료");
-            if (refetchScraps) {
-              await refetchScraps();
-            }
-          } else {
-            console.error("삭제 실패:", response);
-          }
-        } catch (error) {
-          console.error("북마크 삭제 중 오류:", error);
-        }
-      },
-      [fetchData, refetchScraps]
-    );
-
-    return { deleteBookmark };
-  }
 
   return (
     <Component>
@@ -73,7 +52,7 @@ function Scraped({
             <GreenBookmark
               width={24}
               height={24}
-              onClick={() => onDelete(id)}
+              onClick={() => onDelete(exhibitionId)}
             />
           ) : (
             <BookmarkOL width={24} height={24} />
@@ -81,7 +60,11 @@ function Scraped({
         </BookmarkWrapper>
 
         <BtnArea>
-          <HaveSeen />
+          <HaveSeen
+            viewed={viewed}
+            exhibitionId={exhibitionId}
+            onViewedChange={onViewedChange}
+          />
         </BtnArea>
       </Container>
       <Br />

@@ -22,7 +22,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
 
           <Route path="/scrap" element={<Scrap />} />
-          <Route path="/createReview" element={<CreateReview />} />
+          <Route path="/createReview/:exhibitionId" element={<CreateReview />} />
           <Route path="/guestBook" element={<GuestBook />} />
           <Route path="/detail" element={<Detail />} />
           <Route path="/enrollEvent" element={<EnrollEvent />} />

@@ -1,11 +1,35 @@
 import { useState } from "react";
 import styled from "styled-components";
+import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
-function HaveSeen() {
-  const [seen, setSeen] = useState(false);
+function HaveSeen({ viewed, exhibitionId, onViewedChange }) {
+  const [seen, setSeen] = useState(viewed);
+  const { fetchData } = useCustomFetch();
+  //console.log(exhibitionId);
+
+  const handleToggleSeen = async () => {
+    const newSeen = !seen;
+
+    try {
+      const response = await fetchData(
+        `/scraps/${exhibitionId}/viewed?viewed=${newSeen}`,
+        "PATCH"
+      );
+      if (response?.status === 200) {
+        setSeen(newSeen);
+        if (onViewedChange) {
+          onViewedChange({ newSeen, exhibitionId });
+        }
+      } else {
+        console.error("업데이트 실패:", response);
+      }
+    } catch (error) {
+      console.error("API 호출 오류:", error);
+    }
+  };
 
   return (
-    <Btn seen={seen} onClick={() => setSeen(!seen)}>
+    <Btn seen={seen} onClick={handleToggleSeen}>
       {seen ? "관람 완료" : "관람했어요"}
     </Btn>
   );
