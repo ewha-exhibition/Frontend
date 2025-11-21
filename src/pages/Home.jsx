@@ -1,15 +1,21 @@
 import styled from "styled-components";
+import { useState } from "react";
+
 import MenuTrigger from "../components/menu/MenuTrigger.jsx";
 import TabBar from "../components/home/TabBar.jsx";
 import EventList from "../components/home/EventList.jsx";
+
 import SearchIcon from "../assets/icons/Search.svg?react";
 import BookmarkIcon from "../assets/icons/Bookmark.svg?react";
 import Logo from "../assets/icons/Logo.svg?react";
-import poster1 from "../assets/mock/poster1.jpg";
-import poster2 from "../assets/mock/poster2.jpg";
-import poster3 from "../assets/mock/poster3.jpg";
 
-function TopTenItem({ rank, title, poster }) {
+//API
+import useSearchExhibitions from "../utils/hooks/useSearchExhibitions";
+import useRankingExhibitions from "../utils/hooks/useRankingExhibitions";
+import useLatestExhibitions from "../utils/hooks/useLatestExhibitions";
+
+//top10 컴포넌트
+function TopTenItem({ rank, exhibitionId, title, poster, scraped }) {
   return (
     <Card>
       <Poster poster={poster}>
@@ -24,160 +30,96 @@ function TopTenItem({ rank, title, poster }) {
   );
 }
 
-//TODO: Event의 공연, 전시, 기타 속성 추가!
-//TODO: 클릭 시 선택된 카테고리 스타일 변경 (isSelected 추가)
-
 export default function Home() {
-  const mock_data_top10 = {
-    response: 200,
-    result: [
-      {
-        id: 1,
-        rank: 1,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        poster: poster1,
-      },
-      {
-        id: 2,
-        rank: 2,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        poster: poster2,
-      },
-      {
-        id: 3,
-        rank: 3,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        poster: poster3,
-      },
-      {
-        id: 4,
-        rank: 4,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        poster: poster1,
-      },
-      {
-        id: 5,
-        rank: 5,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        poster: poster2,
-      },
-      {
-        id: 6,
-        rank: 6,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        poster: poster3,
-      },
-      {
-        id: 7,
-        rank: 7,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        poster: poster1,
-      },
-      {
-        id: 8,
-        rank: 8,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        poster: poster2,
-      },
-      {
-        id: 9,
-        rank: 9,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        poster: poster3,
-      },
-      {
-        id: 10,
-        rank: 10,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        poster: poster1,
-      },
-    ],
+  //top10
+  const {
+    list: top10List,
+    loading: top10Loading,
+    error: top10Error,
+  } = useRankingExhibitions();
+
+  //검색
+  const [keywordInput, setKeywordInput] = useState("");
+  const [keyword, setKeyword] = useState(null);
+  const handleSearch = () => {
+    if (keywordInput.trim().length === 0) return;
+    setKeyword(keywordInput.trim());
   };
-  const mock_data_event = {
-    response: 200,
-    result: [
-      {
-        id: 1,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster1,
-        scraped: true,
-        onGoing: true,
-      },
-      {
-        id: 2,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.09.10-09.11",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster2,
-        scraped: true,
-        onGoing: false,
-      },
-      {
-        id: 3,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster3,
-        scraped: true,
-        onGoing: true,
-      },
-    ],
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") handleSearch();
   };
+  const { exhibitions, loading: searchLoading } = useSearchExhibitions(keyword);
+
+  //카테고리 별 최신 공연
+  const [category, setCategory] = useState("");
+  const { exhibitions: latestList, loading: latestLoading } =
+    useLatestExhibitions(category, 0, 10);
+
   return (
     <Container>
       <Header>
         <Logo />
         <MenuTrigger />
       </Header>
+
       <SearchBarContainer>
         <SearchBar>
-          <placeholder>이화인들의 공연, 전시를 검색해보세요!</placeholder>
-          <SearchIcon width={24} height={24} />
+          <input
+            type="text"
+            value={keywordInput}
+            placeholder="이화인들의 공연, 전시를 검색해보세요!"
+            onChange={(e) => setKeywordInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+          <SearchIcon onClick={handleSearch} width={24} height={24} />
         </SearchBar>
       </SearchBarContainer>
 
       <Content>
         <WhiteBox />
+
         <TopTenHeadline>
           <h6>오늘의 TOP 10</h6>
           <p>스크랩 수 기준</p>
         </TopTenHeadline>
         <TopTenList>
-          {mock_data_top10?.result.map((data) => (
-            <TopTenItem
-              key={data.id}
-              title={data.title}
-              rank={data.rank}
-              poster={data.poster}
-            />
-          ))}
+          {!top10Loading &&
+            top10List?.map((item, index) => (
+              <TopTenItem
+                key={item.exhibitionId}
+                title={item.exhibitionName}
+                rank={index + 1}
+                poster={item.posterUrl}
+              />
+            ))}
         </TopTenList>
+
         <EventWrapper>
           <CategoryWrapper>
-            <CategoryButton>
-              <label>전체</label>
-            </CategoryButton>
-            <CategoryButton>
-              <label>공연</label>
-            </CategoryButton>
-            <CategoryButton>
-              <label>전시</label>
-            </CategoryButton>
-            <CategoryButton>
-              <label>기타</label>
-            </CategoryButton>
+            {["", "performance", "exhibition", "etc"].map((item, idx) => (
+              <CategoryButton key={idx} onClick={() => setCategory(item)}>
+                <label>
+                  {item === ""
+                    ? "전체"
+                    : item === "performance"
+                      ? "공연"
+                      : item === "exhibition"
+                        ? "전시"
+                        : "기타"}
+                </label>
+              </CategoryButton>
+            ))}
           </CategoryWrapper>
           <EventListWrapper>
-            {mock_data_event?.result.map((data) => (
+            {latestList.map((item) => (
               <EventList
-                key={data.id}
-                title={data.title}
-                date={data.date}
-                place={data.place}
-                poster={data.poster}
-                onGoing={data.onGoing}
+                key={item.exhibitionId}
+                title={item.exhibitionName}
+                date={item.duration}
+                place={item.place}
+                poster={item.posterUrl}
+                onGoing={item.open}
+                scraped={item.scrap}
               />
             ))}
           </EventListWrapper>
@@ -238,9 +180,20 @@ const SearchBar = styled.div`
   padding: 8px 18px 8px 19px;
   border-radius: 20px;
   border: 1.5px solid #74a08f;
-  placeholder {
+
+  input {
+    width: 100%;
+    background: none;
+    border: none;
+    outline: none;
+
     ${({ theme }) => theme.textStyles.label2Regular};
     color: ${({ theme }) => theme.colors.Primary10};
+
+    &::placeholder {
+      ${({ theme }) => theme.textStyles.label2Regular};
+      color: ${({ theme }) => theme.colors.Primary10};
+    }
   }
 `;
 
@@ -276,9 +229,6 @@ const TopTenList = styled.div`
   overflow-x: auto;
 `;
 
-//width: 107.078 to 107
-//gap: 7.812 to 7.8
-//flex: 0 0 auto; 가로 스크롤 시, 화면 밖으로 나가는 문제 해결
 const Card = styled.div`
   flex: 0 0 auto;
   width: 107px;

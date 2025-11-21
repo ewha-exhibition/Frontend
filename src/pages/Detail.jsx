@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
 import TopBar from "../components/Topbar";
@@ -14,14 +15,19 @@ import calenderIcon from "../assets/icons/Calender.svg";
 import clockIcon from "../assets/icons/Clock.svg";
 import sendIcon from "../assets/icons/Send.svg";
 
-//Mocks
-import poster1 from "../assets/mock/poster1.jpg";
-import poster2 from "../assets/mock/poster2.jpg";
+//API
+import useExhibitionDetail from "../utils/hooks/useExhibitionDetail";
 
 //TODO: 상단바 고정, 카테고리바 일정 스크롤 시 고정
 //TODO: hook: 댓글 수 count, scrap
 
 export default function Detail() {
+  const { id } = useParams();
+  const { detail, loading, error } = useExhibitionDetail(id);
+  if (loading) return <div>Loading...</div>;
+  if (error || !detail.exhibitionId)
+    return <div>데이터를 불러올 수 없습니다.</div>;
+
   const [currentCategory, setCurrentCategory] = useState("detail");
   const [currentUser, setCurrentUser] = useState({
     id: 1,
@@ -40,116 +46,50 @@ export default function Detail() {
     closeModal();
   };
 
-  // 더미 데이터
   const categories = [
-    { key: "detail", label: "상세정보" },
-    { key: "question", label: "질문", count: 3 },
-    { key: "cheer", label: "응원", count: 5 },
-    { key: "review", label: "후기", count: 0 },
+    { key: "detail", label: "상세", count: 0 },
+    { key: "question", label: "질문", count: detail.questionCount },
+    { key: "cheer", label: "응원", count: detail.cheerCount },
+    { key: "review", label: "후기", count: detail.reviewCount },
   ];
 
-  //NOTE: onGoing, price -> 하단바 결정
-  const mock_data = {
-    id: 1,
-    title: "이화여대 섬유예술 전공 졸업전시 2023 “Weave Our Way”",
-    place: "이화여대 조형예술관 A동 4층",
-    price: 0,
-    host: "섬유예술전공",
-    date: "2025.06.13~06.25",
-    time: "9:00-16:00",
-    poster: poster1,
-    explain:
-      "뮤지컬 동아리 뮤랩 3번째 정기공연에 초대합니다! 내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용내용",
-    images: [
-      { id: 1, img: poster1 },
-      { id: 2, img: poster1 },
-      { id: 3, img: poster1 },
-    ],
-    scraped: false,
-    onGoing: false,
-  };
-
-  const mockCheers = [
-    {
-      id: 1,
-      nickname: "사용자1",
-      date: "2023.06.01",
-      text: "졸업 축하드려요!!",
-      reply: {
-        id: 1,
-        nickname: "호스트1",
-        date: "2025.06.02",
-        text: "감사합니다:)",
-      },
-    },
-    {
-      id: 2,
-      nickname: "사용자2",
-      date: "2023.06.02",
-      text: "너무 기대돼요 😊",
-      reply: {},
-    },
-  ];
-  const mockQuestions = [
-    {
-      id: 1,
-      nickname: "사용자1",
-      date: "2023.06.01",
-      text: "전시 관람은 무료인가요?",
-      reply: {},
-    },
-    {
-      id: 2,
-      nickname: "사용자2",
-      date: "2023.06.02",
-      text: "예약은 필요한가요?",
-      reply: {
-        id: 1,
-        nickname: "호스트2",
-        date: "2025.06.02",
-        text: "안녕하세요! 현장에서 즉시 입장 가능합니다 :)",
-      },
-    },
-  ];
-  const mockReviews = [
-    {
-      id: 1,
-      nickname: "사용자1",
-      date: "2023.06.01",
-      text: "정말 감동적인 전시였어요.",
-      photos: [{ src: poster1 }, { src: poster2 }],
-    },
-  ];
   return (
     <Container>
       <TopBar title={null} icon={"Link"} />
 
       {/* 공연 정보 */}
       <Header>
-        <img className="img" src={mock_data.poster} alt={mock_data.title} />
-        <h1 className="h1">{mock_data.title}</h1>
+        <img
+          className="img"
+          src={detail.posterUrl}
+          alt={detail.exhibitionName}
+        />
+        <h1 className="h1">{detail.exhibitionName}</h1>
+
         <Summary>
           <div className="div">
-            <img className="img" src={locationIcon} alt={"위치"} />
-            <p className="p">{mock_data.place}</p>
+            <img className="img" src={locationIcon} alt="장소" />
+            <p className="p">{detail.place}</p>
           </div>
+
           <div className="div">
-            <img className="img" src={ticketIcon} alt={"가격"} />
-            <p className="p">
-              {mock_data.price === 0 ? "무료" : mock_data.price}
-            </p>
+            <img className="img" src={ticketIcon} alt="가격" />
+            <p className="p">{detail.price}</p>
           </div>
+
           <div className="div">
-            <img className="img" src={userIcon} alt={"주최"} />
-            <p className="p">{mock_data.host}</p>
+            <img className="img" src={userIcon} alt="주최" />
+            <p className="p">{detail.clubName}</p>
           </div>
+
           <div className="div">
-            <img className="img" src={calenderIcon} alt={"날짜"} />
-            <p className="p">{mock_data.date}</p>
+            <img className="img" src={calenderIcon} alt="날짜" />
+            <p className="p">{detail.period}</p>
           </div>
+
           <div className="div">
-            <img className="img" src={clockIcon} alt={"시간"} />
-            <p className="p">{mock_data.time}</p>
+            <img className="img" src={clockIcon} alt="시간" />
+            <p className="p">{detail.duration}</p>
           </div>
         </Summary>
       </Header>
@@ -172,11 +112,10 @@ export default function Detail() {
         {/* 상세 정보 */}
         {currentCategory === "detail" && (
           <DetailSection>
-            <p className="p">
-              {mock_data.explain} <br /> <br />
-            </p>
-            {mock_data.images?.map((image) => (
-              <img className="img" key={image.id} src={image.img} />
+            <p className="p">{detail.content}</p>
+
+            {detail.images?.map((img, idx) => (
+              <img className="img" key={idx} src={img} />
             ))}
           </DetailSection>
         )}
@@ -187,21 +126,12 @@ export default function Detail() {
             <InputBox>
               <div className="left">
                 <p className="nickname">익명</p>
-                <Input
-                  type="text"
-                  placeholder="주최자 분들에게 궁금한 점을 질문하세요!"
-                />
+                <Input placeholder="주최자 분들에게 궁금한 점을 질문하세요!" />
               </div>
-              <img className="send" src={sendIcon} alt={"전송"} />
+              <img className="send" src={sendIcon} alt="send" />
             </InputBox>
-            {mockQuestions.map((question) => (
-              <Question
-                key={question.id}
-                comment={question}
-                openModal={openModal}
-                currentUser={currentUser}
-              />
-            ))}
+
+            {/* TODO: 실제 질문 API 붙이기 전까지 mock 유지 */}
           </CommentSection>
         )}
 
@@ -211,21 +141,10 @@ export default function Detail() {
             <InputBox>
               <div className="left">
                 <p className="nickname">익명</p>
-                <Input
-                  type="text"
-                  placeholder="벗들에게 응원의 한마디를 남겨주세요!"
-                />
+                <Input placeholder="응원의 한마디를 남겨주세요!" />
               </div>
-              <img className="send" src={sendIcon} alt={"전송"} />
+              <img className="send" src={sendIcon} alt="send" />
             </InputBox>
-            {mockCheers.map((cheer) => (
-              <Cheer
-                key={cheer.id}
-                comment={cheer}
-                openModal={openModal}
-                currentUser={currentUser}
-              />
-            ))}
           </CommentSection>
         )}
 
@@ -233,19 +152,14 @@ export default function Detail() {
         {currentCategory === "review" && (
           <CommentSection>
             <div className="review">
-              <DropShape>관람 후 느낀 점을 니눠주세요!</DropShape>
+              <DropShape>관람 후 느낀 점을 나눠주세요!</DropShape>
               <WriteReviewButton>후기 작성하기</WriteReviewButton>
             </div>
-            {mockReviews.map((review) => (
-              <Review key={review.id} comment={review} openModal={openModal} />
-            ))}
           </CommentSection>
         )}
       </Content>
-      <BookingBar
-        isOnGoing={mock_data.onGoing}
-        isFree={mock_data.price === 0}
-      />
+      <BookingBar isOnGoing={detail.open} isFree={detail.price === "무료"} />
+
       <ConfirmModal
         isOpen={modalState.isOpen}
         target={modalState.target}

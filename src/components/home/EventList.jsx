@@ -13,9 +13,9 @@ function EventList({ id, title, date, place, poster, onGoing, scraped }) {
           <p>{date}</p>
         </TextArea>
         {scraped ? (
-            <GreenBookmark width={24} height={24} />
-          ) : (
-            <BookmarkOL width={24} height={24} />
+          <GreenBookmark width={24} height={24} />
+        ) : (
+          <BookmarkOL width={24} height={24} />
         )}
       </Container>
       <Br />
@@ -27,7 +27,7 @@ export default EventList;
 
 const GreenBookmark = styled(Bookmark)`
   color: ${({ theme }) => theme.colors.Primary50};
-`
+`;
 const Component = styled.div`
   width: 100%;
   display: flex;
