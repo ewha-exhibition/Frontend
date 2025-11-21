@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import MenuTrigger from "../components/menu/MenuTrigger.jsx";
 import TabBar from "../components/home/TabBar.jsx";
@@ -39,12 +40,22 @@ export default function Home() {
   } = useRankingExhibitions();
 
   //검색
+  const navigate = useNavigate(); // 검색 화면 이동
   const [keywordInput, setKeywordInput] = useState("");
   const [keyword, setKeyword] = useState(null);
   const handleSearch = () => {
     if (keywordInput.trim().length === 0) return;
+
     setKeyword(keywordInput.trim());
+    setTimeout(() => {
+      navigate("/search", {
+        state: {
+          keyword: keywordInput.trim(), // 검색어 전달
+        },
+      });
+    }, 200);
   };
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") handleSearch();
   };
