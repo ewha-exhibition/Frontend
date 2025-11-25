@@ -3,16 +3,9 @@ import styled from "styled-components";
 import PhotoArea from "./PhotoArea";
 
 import Trash from "../../assets/icons/Trash.svg?react";
+import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
 
-function ReivewItem({
-  poster,
-  title,
-  id,
-  review,
-  pic,
-  loginId,
-  memberId,
-}) {
+function ReivewItem({ poster, title, id, review, pic, loginId, memberId }) {
   return (
     <Container>
       <Upper>
@@ -20,7 +13,7 @@ function ReivewItem({
           <img src={poster} alt="포스터 이미지" />
           <p>{title}</p>
         </TitleArea>
-        {loginId === memberId && <Trash width={16} height={16} />}
+        {loginId === memberId && <StyledChvron width={12} height={12} />}
       </Upper>
 
       <TextArea>{review}</TextArea>
@@ -30,6 +23,11 @@ function ReivewItem({
 }
 
 export default ReivewItem;
+
+const StyledChvron = styled(ChevronRight)`
+  color: ${({ theme }) => theme.colors.gray6};
+  cursor: pointer;
+`;
 
 const Container = styled.div`
   width: 100%;
