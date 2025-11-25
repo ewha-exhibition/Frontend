@@ -1,13 +1,17 @@
 import styled from "styled-components";
 
-function PhotoArea({ pics }) {
+function PhotoArea({ pics, onOpen }) {
   const count = pics.length;
+
+  const handleClick = (i) => {
+    if (onOpen) onOpen(i);
+  };
 
   if (count === 1) {
     return (
       <Wrapper>
         <OneImg>
-          <img src={pics[0].src} alt="사진1" />
+          <img onClick={() => handleClick(0)} src={pics[0].src} alt="사진1" />
         </OneImg>
       </Wrapper>
     );
@@ -18,7 +22,12 @@ function PhotoArea({ pics }) {
       <Wrapper>
         <TwoImg>
           {pics.map((p, i) => (
-            <img key={i} src={p.src} alt={`사진 ${i + 1}`} />
+            <img
+              onClick={() => handleClick(i)}
+              key={i}
+              src={p.src}
+              alt={`사진 ${i + 1}`}
+            />
           ))}
         </TwoImg>
       </Wrapper>
@@ -30,11 +39,11 @@ function PhotoArea({ pics }) {
       <Wrapper>
         <ThreeImg>
           <div className="left">
-            <img src={pics[0].src} alt="사진1" />
+            <img onClick={() => handleClick(0)} src={pics[0].src} alt="사진1" />
           </div>
           <div className="right">
-            <img src={pics[1].src} alt="사진2" />
-            <img src={pics[2].src} alt="사진3" />
+            <img onClick={() => handleClick(1)} src={pics[1].src} alt="사진2" />
+            <img onClick={() => handleClick(2)} src={pics[2].src} alt="사진3" />
           </div>
         </ThreeImg>
       </Wrapper>
@@ -46,12 +55,12 @@ function PhotoArea({ pics }) {
       <Wrapper>
         <FourImg>
           <div className="left">
-            <img src={pics[0].src} alt="사진1" />
-            <img src={pics[2].src} alt="사진3" />
+            <img onClick={() => handleClick(0)} src={pics[0].src} alt="사진1" />
+            <img onClick={() => handleClick(2)} src={pics[2].src} alt="사진3" />
           </div>
           <div className="right">
-            <img src={pics[1].src} alt="사진2" />
-            <img src={pics[3].src} alt="사진4" />
+            <img onClick={() => handleClick(1)} src={pics[1].src} alt="사진2" />
+            <img onClick={() => handleClick(4)} src={pics[3].src} alt="사진4" />
           </div>
         </FourImg>
       </Wrapper>
