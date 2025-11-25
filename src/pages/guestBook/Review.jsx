@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { useState } from "react";
 
+import useCustomFetch from "../../utils/hooks/useCustomFetch";
+
 import ReivewItem from "../../components/guestBook/ReviewItem";
 
 import poster1 from "../../assets/mock/poster1.jpg";
@@ -8,8 +10,8 @@ import poster2 from "../../assets/mock/poster2.jpg";
 import poster3 from "../../assets/mock/poster3.jpg";
 
 function Review() {
-  const loginId = 13
-  
+  const loginId = 13;
+
   const mockData = {
     status: 200,
     result: [
@@ -54,33 +56,39 @@ function Review() {
           "퀄리티 대박! 너무 알찬 전시 잘 구경하고 갑니다! 무료 굿즈도 너무 감사합니다~ 금손벗들 졸업 축하드려요~ ",
         pic: [{ src: poster1 }],
       },
-            {
+      {
         poster: poster1,
         title: "2025 조형예술대학 메이데이 전시",
         id: 5,
         memberId: 10,
         review:
           "퀄리티 대박! 너무 알찬 전시 잘 구경하고 갑니다! 무료 굿즈도 너무 감사합니다~ 금손벗들 졸업 축하드려요~ ",
-        pic: [
-          { src: poster1 },
-          { src: poster2 },
-        ],
+        pic: [{ src: poster1 }, { src: poster2 }],
       },
     ],
   };
 
+  const [pageNow, setPageNow] = useState(0);
+
+  const {
+    data: reviewData,
+    error,
+    loading,
+  } = useCustomFetch(`/guestbooks/reviews?pageNum=${pageNow}&limit=10`);
+  console.log(reviewData?.data);
+
   return (
     <Container>
-      {mockData?.result.map((data) => (
+      {reviewData?.data.posts.map((data) => (
         <ReivewItem
-          key={data.id}
-          poster={data.poster}
+          key={data.postId}
+          poster={data.posterUrl}
           title={data.title}
-          id={data.id}
-          review={data.review}
-          pic={data.pic}
+          id={data.postId}
+          review={data.body}
+          pic={data.imageUrls}
           loginId={loginId}
-          memberId={data.memberId}
+          memberId={loginId}
         />
       ))}
     </Container>
