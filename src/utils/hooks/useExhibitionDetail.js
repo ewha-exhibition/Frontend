@@ -5,9 +5,9 @@ export default function useExhibitionDetail(exhibitionId) {
 
   const { data, loading, error } = useCustomFetch(url);
 
-  return {
-    detail: data?.data ?? {},
-    loading,
-    error,
-  };
+  // API 구조:
+  // { status, message, data: { exhibitionId, exhibitionName, ... } }
+  const detail = data?.data ?? {};
+
+  return { detail, loading, error };
 }

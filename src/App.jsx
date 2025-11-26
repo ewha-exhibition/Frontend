@@ -24,7 +24,7 @@ export default function App() {
           <Route path="/scrap" element={<Scrap />} />
           <Route path="/createReview" element={<CreateReview />} />
           <Route path="/guestBook" element={<GuestBook />} />
-          <Route path="/detail/:exhibitionId" element={<Detail />} />
+          <Route path="/detail/:id" element={<Detail />} />
           <Route path="/enrollEvent" element={<EnrollEvent />} />
           <Route path="/myShow" element={<MyShow />} />
           <Route path="/mypage" element={<MyPage />} />

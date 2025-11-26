@@ -66,6 +66,7 @@ const TextArea = styled.div`
     line-height: ${({ theme }) => theme.font.lineHeight.normal};
 
     display: -webkit-box;
+    width: 190px;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;

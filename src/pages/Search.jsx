@@ -1,44 +1,43 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import EventList from "../components/home/EventList.jsx";
 import SearchIcon from "../assets/icons/Search.svg?react";
+import BackIcon from "../assets/icons/ChevronLeft.svg?react";
+import Nothing from "../assets/icons/Nothing.svg?react";
 import useSearchExhibitions from "../utils/hooks/useSearchExhibitions";
 
 export default function Search() {
   const location = useLocation();
   const initialKeyword = location.state?.keyword || "";
-  const initialResults = location.state?.results || [];
 
   const [keywordInput, setKeywordInput] = useState(initialKeyword);
   const [keyword, setKeyword] = useState(initialKeyword);
-  const { exhibitions, loading, error } = useSearchExhibitions(keyword);
-  const [resultList, setResultList] = useState(initialResults);
+  const { exhibitions, loading } = useSearchExhibitions(keyword);
+  const [resultList, setResultList] = useState([]);
 
   useEffect(() => {
     if (keyword && !loading) {
       setResultList(exhibitions);
     }
-    // 만약 keyword가 빈 문자열이라면 initialResults 유지 혹은 빈 배열 처리
-    if (!keyword && !loading) {
-      setResultList(initialResults);
-    }
-  }, [keyword, loading, exhibitions, initialResults]);
+  }, [keyword, loading]);
 
   const handleSearch = () => {
-    const trimmed = keywordInput.trim();
-    if (trimmed.length === 0) return;
-    if (trimmed === keyword) return; // 동일 키워드 재검색 막기
-    setKeyword(trimmed);
+    if (keywordInput.trim().length === 0) return;
+    setKeyword(keywordInput.trim());
   };
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") handleSearch();
   };
-
+  const navigate = useNavigate();
+  const goBack = () => {
+    navigate(-1);
+  };
   return (
     <Container>
       <SearchBarWrapper>
+        <BackIcon height={14} width={24} onClick={goBack} />
         <SearchBar>
           <input
             type="text"
@@ -47,14 +46,19 @@ export default function Search() {
             onChange={(e) => setKeywordInput(e.target.value)}
             onKeyDown={handleKeyDown}
           />
-          <SearchIcon onClick={handleSearch} width={22} height={22} />
+          <SearchIcon
+            onClick={handleSearch}
+            width={20}
+            height={20}
+            color="#868B94"
+          />
         </SearchBar>
       </SearchBarWrapper>
 
-      {error && <Message>검색 중 오류가 발생했습니다.</Message>}
-      {loading && <Message>검색 중...</Message>}
       {!loading && resultList.length === 0 && (
-        <Message>검색 결과가 없습니다.</Message>
+        <Wrapper>
+          <Nothing />
+        </Wrapper>
       )}
 
       <ResultList>
@@ -80,35 +84,44 @@ const Container = styled.div`
 `;
 
 const SearchBarWrapper = styled.div`
-  padding: 0 4px;
-  margin-bottom: 16px;
+  display: flex;
+  margin-bottom: 24px;
+  align-items: center;
+  gap: 8px;
 `;
 
 const SearchBar = styled.div`
-  height: 44px;
-  padding: 0 12px;
+  width: 100%;
+  height: 35px;
+  padding-left: 20px;
+  padding-right: 12px;
   display: flex;
   align-items: center;
-  background: #f5f6f7;
-  border-radius: 12px;
+  background: #f2f3f6;
+  border-radius: 20px;
 
   input {
     flex: 1;
     border: none;
     outline: none;
     background: transparent;
-    font-size: 14px;
+    ${({ theme }) => theme.textStyles.label1Medium};
+    color: ${({ theme }) => theme.colors.gray10};
   }
 `;
 
-const Message = styled.p`
-  padding: 16px;
-  color: #888;
-  font-size: 14px;
+const Wrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 82px 109px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const ResultList = styled.div`
   display: flex;
   flex-direction: column;
+  padding: 14px 20px;
   gap: 20px;
 `;

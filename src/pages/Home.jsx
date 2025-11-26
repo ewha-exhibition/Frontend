@@ -82,7 +82,7 @@ export default function Home() {
             onChange={(e) => setKeywordInput(e.target.value)}
             onKeyDown={handleKeyDown}
           />
-          <SearchIcon onClick={handleSearch} width={24} height={24} />
+          <StyledSearchIcon onClick={handleSearch} />
         </SearchBar>
       </SearchBarContainer>
 
@@ -108,7 +108,11 @@ export default function Home() {
         <EventWrapper>
           <CategoryWrapper>
             {["", "performance", "exhibition", "etc"].map((item, idx) => (
-              <CategoryButton key={idx} onClick={() => setCategory(item)}>
+              <CategoryButton
+                key={idx}
+                selected={category === item}
+                onClick={() => setCategory(item)}
+              >
                 <label>
                   {item === ""
                     ? "전체"
@@ -121,6 +125,7 @@ export default function Home() {
               </CategoryButton>
             ))}
           </CategoryWrapper>
+
           <EventListWrapper>
             {latestList.map((item) => (
               <EventList
@@ -179,7 +184,11 @@ const Header = styled.div`
 const SearchBarContainer = styled.div`
   padding: 9px 20px 24px 20px;
 `;
-
+const StyledSearchIcon = styled(SearchIcon)`
+  width: 24px;
+  height: 24px;
+  color: #dbf3ec;
+`;
 //padding: 18.812 to 19
 //gap: 92.19 to 92
 const SearchBar = styled.div`
@@ -336,10 +345,21 @@ const CategoryButton = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 300px;
-  border: 1px solid ${({ theme }) => theme.colors.gray4};
+
+  border: 1.2px solid
+    ${({ selected, theme }) =>
+      selected ? theme.colors.Primary60 : theme.colors.gray4};
+
+  background: ${({ selected, theme }) =>
+    selected ? theme.colors.Primary5 : "transparent"};
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+
   label {
-    ${({ theme }) => theme.textStyles.label2Medium};
-    color: ${({ theme }) => theme.colors.gray9};
+    ${({ theme }) => theme.textStyles.label1Medium};
+    color: ${({ selected, theme }) =>
+      selected ? theme.colors.Primary60 : theme.colors.gray9};
   }
 `;
 

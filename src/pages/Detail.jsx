@@ -18,33 +18,54 @@ import sendIcon from "../assets/icons/Send.svg";
 //API
 import useExhibitionDetail from "../utils/hooks/useExhibitionDetail";
 
-//TODO: 상단바 고정, 카테고리바 일정 스크롤 시 고정
-//TODO: hook: 댓글 수 count, scrap
-
 export default function Detail() {
-  const { id } = useParams();
+  const { id } = useParams(); //페이지 파라미터
   const { detail, loading, error } = useExhibitionDetail(id);
-  if (loading) return <div>Loading...</div>;
-  if (error || !detail.exhibitionId)
-    return <div>데이터를 불러올 수 없습니다.</div>;
 
-  const [currentCategory, setCurrentCategory] = useState("detail");
+  const [currentCategory, setCurrentCategory] = useState("detail"); //카테고리
   const [currentUser, setCurrentUser] = useState({
     id: 1,
     nickname: "호스트1",
-  });
+  }); //현재 사용자
 
-  //삭제 확인 모달
   const [modalState, setModalState] = useState({
     isOpen: false,
     target: null,
   });
+
+  //모달 창
   const openModal = (target) => setModalState({ isOpen: true, target });
   const closeModal = () => setModalState({ ...modalState, isOpen: false });
   const handleConfirm = () => {
     console.log(`${modalState.target} 삭제 완료`);
     closeModal();
   };
+
+  console.log("📌 useParams() ID =", id);
+  console.log("📌 useExhibitionDetail() RAW detail =", detail);
+  console.log("📌 loading =", loading, "error =", error);
+
+  //조건부 렌더링
+  if (loading) return <div>Loading...</div>;
+  if (error || !detail?.exhibitionId) {
+    return <div>데이터를 불러올 수 없습니다.</div>;
+  }
+
+  //진행 여부 계산
+  const isOnGoing = (() => {
+    if (!detail.period) return false;
+
+    const [start, end] = detail.period.split(" - ");
+    const today = new Date();
+
+    const startDate = new Date(start.replace(/\./g, "-"));
+    const endDate = new Date(end.replace(/\./g, "-"));
+
+    return today >= startDate && today <= endDate;
+  })();
+
+  //무료 여부 계산
+  const isFree = detail.price === "무료" || /무료/.test(detail.price);
 
   const categories = [
     { key: "detail", label: "상세", count: 0 },
@@ -94,7 +115,7 @@ export default function Detail() {
         </Summary>
       </Header>
 
-      {/* 하단 카테고리 탭 */}
+      {/* 카테고리 탭 */}
       <Categories>
         {categories.map(({ key, label, count }) => (
           <Category
@@ -130,8 +151,6 @@ export default function Detail() {
               </div>
               <img className="send" src={sendIcon} alt="send" />
             </InputBox>
-
-            {/* TODO: 실제 질문 API 붙이기 전까지 mock 유지 */}
           </CommentSection>
         )}
 
@@ -158,7 +177,9 @@ export default function Detail() {
           </CommentSection>
         )}
       </Content>
-      <BookingBar isOnGoing={detail.open} isFree={detail.price === "무료"} />
+
+      {/* 🔥 수정 완료: BookingBar에 계산된 값 전달 */}
+      <BookingBar isOnGoing={isOnGoing} isFree={isFree} />
 
       <ConfirmModal
         isOpen={modalState.isOpen}
