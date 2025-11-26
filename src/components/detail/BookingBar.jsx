@@ -79,9 +79,10 @@ const End = styled.button`
   color: ${({ theme }) => theme.colors.gray7};
   text-align: center;
   font-size: 14px;
-  font-weight: 600
+  font-weight: 600;
   line-height: 130%;
 `;
+
 const Free = styled.div`
   width: 100%;
   height: 100%;
