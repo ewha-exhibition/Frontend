@@ -1,18 +1,16 @@
+import { useState } from "react";
 import styled from "styled-components";
 
 import PhotoArea from "./PhotoArea";
+import PhotoViewer from "./PhotoViewer";
 
 import Trash from "../../assets/icons/Trash.svg?react";
+import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
 
-function ReivewItem({
-  poster,
-  title,
-  id,
-  review,
-  pic,
-  loginId,
-  memberId,
-}) {
+function ReivewItem({ poster, title, id, review, pic }) {
+  const [open, setOpen] = useState(false);
+  const [index, setIndex] = useState(0);
+
   return (
     <Container>
       <Upper>
@@ -20,16 +18,37 @@ function ReivewItem({
           <img src={poster} alt="포스터 이미지" />
           <p>{title}</p>
         </TitleArea>
-        {loginId === memberId && <Trash width={16} height={16} />}
+        <StyledChvron width={12} height={12} />
       </Upper>
 
       <TextArea>{review}</TextArea>
-      {pic && pic.length > 0 && <PhotoArea pics={pic} />}
+      {pic && pic.length > 0 && (
+        <PhotoArea
+          pics={pic}
+          onOpen={(i) => {
+            setIndex(i);
+            setOpen(true);
+          }}
+        />
+      )}
+      {open && (
+        <PhotoViewer
+          pics={pic}
+          index={index}
+          setIndex={setIndex}
+          onClose={() => setOpen(false)}
+        />
+      )}
     </Container>
   );
 }
 
 export default ReivewItem;
+
+const StyledChvron = styled(ChevronRight)`
+  color: ${({ theme }) => theme.colors.gray6};
+  cursor: pointer;
+`;
 
 const Container = styled.div`
   width: 100%;

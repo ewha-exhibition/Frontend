@@ -1,4 +1,7 @@
 import styled from "styled-components";
+import { useState } from "react";
+
+import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import CheeringItem from "../../components/guestBook/CheeringItem";
 
@@ -41,17 +44,25 @@ function Cheering() {
       },
     ],
   };
+  const [pageNow, setPageNow] = useState(0);
+
+  const {
+    data: cheeringData,
+    error,
+    loading,
+  } = useCustomFetch(`/guestbooks/cheers?pageNum=${pageNow}&limit=10`);
+  console.log(cheeringData?.data);
 
   return (
     <Container>
-      {mockData?.result.map((data) => (
+      {cheeringData?.data.posts.map((data) => (
         <CheeringItem
-          key={data.id}
-          poster={data.poster}
+          key={data.postId}
+          poster={data.posterUrl}
           title={data.title}
-          id={data.id}
-          review={data.review}
-          pic={data.pic}
+          id={data.postId}
+          review={data.body}
+          pic={data.imageUrls}
         />
       ))}
     </Container>
