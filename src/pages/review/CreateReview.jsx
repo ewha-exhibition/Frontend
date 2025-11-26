@@ -6,7 +6,7 @@ import TextBox from "../../components/review/TextBox";
 function CreateReview() {
   return (
     <Container>
-      <Topbar title={"후기 작성"} icon={"Link"} />
+      <Topbar title={"후기 작성"} />
       <Content>
         <p className="guide">관람 후 느낀 점을 벗들과 나눠주세요!</p>
         <TextBox />

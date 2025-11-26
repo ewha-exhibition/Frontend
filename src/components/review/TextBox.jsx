@@ -1,10 +1,14 @@
 import styled from "styled-components";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import Camera from "../../assets/icons/Camera.svg?react";
+import XIcon from "../../assets/icons/X.svg?react";
 
 function TextBox() {
   const textRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  const [images, setImages] = useState([]);
 
   const handleInput = () => {
     const el = textRef.current;
@@ -14,24 +18,79 @@ function TextBox() {
     }
   };
 
+  const handleOpenFile = () => {
+    if (images.length >= 4) {
+      alert("최대 4장까지만 업로드 가능합니다.");
+      return;
+    }
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const fileArray = Array.from(files);
+    const remaining = 4 - images.length;
+
+    const selectedFiles = fileArray.slice(0, remaining);
+
+    selectedFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImages((prev) => [...prev, reader.result]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeImage = (index) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
   return (
-    <Container>
-      <TextArea
-        ref={textRef}
-        rows={1}
-        onInput={handleInput}
-        placeholder="서로 존중하는 언어를 사용해주세요."
-      />
-      <IconArea>
-        <p className="label">사진추가</p>
-        <Camera width={24} height={24} />
-      </IconArea>
-    </Container>
+    <>
+      <Container>
+        <TextArea
+          ref={textRef}
+          rows={1}
+          onInput={handleInput}
+          placeholder="서로 존중하는 언어를 사용해주세요."
+        />
+        <IconArea onClick={handleOpenFile}>
+          <p className="label">사진추가</p>
+          <Camera width={24} height={24} />
+        </IconArea>
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          style={{ display: "none" }}
+          ref={fileInputRef}
+          onChange={handleFileChange}
+        />
+      </Container>
+      {images.length > 0 && (
+        <PreviewList>
+          {images.map((img, idx) => (
+            <PreviewBox key={idx}>
+              <img src={img} alt={`preview-${idx}`} />
+              <DeleteBtn onClick={() => removeImage(idx)}>
+                <StyledX />
+              </DeleteBtn>
+            </PreviewBox>
+          ))}
+        </PreviewList>
+      )}
+    </>
   );
 }
 
 export default TextBox;
 
+const StyledX = styled(XIcon)`
+  color: ${({ theme }) => theme.colors.white};
+`;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -61,6 +120,9 @@ const TextArea = styled.textarea`
   &::placeholder {
     color: ${({ theme }) => theme.colors.gray};
   }
+  &:focus {
+    outline: none;
+  }
 `;
 const IconArea = styled.div`
   width: 50%;
@@ -78,4 +140,35 @@ const IconArea = styled.div`
     font-size: ${({ theme }) => theme.font.fontSize.label14};
     font-weight: ${({ theme }) => theme.font.fontWeight.medium};
   }
+`;
+const PreviewList = styled.div`
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+`;
+const PreviewBox = styled.div`
+  width: 160px;
+  height: 160px;
+  border-radius: 4.8px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
+const DeleteBtn = styled.button`
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.colors.gray9};
+  cursor: pointer;
 `;
