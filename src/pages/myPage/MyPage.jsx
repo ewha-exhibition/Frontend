@@ -68,7 +68,7 @@ function MyPage() {
   };
 
   const theme = useTheme();
-  const [login, setLogin] = useState(!!localStorage.getItem("accessToken"));
+  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
   //disabled 하는 기능 필요
 
   const navigate = useNavigate();

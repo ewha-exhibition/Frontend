@@ -18,7 +18,7 @@ function KakaoCallback() {
       const params = new URLSearchParams(location.search);
       const code = params.get("code");
       const redirectUri = import.meta.env.VITE_KAKAO_REDIRECT_URI;
-      console.log(code);
+      //console.log(code);
 
       if (!code) {
         console.error("카카오 인가 코드를 받지 못했습니다.");
@@ -32,16 +32,18 @@ function KakaoCallback() {
           `${import.meta.env.VITE_APP_API_URL}/api/auth/kakao`,
           { code, redirectUri }
         );
-        //console.log("res:", response);
+        console.log("res:", response);
         const memberId = response?.data.data.memberId;
-        localStorage.setItem("memberId", memberId);
+        sessionStorage.setItem("memberId", memberId);
+
 
         const token = await axiosInstance.get(
           `${import.meta.env.VITE_APP_API_URL}/api/auth/test-auth/token/${memberId}`
         );
         //console.log(token);
         const accessToken = token?.data.data.accessToken;
-        localStorage.setItem("accessToken", accessToken);
+        sessionStorage.setItem("accessToken", accessToken);
+
 
         navigate("/");
       } catch (error) {
