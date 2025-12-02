@@ -68,8 +68,8 @@ function MyPage() {
   };
 
   const theme = useTheme();
-  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
-  //disabled 하는 기능 필요
+  const [login, setLogin] = useState(!!sessionStorage.getItem("memberId"));
+  const nickname = sessionStorage.getItem("nickname");
 
   const navigate = useNavigate();
 
@@ -88,7 +88,11 @@ function MyPage() {
 
   return (
     <Container>
-      <MypageHeader color={theme.colors.Primary50} authorized={login} />
+      <MypageHeader
+        color={theme.colors.Primary50}
+        authorized={login}
+        nickname={nickname}
+      />
       <Banner />
       <Content>
         {login ? (

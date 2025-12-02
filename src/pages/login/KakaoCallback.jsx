@@ -30,13 +30,19 @@ function KakaoCallback() {
       try {
         const response = await axiosInstance.post(
           `${import.meta.env.VITE_APP_API_URL}/api/auth/kakao`,
-          { code, redirectUri }
+          { code, redirectUri },
+          {
+            withCredentials: true,
+          }
         );
         console.log("res:", response);
         const memberId = response?.data.data.memberId;
+        const nickname = response?.data.data.nickname;
         sessionStorage.setItem("memberId", memberId);
+        sessionStorage.setItem("nickname", nickname);
 
-
+        {
+          /*
         const token = await axiosInstance.get(
           `${import.meta.env.VITE_APP_API_URL}/api/auth/test-auth/token/${memberId}`
         );
@@ -44,6 +50,8 @@ function KakaoCallback() {
         const accessToken = token?.data.data.accessToken;
         sessionStorage.setItem("accessToken", accessToken);
 
+         */
+        }
 
         navigate("/");
       } catch (error) {
