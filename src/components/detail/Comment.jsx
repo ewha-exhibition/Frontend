@@ -14,25 +14,30 @@ export function Cheer({ comment, openModal, currentUser }) {
     <CommentBox>
       <CommentHeader>
         <div className="info">
-          <p className="id">벗{comment.id}</p>
-          <p className="date">{comment.date}</p>
+          <p className="id">{comment.writer}</p>
+          <p className="date">{comment.createdAt}</p>
         </div>
-        {currentUser?.nickname === comment.nickname && (
+
+        {comment.isWriter && (
           <img
             className="delete"
             src={deleteIcon}
-            alt="삭제"
-            onClick={() => openModal?.("cheer")}
+            onClick={() => openModal("cheer", comment.postId)}
           />
         )}
       </CommentHeader>
+
       <CommentContent>
-        <p className="text">{comment.text}</p>
+        <p className="text">{comment.content}</p>
       </CommentContent>
 
-      {comment.reply?.text ? (
+      {comment.hasAnswer && comment.answer ? (
         <Reply
-          reply={comment.reply}
+          reply={{
+            nickname: "작성자",
+            date: comment.createdAt,
+            text: comment.answer,
+          }}
           openModal={openModal}
           currentUser={currentUser}
         />
@@ -45,31 +50,37 @@ export function Cheer({ comment, openModal, currentUser }) {
     </CommentBox>
   );
 }
+
 export function Question({ comment, openModal, currentUser }) {
   return (
     <CommentBox>
       <CommentHeader>
         <div className="info">
-          <p className="id">벗{comment.id}</p>
-          <p className="date">{comment.date}</p>
+          <p className="id">{comment.writer}</p>
+          <p className="date">{comment.createdAt}</p>
         </div>
-        {currentUser?.nickname === comment.nickname && (
+
+        {comment.isWriter && (
           <img
             className="delete"
             src={deleteIcon}
-            alt="삭제"
-            onClick={() => openModal?.("question")}
+            onClick={() => openModal("question", comment.postId)}
           />
         )}
       </CommentHeader>
+
       <CommentContent>
         <Tag type="question">질문</Tag>
-        <p className="text">{comment.text}</p>
+        <p className="text">{comment.content}</p>
       </CommentContent>
 
-      {comment.reply?.text ? (
+      {comment.hasAnswer && comment.answer ? (
         <Answer
-          reply={comment.reply}
+          reply={{
+            nickname: "작성자",
+            date: comment.createdAt,
+            text: comment.answer,
+          }}
           openModal={openModal}
           currentUser={currentUser}
         />
@@ -82,43 +93,36 @@ export function Question({ comment, openModal, currentUser }) {
     </CommentBox>
   );
 }
+
 export function Review({ comment, openModal, currentUser }) {
   return (
     <CommentBox>
       <CommentHeader>
         <div className="info">
-          <p className="id">벗{comment.id}</p>
-          <p className="date">{comment.date}</p>
+          <p className="id">{comment.writer}</p>
+          <p className="date">{comment.createdAt}</p>
         </div>
-        {currentUser?.nickname === comment.nickname && (
+
+        {comment.isWriter && (
           <img
             className="delete"
             src={deleteIcon}
-            alt="삭제"
-            onClick={() => openModal?.("review")}
+            onClick={() => openModal("review", comment.id)}
           />
         )}
       </CommentHeader>
-      <CommentContent>
-        <p className="text">{comment.text}</p>
-      </CommentContent>
-      <PhotoArea pics={comment.photos || []} />
 
-      {comment.reply?.text ? (
-        <Reply
-          reply={comment.reply}
-          openModal={openModal}
-          currentUser={currentUser}
-        />
-      ) : (
-        <WriteReply>
-          <img className="img" src={commentIcon} />
-          작성자 댓글쓰기
-        </WriteReply>
+      <CommentContent>
+        <p className="text">{comment.content}</p>
+      </CommentContent>
+
+      {comment.images && comment.images.length > 0 && (
+        <PhotoArea pics={comment.images} />
       )}
     </CommentBox>
   );
 }
+
 function Reply({ reply, openModal, currentUser }) {
   //CommentBox 안에 들어가는 답글
   return (
@@ -281,7 +285,6 @@ const WriteReply = styled.div`
 
   align-self: flex-end;
   ${({ theme }) => theme.textStyles.label2Regular};
-  font-size: 13px;
   color: ${({ theme }) => theme.colors.gray7};
   .img {
     width: 18px;
