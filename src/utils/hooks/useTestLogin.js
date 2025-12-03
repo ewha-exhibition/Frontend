@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function useTestLogin(memberId = 2) {
+export default function useTestLogin(memberId = 1) {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  1;
   const TEST_TOKEN_URL = `https://api.greenknock.xyz/api/auth/test-auth/token/${memberId}`;
 
   const fetchTestToken = async () => {

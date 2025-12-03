@@ -6,14 +6,19 @@ import Preview from "../../components/enrollEvent/Preview";
 import PreviewIcon from "../../assets/icons/Eyes.svg?react";
 import CameraIcon from "../../assets/icons/Camera.svg?react";
 import useS3Upload from "../../utils/hooks/useS3Upload";
-
+//
 export default function EnrollStepTwo({
   text,
   setText,
   pictures,
   setPictures,
-  step1Data, //부모 전달
+  stepOneData, //부모 전달
 }) {
+  useEffect(() => {
+    console.log("🔥 stepOneData.startDate:", stepOneData.startDate);
+    console.log("🔥 stepOneData.endDate:", stepOneData.endDate);
+  }, [stepOneData.startDate, stepOneData.endDate]);
+
   const [previewMode, setPreviewMode] = useState(false);
 
   const textRef = useRef(null);
@@ -124,8 +129,24 @@ export default function EnrollStepTwo({
       ) : (
         <Preview
           detail={{
-            ...step1Data, // Step1
-            content: text, // Step2
+            ...stepOneData,
+            title: stepOneData.exhibitionName,
+            posterUrl: stepOneData.posterUrl,
+            place: stepOneData.place,
+            clubName: stepOneData.clubName,
+
+            price: stepOneData.price === 0 ? "무료" : `${stepOneData.price}원`,
+
+            period:
+              stepOneData.startDate === stepOneData.endDate
+                ? stepOneData.startDate
+                : `${stepOneData.startDate} - ${stepOneData.endDate}`,
+
+            duration: stepOneData.endTime
+              ? `${stepOneData.startTime} - ${stepOneData.endTime}`
+              : `${stepOneData.startTime}`,
+
+            content: text,
             images: pictures.map((p) => p.preview || p.url),
           }}
           onBack={() => setPreviewMode(false)}

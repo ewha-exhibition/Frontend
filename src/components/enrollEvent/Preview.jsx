@@ -1,18 +1,19 @@
 import styled from "styled-components";
-import TopBar from "../components/Topbar";
-
-// Detail 페이지에서 쓰는 아이콘들 그대로
-import locationIcon from "../assets/icons/Location.svg";
-import ticketIcon from "../assets/icons/Ticket.svg";
-import userIcon from "../assets/icons/User.svg";
-import CalenderIcon from "../assets/icons/Calender.svg?react";
-import clockIcon from "../assets/icons/Clock.svg";
+import locationIcon from "../../assets/icons/Location.svg";
+import ticketIcon from "../../assets/icons/Ticket.svg";
+import userIcon from "../../assets/icons/User.svg";
+import CalenderIcon from "../../assets/icons/Calender.svg?react";
+import clockIcon from "../../assets/icons/Clock.svg";
 
 export default function PreviewModeDetail({ detail, onBack }) {
+  const categories = [
+    { key: "detail", label: "상세" },
+    { key: "question", label: "질문" },
+    { key: "cheer", label: "응원" },
+    { key: "review", label: "후기" },
+  ];
   return (
     <Container>
-      <TopBar title={null} icon="Back" onClick={onBack} />
-
       {/* HEADER */}
       <Header>
         <img className="img" src={detail.posterUrl} alt={detail.title} />
@@ -45,14 +46,25 @@ export default function PreviewModeDetail({ detail, onBack }) {
           </div>
         </Summary>
       </Header>
-
-      <DetailSection>
-        <p className="p">{detail.content}</p>
-
-        {detail.images?.map((img, idx) => (
-          <img className="img" key={idx} src={img} alt={`preview-${idx}`} />
+      {/* 카테고리 탭 */}
+      <Categories>
+        {categories.map(({ key, label }) => (
+          <Category key={key} isSelected={detail}>
+            <p>{label}</p>
+          </Category>
         ))}
-      </DetailSection>
+      </Categories>
+
+      <Content>
+        {/* 상세 */}
+        <DetailSection>
+          <p className="p">{detail.content}</p>
+
+          {detail.images?.map((img, idx) => (
+            <img className="img" key={idx} src={img} alt={`preview-${idx}`} />
+          ))}
+        </DetailSection>
+      </Content>
     </Container>
   );
 }
@@ -110,7 +122,35 @@ const Summary = styled.div`
     color: ${({ theme }) => theme.colors.gray10};
   }
 `;
+const Categories = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 24px;
+  padding: 0 20px;
+  justify-content: space-between;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.gray3};
+`;
 
+const Category = styled.div`
+  display: inline-flex;
+  padding: 7.5px 8px;
+  cursor: pointer;
+  ${({ theme }) => theme.textStyles.titleSemiBold};
+
+  color: ${({ isSelected, theme }) =>
+    isSelected ? theme.colors.blackMain : theme.colors.gray6};
+  border-bottom: ${({ isSelected, theme }) =>
+    isSelected ? `solid 1.5px ${theme.colors.gray10}` : "none"};
+`;
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 300px;
+  background: ${({ theme }) => theme.colors.gray1};
+`;
 const DetailSection = styled.div`
   padding: 19px;
   display: flex;

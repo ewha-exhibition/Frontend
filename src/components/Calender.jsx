@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import DatePicker from "react-datepicker";
 import { ko } from "date-fns/locale";
 import { styled, createGlobalStyle } from "styled-components";
@@ -7,51 +7,52 @@ import LeftIcon from "../assets/icons/ChevronLeft.svg?react";
 import RightIcon from "../assets/icons/ChevronRight.svg?react";
 import CalendarIcon from "../assets/icons/Calender.svg?react";
 
-export default function Calender() {
-  // 확정된 날짜
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+export default function Calender({ startDate, endDate, onChange }) {
+  // 부모에서 받은 날짜를 초기값으로 설정
+  const [tempStart, setTempStart] = useState(
+    startDate ? new Date(startDate) : null
+  );
+  const [tempEnd, setTempEnd] = useState(endDate ? new Date(endDate) : null);
 
-  // 임시 선택 날짜
-  const [tempStart, setTempStart] = useState(null);
-  const [tempEnd, setTempEnd] = useState(null);
-
-  // 기간 선택 모드
   const [isSelectingPeriod, setIsSelectingPeriod] = useState(false);
-
-  // 달력 열고 닫기
   const [isOpen, setIsOpen] = useState(false);
   const datePickerRef = useRef(null);
 
   const toggleCalendar = () => {
-    if (isOpen) {
-      datePickerRef.current?.setOpen(false);
-    } else {
-      datePickerRef.current?.setOpen(true);
-    }
+    if (isOpen) datePickerRef.current?.setOpen(false);
+    else datePickerRef.current?.setOpen(true);
     setIsOpen(!isOpen);
   };
 
-  // ⭐ 단일 날짜 / 기간 선택 모드 핸들링
+  // 날짜 선택 핸들링
   const handleChange = (dates) => {
-    // 단일 날짜 선택 모드
     if (!isSelectingPeriod) {
-      const date = dates;
-      setTempStart(date);
+      // 단일 날짜 선택
+      setTempStart(dates);
       setTempEnd(null);
       return;
     }
 
-    // 기간 선택 모드
     const [start, end] = dates;
     setTempStart(start);
     setTempEnd(end);
   };
 
-  // ⭐ 선택 완료
+  // 날짜 문자열 포맷 함수
+  const formatDate = (d) =>
+    d
+      ? `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}.${String(d.getDate()).padStart(2, "0")}`
+      : "";
+
+  // 선택 완료 → 부모에게 전달
   const handleSubmit = () => {
-    setStartDate(tempStart);
-    setEndDate(tempEnd);
+    if (onChange) {
+      onChange(formatDate(tempStart), tempEnd ? formatDate(tempEnd) : null);
+    }
+
     setIsOpen(false);
     datePickerRef.current?.setOpen(false);
   };
@@ -75,10 +76,11 @@ export default function Calender() {
                 date.getMonth() + 1
               }월`}</MonthLabel>
               <NavButton onClick={increaseMonth}>
-                <RightIcon width={12} height={13} color="#000000" />
+                <RightIcon width={12} height={13} />
               </NavButton>
             </Header>
           )}
+          // 현재 선택된 날짜 표시
           selected={tempStart}
           startDate={tempStart}
           endDate={tempEnd}
@@ -95,11 +97,7 @@ export default function Calender() {
               $selected={isSelectingPeriod}
               onClick={() => {
                 setIsSelectingPeriod((prev) => !prev);
-
-                // 단일 날짜 모드로 전환되면 end 제거
-                if (isSelectingPeriod) {
-                  setTempEnd(null);
-                }
+                if (isSelectingPeriod) setTempEnd(null);
               }}
             >
               기간 선택
@@ -109,7 +107,6 @@ export default function Calender() {
           </FooterContainer>
         </DatePicker>
 
-        {/* 달력 여는 아이콘 */}
         <CalendarButton onClick={toggleCalendar}>
           <CalendarIcon />
         </CalendarButton>
@@ -117,7 +114,6 @@ export default function Calender() {
     </>
   );
 }
-
 const StyledCalender = createGlobalStyle` 
   /* 오류 임시 해결*/
   .react-datepicker__sr-only {

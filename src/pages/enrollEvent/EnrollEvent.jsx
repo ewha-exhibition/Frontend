@@ -50,7 +50,7 @@ export default function EnrollEvent() {
         startTime: stepOneData.startTime,
         endTime: stepOneData.endTime,
         dateException: stepOneData.dateException,
-        price: Number(stepOneData.price),
+        price: stepOneData.price,
         link: stepOneData.link,
         content: detailText,
         category: stepOneData.category,
@@ -104,6 +104,7 @@ export default function EnrollEvent() {
             pictures={detailImages}
             setPictures={setDetailImages}
             onSubmit={handleSubmit}
+            stepOneData={stepOneData}
           />
         )}
       </Content>
