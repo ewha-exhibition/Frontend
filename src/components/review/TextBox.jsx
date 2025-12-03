@@ -4,13 +4,25 @@ import { useRef, useState } from "react";
 import Camera from "../../assets/icons/Camera.svg?react";
 import XIcon from "../../assets/icons/X.svg?react";
 
-function TextBox() {
+function TextBox({ onChange }) {
   const textRef = useRef(null);
   const fileInputRef = useRef(null);
 
+  const [content, setContent] = useState("");
   const [images, setImages] = useState([]);
+  const [files, setFiles] = useState([]);
 
-  const handleInput = () => {
+  const handleInput = (e) => {
+    const value = e.target.value;
+    setContent(value);
+
+    // 상위에 content와 files 전달
+    onChange?.({
+      content: value,
+      files,
+    });
+
+    // textarea auto height
     const el = textRef.current;
     if (el) {
       el.style.height = "auto";
@@ -27,25 +39,37 @@ function TextBox() {
   };
 
   const handleFileChange = (e) => {
-    const files = e.target.files;
-    if (!files) return;
-
-    const fileArray = Array.from(files);
+    const selected = Array.from(e.target.files);
     const remaining = 4 - images.length;
+    const pick = selected.slice(0, remaining);
 
-    const selectedFiles = fileArray.slice(0, remaining);
+    setFiles((prev) => [...prev, ...pick]);
 
-    selectedFiles.forEach((file) => {
+    pick.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImages((prev) => [...prev, reader.result]);
       };
       reader.readAsDataURL(file);
     });
+
+    onChange?.({
+      content,
+      files: [...files, ...pick],
+    });
   };
 
-  const removeImage = (index) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
+  const removeImage = (idx) => {
+    setImages((prev) => prev.filter((_, i) => i !== idx));
+
+    setFiles((prev) => {
+      const updatedFiles = prev.filter((_, i) => i !== idx);
+      onChange?.({
+        content,
+        files: updatedFiles,
+      });
+      return updatedFiles;
+    });
   };
 
   return (
@@ -54,6 +78,7 @@ function TextBox() {
         <TextArea
           ref={textRef}
           rows={1}
+          value={content}
           onInput={handleInput}
           placeholder="서로 존중하는 언어를 사용해주세요."
         />
