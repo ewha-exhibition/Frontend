@@ -2,25 +2,87 @@ import styled from "styled-components";
 import { useState } from "react";
 
 import Topbar from "../../components/Topbar";
+import usePostExhibition from "../../utils/hooks/usePostExhibition";
+import useTestLogin from "../../utils/hooks/useTestLogin";
 import EnrollStepOne from "./EnrollStepOne";
 import EnrollStepTwo from "./EnrollStepTwo";
 
-//NOTE: 등록하기 버튼 추가 예정
-//REVIEW: 회색 정보 박스 위치가 애매함, 고정하긴 했는데...
-
 export default function EnrollEvent() {
   const [step, setStep] = useState(1);
+
+  const { token } = useTestLogin(1);
+  const { createExhibition } = usePostExhibition();
+
+  // Step1 데이터
+  const [stepOneData, setStepOneData] = useState({
+    category: "",
+    exhibitionName: "",
+    posterUrl: "",
+    place: "",
+    startDate: "",
+    endDate: "",
+    startTime: "",
+    endTime: "",
+    dateException: "",
+    price: "",
+    link: "",
+    clubName: "",
+  });
+
+  // Step2 데이터
+  const [detailText, setDetailText] = useState("");
+  const [detailImages, setDetailImages] = useState([]);
+
   const handleNextStep = () => {
-    setStep((prev) => (prev === 1 ? 2 : 1));
+    console.log("STEP BEFORE:", step);
+    setStep(2);
+    console.log("STEP AFTER (won’t update immediately):", step);
   };
+
+  const handleSubmit = async () => {
+    const body = {
+      exhibition: {
+        exhibitionName: stepOneData.exhibitionName,
+        posterUrl: stepOneData.posterUrl,
+        place: stepOneData.place,
+        startDate: stepOneData.startDate,
+        endDate: stepOneData.endDate,
+        startTime: stepOneData.startTime,
+        endTime: stepOneData.endTime,
+        dateException: stepOneData.dateException,
+        price: Number(stepOneData.price),
+        link: stepOneData.link,
+        content: detailText,
+        category: stepOneData.category,
+      },
+      club: {
+        name: stepOneData.clubName,
+      },
+      images: detailImages.map((url, index) => ({
+        url,
+        sequence: index,
+      })),
+    };
+
+    const res = await createExhibition({ ...body, token });
+
+    if (res?.success) {
+      alert("전시 등록 성공!");
+    } else {
+      alert(res?.reason || "등록 실패");
+    }
+  };
+
   return (
     <Container>
       <Topbar title={""} icon={"none"} />
+
       <Header>
         <ProgressBar>
           <LongBar />
           <ShortBar $step={step} />
         </ProgressBar>
+
         <Step>
           <Label $active={step === 1}>기본정보</Label>
           <Label $active={step === 2}>상세설명</Label>
@@ -30,11 +92,20 @@ export default function EnrollEvent() {
       <Content>
         {step === 1 && (
           <>
-            <EnrollStepOne />
+            <EnrollStepOne data={stepOneData} setData={setStepOneData} />
             <NextButton onClick={handleNextStep}>다음으로</NextButton>
           </>
         )}
-        {step === 2 && <EnrollStepTwo />}
+
+        {step === 2 && (
+          <EnrollStepTwo
+            text={detailText}
+            setText={setDetailText}
+            pictures={detailImages}
+            setPictures={setDetailImages}
+            onSubmit={handleSubmit}
+          />
+        )}
       </Content>
     </Container>
   );
@@ -103,6 +174,7 @@ const Content = styled.div`
 const NextButton = styled.button`
   display: flex;
   width: 100%;
+  max-width: 380px;
   height: 50px;
   justify-content: center;
   align-items: center;

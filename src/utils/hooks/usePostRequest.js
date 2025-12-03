@@ -26,10 +26,10 @@ export default function usePostRequest() {
       setError(err);
       console.error("POST 요청 오류:", err);
       if (err.response) {
-        console.log("🔴 서버 status:", err.response.status);
-        console.log("🔴 서버 응답 데이터:", err.response.data);
+        console.log("서버 status:", err.response.status);
+        console.log("서버 응답 데이터:", err.response.data);
       } else {
-        console.log("🔴 response 없이 실패:", err.message);
+        console.log("response 없이 실패:", err.message);
       }
       return err.response?.data ?? { success: false, reason: "서버 오류" };
     } finally {

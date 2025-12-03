@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import { ko } from "date-fns/locale";
 import { styled, createGlobalStyle } from "styled-components";
@@ -7,36 +7,54 @@ import LeftIcon from "../assets/icons/ChevronLeft.svg?react";
 import RightIcon from "../assets/icons/ChevronRight.svg?react";
 import CalendarIcon from "../assets/icons/Calender.svg?react";
 
-//NOTE: 기간 선택, 완료 버튼 기능 구현 필요
-
 export default function Calender() {
-  // 캘린더에서 기간 선택: 확정, 임시
+  // 확정된 날짜
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+
+  // 임시 선택 날짜
   const [tempStart, setTempStart] = useState(null);
   const [tempEnd, setTempEnd] = useState(null);
-  const handleChange = (dates) => {
-    const [start, end] = dates;
-    setTempStart(start);
-    setTempEnd(end);
-  };
 
-  //달력 열고 닫기
+  // 기간 선택 모드
+  const [isSelectingPeriod, setIsSelectingPeriod] = useState(false);
+
+  // 달력 열고 닫기
   const [isOpen, setIsOpen] = useState(false);
   const datePickerRef = useRef(null);
+
   const toggleCalendar = () => {
     if (isOpen) {
       datePickerRef.current?.setOpen(false);
     } else {
       datePickerRef.current?.setOpen(true);
     }
+    setIsOpen(!isOpen);
   };
 
-  //선택 완료
-  const handleSubmit = () => {};
+  // ⭐ 단일 날짜 / 기간 선택 모드 핸들링
+  const handleChange = (dates) => {
+    // 단일 날짜 선택 모드
+    if (!isSelectingPeriod) {
+      const date = dates;
+      setTempStart(date);
+      setTempEnd(null);
+      return;
+    }
 
-  //캘린더: 기간선택 활성화, 비활성화
-  const [isSelectingPeriod, setIsSelectingPeriod] = useState(false);
+    // 기간 선택 모드
+    const [start, end] = dates;
+    setTempStart(start);
+    setTempEnd(end);
+  };
+
+  // ⭐ 선택 완료
+  const handleSubmit = () => {
+    setStartDate(tempStart);
+    setEndDate(tempEnd);
+    setIsOpen(false);
+    datePickerRef.current?.setOpen(false);
+  };
 
   return (
     <>
@@ -64,8 +82,8 @@ export default function Calender() {
           selected={tempStart}
           startDate={tempStart}
           endDate={tempEnd}
+          selectsRange={isSelectingPeriod}
           onChange={handleChange}
-          selectsRange
           dateFormat="yyyy.MM.dd"
           locale={ko}
           placeholderText="-"
@@ -75,15 +93,23 @@ export default function Calender() {
           <FooterContainer>
             <SelectPeriodButton
               $selected={isSelectingPeriod}
-              onClick={() => setIsSelectingPeriod((prev) => !prev)}
+              onClick={() => {
+                setIsSelectingPeriod((prev) => !prev);
+
+                // 단일 날짜 모드로 전환되면 end 제거
+                if (isSelectingPeriod) {
+                  setTempEnd(null);
+                }
+              }}
             >
               기간 선택
             </SelectPeriodButton>
-            <CompleteButton>완료</CompleteButton>
+
+            <CompleteButton onClick={handleSubmit}>완료</CompleteButton>
           </FooterContainer>
         </DatePicker>
 
-        {/* ✅ 커스텀 아이콘 (달력 열기/닫기) */}
+        {/* 달력 여는 아이콘 */}
         <CalendarButton onClick={toggleCalendar}>
           <CalendarIcon />
         </CalendarButton>
