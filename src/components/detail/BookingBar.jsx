@@ -20,7 +20,7 @@ export default function BookingBar({ isOnGoing, isFree }) {
 }
 
 const Container = styled.div`
-  width: 100%;
+  width: min(540px, 100vw);
   height: 60px;
   position: fixed;
   bottom: 0;
@@ -28,7 +28,7 @@ const Container = styled.div`
 
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 
   background-color: ${({ theme }) => theme.colors.white};
