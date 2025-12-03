@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import MypageHeader from "../../components/myPage/MypageHeader";
 import Banner from "../../components/myPage/Banner";
 import TabBar from "../../components/home/TabBar";
+import KakaoBtn from "../../components/myPage/KakaoBtn";
 
 import Kakao from "../../assets/icons/Kakao.png";
 import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
@@ -67,8 +68,8 @@ function MyPage() {
   };
 
   const theme = useTheme();
-  const [login, setLogin] = useState(false);
-  //disabled 하는 기능 필요
+  const [login, setLogin] = useState(!!sessionStorage.getItem("memberId"));
+  const nickname = sessionStorage.getItem("nickname");
 
   const navigate = useNavigate();
 
@@ -87,7 +88,11 @@ function MyPage() {
 
   return (
     <Container>
-      <MypageHeader color={theme.colors.Primary50} authorized={login} />
+      <MypageHeader
+        color={theme.colors.Primary50}
+        authorized={login}
+        nickname={nickname}
+      />
       <Banner />
       <Content>
         {login ? (
@@ -95,14 +100,7 @@ function MyPage() {
         ) : (
           <Login>
             <p>로그인하고 기능을 사용해보세요!</p>
-            <KakaoBtn
-              onClick={() => {
-                setLogin(true);
-              }}
-            >
-              <img src={Kakao} alt="카카오 로그인" />
-              <span>카카오톡으로 5초 로그인</span>
-            </KakaoBtn>
+            <KakaoBtn />
           </Login>
         )}
 
@@ -112,7 +110,7 @@ function MyPage() {
               <div key={tab.path}>
                 <TabItem onClick={() => navigate(`/mypage/${tab.path}`)}>
                   {tab.name}
-                  <StyledChevron/>
+                  <StyledChevron />
                 </TabItem>
 
                 {login && tab.path === "watched" && (
@@ -166,7 +164,7 @@ const StyledChevron = styled(ChevronRight)`
   height: 16px;
   width: 10px;
   color: ${({ theme }) => theme.colors.gray6};
-`
+`;
 const Container = styled.div`
   width: 100%;
   height: 100vh;
@@ -189,28 +187,9 @@ const Login = styled.div`
   font-weight: ${({ theme }) => theme.font.fontWeight.semiBold};
   line-height: ${({ theme }) => theme.font.lineHeight.normal};
 `;
-const KakaoBtn = styled.div`
-  width: 100%;
-  height: 49px;
-  border-radius: 5px;
-  background-color: #fee500;
 
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-
-  img {
-    width: 24px;
-    height: 24px;
-  }
-
-  color: ${({ theme }) => theme.colors.blackMain};
-  font-size: ${({ theme }) => theme.font.fontSize.title15};
-  font-weight: ${({ theme }) => theme.font.fontWeight.semiBold};
-  line-height: ${({ theme }) => theme.font.lineHeight.normal};
-`;
 const ListArea = styled.div`
+  pointer-events: ${({ $login }) => ($login ? "auto" : "none")};
   display: flex;
   flex-direction: column;
   opacity: ${({ $login }) => ($login ? 1 : 0.35)};

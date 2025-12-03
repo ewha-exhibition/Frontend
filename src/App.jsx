@@ -14,12 +14,17 @@ import Watched from "./pages/myPage/Watched.jsx";
 import EnterCode from "./pages/myPage/EnterCode.jsx";
 import MyShow from "./pages/myPage/MyShow.jsx";
 import Search from "./pages/Search.jsx";
+
+import KakaoCallback from "./pages/login/KakaoCallback.jsx";
+
 export default function App() {
   return (
     <MenuProvider>
       <AppLayout>
         <Routes>
           <Route path="/" element={<Home />} />
+          
+          <Route path="/oauth" element={<KakaoCallback />}/>
 
           <Route path="/scrap" element={<Scrap />} />
           <Route path="/createReview/:exhibitionId" element={<CreateReview />} />
