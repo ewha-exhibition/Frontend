@@ -3,12 +3,14 @@ import styled from "styled-components";
 import Topbar from "../../components/Topbar";
 import ReivewItem from "../../components/guestBook/ReviewItem";
 
+import useCustomFetch from "../../utils/hooks/useCustomFetch";
+
 import poster1 from "../../assets/mock/poster1.jpg";
 import poster2 from "../../assets/mock/poster2.jpg";
 import poster3 from "../../assets/mock/poster3.jpg";
 
 function MyReviews() {
-  const loginId = 10;
+  const loginId = sessionStorage.getItem("memberId");
   const mockData = {
     status: 200,
     result: [
@@ -64,6 +66,14 @@ function MyReviews() {
       },
     ],
   };
+
+  const {
+    data: myReviewData,
+    error,
+    loading,
+  } = useCustomFetch(`/reviews?pageNum=0&limit=10`);
+
+  console.log(myReviewData?.data);
 
   return (
     <Container>

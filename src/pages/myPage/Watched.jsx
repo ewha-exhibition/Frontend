@@ -1,5 +1,7 @@
 import styled from "styled-components";
 
+import useCustomFetch from "../../utils/hooks/useCustomFetch";
+
 import Topbar from "../../components/Topbar";
 import WatchedHis from "../../components/myPage/WatchedHis";
 
@@ -51,19 +53,28 @@ function Watched() {
     ],
   };
 
+  const {
+    data: myWatchedData,
+    error,
+    loading,
+  } = useCustomFetch(`/scraps/viewed?pageNum=0&limit=10`);
+
+  console.log(myWatchedData?.data.exhibitions);
+
   return (
     <Container>
       <Topbar title={"관람 내역"} icon={"none"} />
       <Content>
-        {mock_data?.result.map((data) => (
+        {myWatchedData?.data.exhibitions.map((data) => (
           <WatchedHis
-            key={data.id}
-            title={data.title}
-            date={data.date}
+            key={data.exhibitionId}
+            exhibitionId={data.exhibitionId}
+            title={data.exhibitionName}
+            startDate={data.startDate}
+            endDate={data.endDate}
             place={data.place}
-            poster={data.poster}
-            haveReview={data.haveReview}
-            onGoing={data.onGoing}
+            poster={data.posterUrl}
+            haveReview={data.reviewed}
           />
         ))}
       </Content>

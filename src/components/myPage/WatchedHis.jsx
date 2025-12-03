@@ -1,7 +1,31 @@
 import styled from "styled-components";
 import WriteReview from "../buttons/WriteReview";
 
-function WatchedHis({ id, title, date, place, poster, haveReview, onGoing }) {
+function WatchedHis({
+  id,
+  exhibitionId,
+  title,
+  startDate,
+  endDate,
+  place,
+  poster,
+  haveReview,
+}) {
+  function formatDate(dateString) {
+    return dateString.replace(/-/g, ".");
+  }
+
+  const formatStartDate = formatDate(startDate);
+  const formatEndDate = formatDate(endDate);
+
+  function checkOnGoing(endDate) {
+    const today = new Date();
+    const target = new Date(endDate);
+    return today <= target;
+  }
+
+  const onGoing = checkOnGoing(endDate);
+
   return (
     <Component>
       <Container>
@@ -16,10 +40,12 @@ function WatchedHis({ id, title, date, place, poster, haveReview, onGoing }) {
         <TextArea>
           <div className="titleBox">{title}</div>
           <p>{place}</p>
-          <p>{date}</p>
+          <p>
+            {formatStartDate}~{formatEndDate}
+          </p>
         </TextArea>
         <BtnArea>
-          <WriteReview haveReview={haveReview} />
+          <WriteReview haveReview={haveReview} exhibitionId={exhibitionId} />
         </BtnArea>
       </Container>
       <Br />
@@ -82,13 +108,13 @@ const ImgWrapper = styled.div`
   position: relative;
   width: 92px;
   height: 130px;
+  background-color: ${({ theme }) => theme.colors.gray2};
 
   img {
     width: 100%;
     height: 100%;
     border-radius: 3px;
     object-fit: contain;
-    background-color: ${({ theme }) => theme.colors.gray2};
   }
 `;
 const Overlay = styled.div`
