@@ -6,7 +6,7 @@ const useAxios = () => {
   const navigate = useNavigate();
 
   const requestInterceptor = useCallback((config) => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = sessionStorage.getItem("accessToken");
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -17,10 +17,10 @@ const useAxios = () => {
     async (error) => {
       const originalRequest = error.config;
 
-      // accessToken 만료 시
+      // accessToken 만료 시, refreshToken 개발 대비
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
-        const refreshToken = localStorage.getItem("refreshToken");
+        const refreshToken = sessionStorage.getItem("refreshToken");
 
         if (!refreshToken) {
           console.error("refreshToken 없음 → 로그인 페이지로 이동");

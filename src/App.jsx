@@ -19,12 +19,16 @@ import MyQuestions from "./pages/myPage/MyQuestions.jsx";
 
 import Search from "./pages/Search.jsx";
 
+import KakaoCallback from "./pages/login/KakaoCallback.jsx";
+
 export default function App() {
   return (
     <MenuProvider>
       <AppLayout>
         <Routes>
           <Route path="/" element={<Home />} />
+          
+          <Route path="/oauth" element={<KakaoCallback />}/>
 
           <Route path="/scrap" element={<Scrap />} />
           <Route

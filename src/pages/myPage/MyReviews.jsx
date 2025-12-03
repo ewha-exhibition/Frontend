@@ -1,5 +1,7 @@
 import styled from "styled-components";
 
+import useCustomFetch from "../../utils/hooks/useCustomFetch";
+
 import Topbar from "../../components/Topbar";
 import ReivewItem from "../../components/guestBook/ReviewItem";
 
@@ -11,6 +13,14 @@ import poster3 from "../../assets/mock/poster3.jpg";
 
 function MyReviews() {
   const loginId = sessionStorage.getItem("memberId");
+
+  const {
+    data: myReviewData,
+    error,
+    loading,
+  } = useCustomFetch(`/scraps/viewed?page=0&limit=10`);
+  console.log("myReviewData:", myReviewData?.data);
+
   const mockData = {
     status: 200,
     result: [
