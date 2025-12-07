@@ -1,18 +1,29 @@
 import styled from "styled-components";
 
-function CheeringItem({ key, poster, title, id, review, pic }) {
+import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
+
+function CheeringItem({ key, poster, title, id, review, pic, mypage }) {
   return (
     <Container>
-      <TitleArea>
-        <img src={poster} alt="포스터 이미지" />
-        <p>{title}</p>
-      </TitleArea>
+      <Upper>
+        <TitleArea>
+          <img src={poster} alt="포스터 이미지" />
+          <p>{title}</p>
+        </TitleArea>
+        <StyledChevron width={15} height={15} />
+      </Upper>
+
       <TextArea>{review}</TextArea>
     </Container>
   );
 }
 
 export default CheeringItem;
+
+const StyledChevron = styled(ChevronRight)`
+  color: ${({ theme }) => theme.colors.gray6};
+  cursor: pointer;
+`;
 
 const Container = styled.div`
   width: 100%;
@@ -23,6 +34,11 @@ const Container = styled.div`
   gap: 8px;
 
   border-bottom: 1px solid ${({ theme }) => theme.colors.gray2};
+`;
+const Upper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 const TitleArea = styled.div`
   display: flex;

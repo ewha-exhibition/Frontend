@@ -7,7 +7,7 @@ import PhotoViewer from "./PhotoViewer";
 import Trash from "../../assets/icons/Trash.svg?react";
 import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
 
-function ReivewItem({ poster, title, id, review, pic }) {
+function ReivewItem({ poster, title, review, pic, isWriter }) {
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
 
@@ -18,7 +18,7 @@ function ReivewItem({ poster, title, id, review, pic }) {
           <img src={poster} alt="포스터 이미지" />
           <p>{title}</p>
         </TitleArea>
-        <StyledChvron width={12} height={12} />
+        <StyledChevron width={15} height={15} />
       </Upper>
 
       <TextArea>{review}</TextArea>
@@ -45,7 +45,7 @@ function ReivewItem({ poster, title, id, review, pic }) {
 
 export default ReivewItem;
 
-const StyledChvron = styled(ChevronRight)`
+const StyledChevron = styled(ChevronRight)`
   color: ${({ theme }) => theme.colors.gray6};
   cursor: pointer;
 `;
@@ -63,6 +63,7 @@ const Container = styled.div`
 const Upper = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `;
 const TitleArea = styled.div`
   display: flex;

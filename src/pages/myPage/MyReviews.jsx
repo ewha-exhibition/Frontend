@@ -1,11 +1,10 @@
 import styled from "styled-components";
+import { useState } from "react";
 
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import Topbar from "../../components/Topbar";
 import ReivewItem from "../../components/guestBook/ReviewItem";
-
-import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import poster1 from "../../assets/mock/poster1.jpg";
 import poster2 from "../../assets/mock/poster2.jpg";
@@ -13,12 +12,13 @@ import poster3 from "../../assets/mock/poster3.jpg";
 
 function MyReviews() {
   const loginId = sessionStorage.getItem("memberId");
+  const [pageNow, setPageNow] = useState(0);
 
   const {
     data: myReviewData,
     error,
     loading,
-  } = useCustomFetch(`/scraps/viewed?page=0&limit=10`);
+  } = useCustomFetch(`/reviews?page=${pageNow}&limit=10`);
   console.log("myReviewData:", myReviewData?.data);
 
   const mockData = {
@@ -77,28 +77,20 @@ function MyReviews() {
     ],
   };
 
-  const {
-    data: myReviewData,
-    error,
-    loading,
-  } = useCustomFetch(`/reviews?pageNum=0&limit=10`);
-
-  console.log(myReviewData?.data);
-
   return (
     <Container>
       <Topbar title={"작성한 후기"} icon={"none"} />
       <Content>
-        {mockData?.result.map((data) => (
+        {myReviewData?.data.comments.map((data) => (
           <ReivewItem
-            key={data.id}
-            poster={data.poster}
-            title={data.title}
-            id={data.id}
-            review={data.review}
-            pic={data.pic}
-            loginId={loginId}
-            memberId={data.memberId}
+            key={data.exhibitionId}
+            poster={data.posterUrl}
+            title={data.exhibitionName}
+            review={data.content}
+            pic={data.images}
+            //loginId={loginId}
+            isWriter={data.isWriter}
+            //memberId={data.memberId}
           />
         ))}
       </Content>
