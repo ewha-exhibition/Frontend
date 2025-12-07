@@ -3,6 +3,7 @@ import styled from "styled-components";
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import Topbar from "../../components/Topbar";
+import CheeringItem from "../../components/guestBook/CheeringItem";
 
 function MyExpectations() {
   const {
@@ -14,6 +15,19 @@ function MyExpectations() {
   return (
     <Container>
       <Topbar title={"작성한 기대평"} icon={"none"} />
+      <Content>
+        {myExData?.data.previews.map((data) => (
+          <CheeringItem
+            key={data.exhibitionId}
+            poster={data.posterUrl}
+            title={data.exhibitionName}
+            id={data.exhibitionId}
+            review={data.content}
+            pic={data.imageUrls}
+            mypage={true}
+          />
+        ))}
+      </Content>
     </Container>
   );
 }
@@ -28,3 +42,4 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 `;
+const Content = styled.div``;

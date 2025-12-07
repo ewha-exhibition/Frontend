@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
+import Trash from "../../assets/icons/Trash.svg?react";
 
 function CheeringItem({ key, poster, title, id, review, pic, mypage }) {
   return (
@@ -10,7 +11,10 @@ function CheeringItem({ key, poster, title, id, review, pic, mypage }) {
           <img src={poster} alt="포스터 이미지" />
           <p>{title}</p>
         </TitleArea>
-        <StyledChevron width={15} height={15} />
+        <IconArea>
+          {mypage && <Trash width={15} height={15} />}
+          <StyledChevron width={15} height={15} />
+        </IconArea>
       </Upper>
 
       <TextArea>{review}</TextArea>
@@ -57,6 +61,11 @@ const TitleArea = styled.div`
     font-size: ${({ theme }) => theme.font.fontSize.body14};
     font-weight: ${({ theme }) => theme.font.fontWeight.semiBold};
   }
+`;
+const IconArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 `;
 const TextArea = styled.div`
   color: ${({ theme }) => theme.colors.gray10};
