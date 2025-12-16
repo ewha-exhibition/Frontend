@@ -1,9 +1,35 @@
 import styled from "styled-components";
 
+import useCustomFetch from "../../utils/hooks/useCustomFetch";
+
 import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
 import Trash from "../../assets/icons/Trash.svg?react";
 
-function CheeringItem({ key, poster, title, id, review, pic, mypage }) {
+function CheeringItem({
+  poster,
+  title,
+  id,
+  review,
+  pic,
+  mypage,
+  postId,
+  deleteLink,
+  onDeleteSuccess
+}) {
+  const delUrl = `${deleteLink}/${postId}`;
+  const { fetchData } = useCustomFetch();
+
+  const delItem = async (e) => {
+    e.stopPropagation();
+    try {
+      await fetchData(delUrl, "DELETE");
+      onDeleteSuccess(postId);
+      console.log("삭제 성공");
+    } catch (err) {
+      console.error("삭제 실패", err);
+    }
+  };
+
   return (
     <Container>
       <Upper>
@@ -12,7 +38,14 @@ function CheeringItem({ key, poster, title, id, review, pic, mypage }) {
           <p>{title}</p>
         </TitleArea>
         <IconArea>
-          {mypage && <Trash width={15} height={15} />}
+          {mypage && (
+            <Trash
+              width={15}
+              height={15}
+              onClick={delItem}
+              style={{ cursor: "pointer" }}
+            />
+          )}
           <StyledChevron width={15} height={15} />
         </IconArea>
       </Upper>
