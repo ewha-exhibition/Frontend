@@ -3,9 +3,9 @@ import styled from "styled-components";
 import Edit from "../../assets/icons/Edit.svg?react";
 import Link from "../../assets/icons/Link.svg?react";
 
-function ShowBtn({ name, icon }) {
+function ShowBtn({ name, icon, onClick }) {
   return (
-    <Container>
+    <Container onClick={onClick}>
       <p>{name}</p>
       {icon === "Edit" && <Edit width={16} height={16} />}
       {icon === "Link" && <Link width={16} height={16} />}
@@ -15,7 +15,7 @@ function ShowBtn({ name, icon }) {
 
 export default ShowBtn;
 
-const Container = styled.div`
+const Container = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;

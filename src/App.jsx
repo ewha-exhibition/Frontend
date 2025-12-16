@@ -41,13 +41,13 @@ export default function App() {
           <Route path="/detail/:id" element={<Detail />} />
           <Route path="/enrollEvent" element={<EnrollEvent />} />
 
-          <Route path="/myShow" element={<MyShow />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/mypage/myReviews" element={<MyReviews />} />
           <Route path="/mypage/expectations" element={<MyExpectations />} />
           <Route path="/mypage/questions" element={<MyQuestions />} />
           <Route path="/mypage/watched" element={<Watched />} />
           <Route path="/mypage/enterCode" element={<EnterCode />} />
+          <Route path="/mypage/myShows" element={<MyShow />} />
 
           <Route path="/search/" element={<Search />} />
         </Routes>

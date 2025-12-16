@@ -1,5 +1,7 @@
 import styled from "styled-components";
 
+import useCustomFetch from "../../utils/hooks/useCustomFetch";
+
 import Topbar from "../../components/Topbar";
 import ShowItem from "../../components/myPage/ShowItem";
 
@@ -65,26 +67,40 @@ function MyShow() {
     ],
   };
 
+  const { data: myShowData, error, loading } = useCustomFetch(`/hosts`);
+  console.log(myShowData?.data);
+
   return (
     <Container>
       <Topbar title={"내 공연/전시"} icon={"none"} />
 
       <Content>
-        {mock_data?.result.map((data) => (
+        {myShowData?.data.exhibitions.map((data) => (
           <ShowItem
-            key={data.id}
-            title={data.title}
+            key={data.exhibitionId}
+            exhibitionId={data.exhibitionId}
+            title={data.exhibitionName}
             date={data.date}
+            startDate={data.startDate}
+            endDate={data.endDate}
             place={data.place}
-            poster={data.poster}
-            onGoing={data.onGoing}
+            poster={data.posterUrl}
+            onGoing={data.status}
             code={data.code}
+            link={data.link}
           />
         ))}
         <Noti>
           <p>초대코드란?</p>
-          <li>공연/전시 홍보글을 등록한 사람에게 주어지는 공유용 코드예요.</li>
-          <li>초대코드를 입력하면 글 등록자와 같은 권한(글 수정, 삭제, 대댓글 작성 등)을 가질 수 있어요.</li>
+          <ul>
+            <li>
+              공연/전시 홍보글을 등록한 사람에게 주어지는 공유용 코드예요.
+            </li>
+            <li>
+              초대코드를 입력하면 글 등록자와 같은 권한(글 수정, 삭제, 대댓글
+              작성 등)을 가질 수 있어요.
+            </li>
+          </ul>
         </Noti>
       </Content>
     </Container>
@@ -126,14 +142,20 @@ const Noti = styled.div`
     margin-bottom: 12px;
   }
 
+  ul {
+    list-style-position: outside;
+    list-style-type: disc;
+    padding-inline-start: 20px;
+    margin: 0px;
+  }
+
   li {
     color: ${({ theme }) => theme.colors.gray7};
     font-size: ${({ theme }) => theme.font.fontSize.body14};
     font-weight: ${({ theme }) => theme.font.fontWeight.regular};
     line-height: ${({ theme }) => theme.font.lineHeight.normal};
-    list-style-position: inside;
-
-    //그냥 li 태그 쓰면 디자인이 다르게 나옴
+  }
+  li::marker {
+    font-size: 0.8em;
   }
 `;
- 
