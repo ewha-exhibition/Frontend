@@ -24,7 +24,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           
-          <Route path="/oauth" element={<KakaoCallback />}/>
+          <Route path="/auth/kakao/callback" element={<KakaoCallback />}/>
 
           <Route path="/scrap" element={<Scrap />} />
           <Route path="/createReview/:exhibitionId" element={<CreateReview />} />

@@ -18,7 +18,8 @@ function KakaoCallback() {
       const params = new URLSearchParams(location.search);
       const code = params.get("code");
       const redirectUri = import.meta.env.VITE_KAKAO_REDIRECT_URI;
-      //console.log(code);
+      console.log(code);
+      console.log(redirectUri);
 
       if (!code) {
         console.error("카카오 인가 코드를 받지 못했습니다.");
@@ -38,6 +39,9 @@ function KakaoCallback() {
         console.log("res:", response);
         const memberId = response?.data.data.memberId;
         const nickname = response?.data.data.nickname;
+        const accessToken = response?.data.data.accessToken;
+
+        sessionStorage.setItem("accessToken", accessToken);
         sessionStorage.setItem("memberId", memberId);
         sessionStorage.setItem("nickname", nickname);
 
