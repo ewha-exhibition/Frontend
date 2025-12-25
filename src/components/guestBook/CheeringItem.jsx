@@ -1,6 +1,5 @@
 import styled from "styled-components";
-
-import useCustomFetch from "../../utils/hooks/useCustomFetch";
+import { useNavigate } from "react-router-dom";
 
 import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
 import Trash from "../../assets/icons/Trash.svg?react";
@@ -11,23 +10,14 @@ function CheeringItem({
   id,
   review,
   pic,
-  mypage,
+  mine,
   postId,
-  deleteLink,
-  onDeleteSuccess
+  onRequestDelete,
 }) {
-  const delUrl = `${deleteLink}/${postId}`;
-  const { fetchData } = useCustomFetch();
+  const navigate = useNavigate();
 
-  const delItem = async (e) => {
-    e.stopPropagation();
-    try {
-      await fetchData(delUrl, "DELETE");
-      onDeleteSuccess(postId);
-      console.log("삭제 성공");
-    } catch (err) {
-      console.error("삭제 실패", err);
-    }
+  const goDetail = () => {
+    navigate(`/detail/${id}`);
   };
 
   return (
@@ -38,15 +28,18 @@ function CheeringItem({
           <p>{title}</p>
         </TitleArea>
         <IconArea>
-          {mypage && (
+          {mine && (
             <Trash
               width={15}
               height={15}
-              onClick={delItem}
               style={{ cursor: "pointer" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onRequestDelete(postId);
+              }}
             />
           )}
-          <StyledChevron width={15} height={15} />
+          <StyledChevron width={15} height={15} onClick={goDetail} />
         </IconArea>
       </Upper>
 

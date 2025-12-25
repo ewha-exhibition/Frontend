@@ -5,6 +5,7 @@ import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import Topbar from "../../components/Topbar";
 import CheeringItem from "../../components/guestBook/CheeringItem";
+import ConfirmModal from "../../components/detail/ConfirmModal";
 
 function MyQuestions() {
   const {
@@ -14,23 +15,28 @@ function MyQuestions() {
   } = useCustomFetch(`/questions?pageNum=0&limit=10`);
   console.log(myQData?.data);
 
-  const [list, setList] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [targetPostId, setTargetPostId] = useState(null);
 
-  useEffect(() => {
-    if (myQData?.data?.previews) {
-      setList(myQData.data.previews);
+  const { fetchData } = useCustomFetch();
+  const handleDeleteConfirm = async () => {
+    try {
+      await fetchData(`/questions/${targetPostId}`, "DELETE");
+
+      window.location.reload();
+
+      setIsOpen(false);
+      setTargetPostId(null);
+    } catch (err) {
+      console.error("삭제 실패", err);
     }
-  }, [myQData]);
-
-  const handleDeleteSuccess = (postId) => {
-    setList((prev) => prev.filter((item) => item.postId !== postId));
   };
 
   return (
     <Container>
       <Topbar title={"작성한 질문"} icon={"none"} />
       <Content>
-        {list.map((data) => (
+        {myQData?.data?.previews.map((data) => (
           <CheeringItem
             key={data.postId}
             postId={data.postId}
@@ -39,12 +45,20 @@ function MyQuestions() {
             id={data.exhibitionId}
             review={data.content}
             pic={data.imageUrls}
-            mypage={true}
-            deleteLink={`/questions`}
-            onDeleteSuccess={handleDeleteSuccess}
+            mine={true}
+            onRequestDelete={(postId) => {
+              setTargetPostId(postId);
+              setIsOpen(true);
+            }}
           />
         ))}
       </Content>
+      <ConfirmModal
+        isOpen={isOpen}
+        target="question "
+        onClose={() => setIsOpen(false)}
+        onConfirm={handleDeleteConfirm}
+      />
     </Container>
   );
 }

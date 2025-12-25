@@ -7,7 +7,7 @@ export default function ConfirmModal({ isOpen, target, onClose, onConfirm }) {
     question: "해당 질문을 삭제할까요?",
     review: "해당 후기를 삭제할까요?",
     cheer: "해당 응원글을 삭제할까요?",
-    reply: "해당 답글을 삭제할까요?",
+    reply: "해당 답글을 삭제할까요?", 
   };
 
   const message = messageMap[target] || "이 항목을 삭제할까요?";
@@ -19,7 +19,7 @@ export default function ConfirmModal({ isOpen, target, onClose, onConfirm }) {
         <div className="buttons">
           <button className="left" onClick={onClose}>
             아니요
-          </button> 
+          </button>
           <button className="right" onClick={onConfirm}>
             삭제
           </button>

@@ -5,6 +5,7 @@ import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import Topbar from "../../components/Topbar";
 import CheeringItem from "../../components/guestBook/CheeringItem";
+import ConfirmModal from "../../components/detail/ConfirmModal";
 
 function MyExpectations() {
   const {
@@ -14,16 +15,21 @@ function MyExpectations() {
   } = useCustomFetch(`/cheers?pageNum=0&limit=10`);
   console.log(myExData?.data);
 
-  const [list, setList] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [targetPostId, setTargetPostId] = useState(null);
 
-  useEffect(() => {
-    if (myExData?.data?.previews) {
-      setList(myExData.data.previews);
+  const { fetchData } = useCustomFetch();
+  const handleDeleteConfirm = async () => {
+    try {
+      await fetchData(`/cheers/${targetPostId}`, "DELETE");
+
+      window.location.reload();
+
+      setIsOpen(false);
+      setTargetPostId(null);
+    } catch (err) {
+      console.error("삭제 실패", err);
     }
-  }, [myExData]);
-
-  const handleDeleteSuccess = (postId) => {
-    setList((prev) => prev.filter((item) => item.postId !== postId));
   };
 
   return (
@@ -39,12 +45,20 @@ function MyExpectations() {
             id={data.exhibitionId}
             review={data.content}
             pic={data.imageUrls}
-            mypage={true}
-            deleteLink={`/cheers`}
-            onDeleteSuccess={handleDeleteSuccess}
+            mine={true}
+            onRequestDelete={(postId) => {
+              setTargetPostId(postId);
+              setIsOpen(true);
+            }}
           />
         ))}
       </Content>
+      <ConfirmModal
+        isOpen={isOpen}
+        target="question"
+        onClose={() => setIsOpen(false)}
+        onConfirm={handleDeleteConfirm}
+      />
     </Container>
   );
 }
