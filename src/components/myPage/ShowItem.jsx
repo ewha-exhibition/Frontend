@@ -1,5 +1,4 @@
 import styled from "styled-components";
-
 import ShowBtn from "./ShowBtn";
 
 function ShowItem({
@@ -13,6 +12,7 @@ function ShowItem({
   code,
   onGoing,
   link,
+  onCopySuccess,
 }) {
   function formatDate(dateString) {
     return dateString.replace(/-/g, ".");
@@ -21,12 +21,21 @@ function ShowItem({
   const formatStartDate = formatDate(startDate);
   const formatEndDate = formatDate(endDate);
 
-  const copyToClipboard = async (text) => {
+  const copyCode = async () => {
     try {
-      await navigator.clipboard.writeText(text);
-      alert("클립보드에 복사되었어요!");
-    } catch (err) {
-      console.error("복사 실패", err);
+      await navigator.clipboard.writeText(code);
+      onCopySuccess?.("code");
+    } catch (e) {
+      console.error("초대코드 복사 실패", e);
+    }
+  };
+
+  const copyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      onCopySuccess?.("url");
+    } catch (e) {
+      console.error("URL 복사 실패", e);
     }
   };
 
@@ -53,18 +62,14 @@ function ShowItem({
           <CodeArea>
             <p className="grenBg">초대코드</p>
             <p className="code">{code}</p>
-            <button onClick={() => copyToClipboard(code)}>복사</button>
+            <button onClick={copyCode}>복사</button>
           </CodeArea>
         </Right>
       </ContentArea>
 
       <BtnArea>
         <ShowBtn name={"수정"} icon={"Edit"} />
-        <ShowBtn
-          name={"URL 복사"}
-          icon={"Link"}
-          onClick={() => copyToClipboard(link)}
-        />
+        <ShowBtn name={"URL 복사"} icon={"Link"} onClick={copyUrl} />
       </BtnArea>
     </Container>
   );

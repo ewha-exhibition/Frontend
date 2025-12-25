@@ -6,6 +6,7 @@ import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import Topbar from "../../components/Topbar";
 import BottomBtn from "../../components/buttons/BottomBtn";
+import ConfirmModal from "../../components/myPage/ConfirmModal";
 
 function EnterCode() {
   const navigate = useNavigate();
@@ -27,15 +28,12 @@ function EnterCode() {
 
       if (error) {
         console.log("초대코드 요청 오류:", error?.response.data);
-        alert(error?.response.data.reason);
         setIsOpen(true);
         return;
       }
-
       console.log("응답 데이터:", data);
       alert("초대코드 등록이 완료되었습니다!");
       navigate("/mypage/enterCode");
-      
     } catch (err) {
       console.error("예상치 못한 에러:", err);
       alert("오류가 발생했습니다.");
@@ -44,10 +42,9 @@ function EnterCode() {
 
   return (
     <Container>
-      
       {isOpen && (
         <ConfirmModal
-          message={"올바른 초대 코드가 아니에요. 다시 한 번 확인해 주세요"}
+          message={"올바른 초대 코드가 아니에요 \n다시 한 번 확인해 주세요"}
           onClose={() => setIsOpen(false)}
         />
       )}

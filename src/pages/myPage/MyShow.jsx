@@ -1,77 +1,35 @@
 import styled from "styled-components";
+import { useState } from "react";
 
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import Topbar from "../../components/Topbar";
 import ShowItem from "../../components/myPage/ShowItem";
-
-import poster1 from "../../assets/mock/poster1.jpg";
-import poster2 from "../../assets/mock/poster2.jpg";
-import poster3 from "../../assets/mock/poster3.jpg";
-import poster4 from "../../assets/mock/poster4.jpg";
+import ConfirmModal from "../../components/myPage/ConfirmModal";
 
 function MyShow() {
-  const mock_data = {
-    response: 200,
-    result: [
-      {
-        id: 1,
-        title: "Pile up strands - 섬유예술 전공 과제전시회 어쩌고저쩌고 텍스트",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster1,
-        haveReview: false,
-        onGoing: true,
-        code: "1246AUED",
-      },
-      {
-        id: 2,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.09.10-09.11",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster2,
-        haveReview: true,
-        onGoing: false,
-        code: "1246AUED",
-      },
-      {
-        id: 3,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster3,
-        haveReview: true,
-        onGoing: true,
-        code: "1246AUED",
-      },
-      {
-        id: 4,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster4,
-        haveReview: false,
-        onGoing: false,
-        code: "1246AUED",
-      },
-      {
-        id: 5,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster4,
-        haveReview: false,
-        onGoing: false,
-        code: "1246AUED",
-      },
-    ],
-  };
+  const [isOpen, setIsOpen] = useState(false);
+  const [modalText, setModalText] = useState("");
 
   const { data: myShowData, error, loading } = useCustomFetch(`/hosts`);
   console.log(myShowData?.data);
 
+  const handleCopySuccess = (type) => {
+    if (type === "code") {
+      setModalText("초대코드 복사 완료");
+    }
+    if (type === "url") {
+      setModalText("URL 복사 완료");
+    }
+    setIsOpen(true);
+  };
+
   return (
     <Container>
+      {isOpen && (
+        <ConfirmModal message={modalText} onClose={() => setIsOpen(false)} />
+      )}
+
       <Topbar title={"내 공연/전시"} icon={"none"} />
 
       <Content>
@@ -88,6 +46,7 @@ function MyShow() {
             onGoing={data.status}
             code={data.code}
             link={data.link}
+            onCopySuccess={handleCopySuccess}
           />
         ))}
         <Noti>
