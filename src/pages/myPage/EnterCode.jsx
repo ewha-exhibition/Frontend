@@ -12,6 +12,8 @@ function EnterCode() {
   const { fetchData } = useCustomFetch();
 
   const [code, setCode] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+
   const isActivated = code.length === 8;
 
   const handleSubmit = async () => {
@@ -26,6 +28,7 @@ function EnterCode() {
       if (error) {
         console.log("초대코드 요청 오류:", error?.response.data);
         alert(error?.response.data.reason);
+        setIsOpen(true);
         return;
       }
 
@@ -41,6 +44,14 @@ function EnterCode() {
 
   return (
     <Container>
+      
+      {isOpen && (
+        <ConfirmModal
+          message={"올바른 초대 코드가 아니에요. 다시 한 번 확인해 주세요"}
+          onClose={() => setIsOpen(false)}
+        />
+      )}
+
       <Topbar title={"초대코드 입력하기"} icon={"none"} />
       <Content>
         <SubTitle>공연/전시 초대코드를 입력해 주세요.</SubTitle>
