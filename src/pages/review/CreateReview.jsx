@@ -8,7 +8,7 @@ import { uploadImageToS3 } from "../../utils/apis/uploadImageToS3";
 
 import Topbar from "../../components/Topbar";
 import TextBox from "../../components/review/TextBox";
-import ConfirmModal from "../../components/myPage/ConfirmModal";
+import ConfirmModal from "../../components/myPage/CheckModal";
 
 function CreateReview() {
   const fetch = useCustomFetch();

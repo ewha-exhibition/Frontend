@@ -6,7 +6,7 @@ import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import Topbar from "../../components/Topbar";
 import BottomBtn from "../../components/buttons/BottomBtn";
-import ConfirmModal from "../../components/myPage/ConfirmModal";
+import ConfirmModal from "../../components/myPage/CheckModal";
 
 function EnterCode() {
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-function ConfirmModal({ message, onClose, link }) {
+function CheckModal({ message, onClose, link }) {
   const navigate = useNavigate();
 
   const handleConfirm = () => {
@@ -26,7 +26,7 @@ function ConfirmModal({ message, onClose, link }) {
   );
 }
 
-export default ConfirmModal;
+export default CheckModal;
 
 const Overlay = styled.div`
   position: fixed;

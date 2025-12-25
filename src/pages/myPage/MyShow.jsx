@@ -5,7 +5,7 @@ import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import Topbar from "../../components/Topbar";
 import ShowItem from "../../components/myPage/ShowItem";
-import ConfirmModal from "../../components/myPage/ConfirmModal";
+import ConfirmModal from "../../components/myPage/CheckModal";
 
 function MyShow() {
   const [isOpen, setIsOpen] = useState(false);

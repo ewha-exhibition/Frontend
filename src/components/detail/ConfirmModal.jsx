@@ -19,7 +19,7 @@ export default function ConfirmModal({ isOpen, target, onClose, onConfirm }) {
         <div className="buttons">
           <button className="left" onClick={onClose}>
             아니요
-          </button>
+          </button> 
           <button className="right" onClick={onConfirm}>
             삭제
           </button>
