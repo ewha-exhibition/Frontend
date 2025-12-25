@@ -68,7 +68,7 @@ function MyPage() {
   };
 
   const theme = useTheme();
-  const [login, setLogin] = useState(!!sessionStorage.getItem("memberId"));
+  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
   const nickname = sessionStorage.getItem("nickname");
 
   const navigate = useNavigate();

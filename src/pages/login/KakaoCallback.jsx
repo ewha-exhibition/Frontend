@@ -38,8 +38,15 @@ function KakaoCallback() {
         console.log("res:", response);
         const memberId = response?.data.data.memberId;
         const nickname = response?.data.data.nickname;
+
         sessionStorage.setItem("memberId", memberId);
         sessionStorage.setItem("nickname", nickname);
+
+        const accessToken = response?.data.data.accessToken;
+        sessionStorage.setItem("accessToken", accessToken);
+
+        const refreshToken = response?.data.data.refreshToken;
+        sessionStorage.setItem("refreshToken", refreshToken);
 
         {
           /*
