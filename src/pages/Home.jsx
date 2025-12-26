@@ -65,6 +65,11 @@ export default function Home() {
   const [category, setCategory] = useState("");
   const { exhibitions: latestList, loading: latestLoading } =
     useLatestExhibitions(category, 0, 10);
+  //console.log(latestList);
+
+  const handleToggleScrap = () => {
+    window.location.reload();
+  };
 
   return (
     <Container>
@@ -130,12 +135,14 @@ export default function Home() {
             {latestList.map((item) => (
               <EventList
                 key={item.exhibitionId}
+                id={item.exhibitionId}
                 title={item.exhibitionName}
                 date={item.duration}
                 place={item.place}
                 poster={item.posterUrl}
                 onGoing={item.open}
                 scraped={item.scrap}
+                onToggleScrap={handleToggleScrap}
               />
             ))}
           </EventListWrapper>

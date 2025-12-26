@@ -1,8 +1,30 @@
 import styled from "styled-components";
+
+import useCustomFetch from "../../utils/hooks/useCustomFetch";
+import { toggleScrap } from "../../utils/apis/toggleScrap";
+
 import Bookmark from "../../assets/icons/Bookmark.svg?react";
 import BookmarkOL from "../../assets/icons/BookmarkOL.svg?react";
 
-function EventList({ id, title, date, place, poster, onGoing, scraped }) {
+function EventList({
+  id,
+  title,
+  date,
+  place,
+  poster,
+  onGoing,
+  scraped,
+  onToggleScrap,
+}) {
+  const { fetchData } = useCustomFetch();
+
+  const handleScrapClick = async () => {
+    const success = await toggleScrap(fetchData, id, scraped);
+
+    if (success) {
+      onToggleScrap(id);
+    }
+  };
   return (
     <Component>
       <Container>
@@ -13,9 +35,9 @@ function EventList({ id, title, date, place, poster, onGoing, scraped }) {
           <p>{date}</p>
         </TextArea>
         {scraped ? (
-          <GreenBookmark width={24} height={24} />
+          <GreenBookmark width={24} height={24} onClick={handleScrapClick} />
         ) : (
-          <BookmarkOL width={24} height={24} />
+          <BookmarkOL width={24} height={24} onClick={handleScrapClick} />
         )}
       </Container>
       <Br />
