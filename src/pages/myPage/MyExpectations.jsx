@@ -4,27 +4,24 @@ import { useEffect, useState } from "react";
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import Topbar from "../../components/Topbar";
-import ReivewItem from "../../components/guestBook/ReviewItem";
+import CheeringItem from "../../components/guestBook/CheeringItem";
 import ConfirmModal from "../../components/detail/ConfirmModal";
 
-function MyReviews() {
-  //const loginId = sessionStorage.getItem("memberId");
-  const [pageNow, setPageNow] = useState(0);
+function MyExpectations() {
+  const {
+    data: myExData,
+    error,
+    loading,
+  } = useCustomFetch(`/cheers?pageNum=0&limit=10`);
+  console.log(myExData?.data);
 
   const [isOpen, setIsOpen] = useState(false);
   const [targetPostId, setTargetPostId] = useState(null);
 
-  const {
-    data: myReviewData,
-    error,
-    loading,
-  } = useCustomFetch(`/reviews?page=${pageNow}&limit=10`);
-  console.log("myReviewData:", myReviewData);
-
   const { fetchData } = useCustomFetch();
   const handleDeleteConfirm = async () => {
     try {
-      await fetchData(`/reviews/${targetPostId}`, "DELETE");
+      await fetchData(`/cheers/${targetPostId}`, "DELETE");
 
       window.location.reload();
 
@@ -37,18 +34,18 @@ function MyReviews() {
 
   return (
     <Container>
-      <Topbar title={"작성한 후기"} icon={"none"} />
+      <Topbar title={"작성한 기대평"} icon={"none"} />
       <Content>
-        {myReviewData?.data?.items.map((data) => (
-          <ReivewItem
+        {myExData?.data.previews.map((data) => (
+          <CheeringItem
             key={data.postId}
-            exhibitionId={data.exhibitionId}
             postId={data.postId}
             poster={data.posterUrl}
             title={data.exhibitionName}
+            id={data.exhibitionId}
             review={data.content}
-            pic={data.images}
-            mine={data.mine}
+            pic={data.imageUrls}
+            mine={true}
             onRequestDelete={(postId) => {
               setTargetPostId(postId);
               setIsOpen(true);
@@ -56,10 +53,9 @@ function MyReviews() {
           />
         ))}
       </Content>
-
       <ConfirmModal
         isOpen={isOpen}
-        target="review"
+        target="question"
         onClose={() => setIsOpen(false)}
         onConfirm={handleDeleteConfirm}
       />
@@ -67,7 +63,7 @@ function MyReviews() {
   );
 }
 
-export default MyReviews;
+export default MyExpectations;
 
 const Container = styled.div`
   width: 100%;

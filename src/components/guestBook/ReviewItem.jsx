@@ -1,15 +1,31 @@
 import { useState } from "react";
 import styled from "styled-components";
-
-import PhotoArea from "./PhotoArea";
-import PhotoViewer from "./PhotoViewer";
+import { useNavigate } from "react-router-dom";
 
 import Trash from "../../assets/icons/Trash.svg?react";
 import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
 
-function ReivewItem({ poster, title, id, review, pic }) {
+import PhotoArea from "./PhotoArea";
+import PhotoViewer from "./PhotoViewer";
+
+function ReivewItem({
+  poster,
+  title,
+  review,
+  pic,
+  exhibitionId,
+  postId,
+  mine,
+  onRequestDelete,
+}) {
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
+
+  const navigate = useNavigate();
+
+  const goDetail = () => {
+    navigate(`/detail/${exhibitionId}`);
+  };
 
   return (
     <Container>
@@ -18,7 +34,20 @@ function ReivewItem({ poster, title, id, review, pic }) {
           <img src={poster} alt="포스터 이미지" />
           <p>{title}</p>
         </TitleArea>
-        <StyledChvron width={12} height={12} />
+        <IconArea>
+          {mine && (
+            <Trash
+              width={15}
+              height={15}
+              style={{ cursor: "pointer" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onRequestDelete(postId);
+              }}
+            />
+          )}
+          <StyledChevron width={15} height={15} onClick={goDetail} />
+        </IconArea>
       </Upper>
 
       <TextArea>{review}</TextArea>
@@ -45,7 +74,7 @@ function ReivewItem({ poster, title, id, review, pic }) {
 
 export default ReivewItem;
 
-const StyledChvron = styled(ChevronRight)`
+const StyledChevron = styled(ChevronRight)`
   color: ${({ theme }) => theme.colors.gray6};
   cursor: pointer;
 `;
@@ -63,6 +92,7 @@ const Container = styled.div`
 const Upper = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `;
 const TitleArea = styled.div`
   display: flex;
@@ -87,4 +117,9 @@ const TextArea = styled.div`
   font-size: ${({ theme }) => theme.font.fontSize.body14};
   font-weight: ${({ theme }) => theme.font.fontWeight.regular};
   line-height: ${({ theme }) => theme.font.lineHeight.wide};
+`;
+const IconArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 `;

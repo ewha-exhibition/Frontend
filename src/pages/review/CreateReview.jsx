@@ -8,6 +8,7 @@ import { uploadImageToS3 } from "../../utils/apis/uploadImageToS3";
 
 import Topbar from "../../components/Topbar";
 import TextBox from "../../components/review/TextBox";
+import ConfirmModal from "../../components/myPage/CheckModal";
 
 function CreateReview() {
   const fetch = useCustomFetch();
@@ -17,6 +18,7 @@ function CreateReview() {
 
   const [content, setContent] = useState("");
   const [files, setFiles] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleTextBoxChange = ({ content, files }) => {
     setContent(content);
@@ -67,21 +69,38 @@ function CreateReview() {
   const handleSubmit = async () => {
     if (!content.trim()) return;
 
-    const imageUrls = await uploadImages();
+    try {
+      const imageUrls = await uploadImages();
 
-    const payload = {
-      content,
-      images: imageUrls,
-    };
+      const payload = {
+        content,
+        images: imageUrls,
+      };
 
-    const res = await fetchData(`/reviews/${exhibitionId}`, "POST", payload);
-    console.log("exhibitionId:", exhibitionId)
-    console.log("업로드 내용:", payload);
-    console.log("리뷰 업로드:", res);
+      const res = await fetchData(`/reviews/${exhibitionId}`, "POST", payload);
+
+      if (res && res.status === 200) {
+        console.log("리뷰 업로드 성공:", res);
+        setIsOpen(true);
+      } else {
+        console.error("리뷰 업로드 실패:", res);
+        alert("후기 등록에 실패했어요.");
+      }
+    } catch (error) {
+      console.error("리뷰 업로드 중 에러:", error);
+      alert("후기 등록 중 오류가 발생했어요.");
+    }
   };
 
   return (
     <Container>
+      {isOpen && (
+        <ConfirmModal
+          message={"후기가 작성되었어요"}
+          onClose={() => setIsOpen(false)}
+          link={`/guestBook`}
+        />
+      )}
       <Topbar title={"후기 작성"} />
       <Content>
         <p className="guide">관람 후 느낀 점을 벗들과 나눠주세요!</p>
@@ -124,7 +143,6 @@ const Content = styled.div`
   }
 `;
 const UploadBtn = styled.div`
-  margin: 0 20px;
   width: 100%;
   height: 50px;
   display: flex;

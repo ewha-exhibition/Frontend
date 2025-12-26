@@ -1,9 +1,18 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-function WriteReview({haveReview}) {
+function WriteReview({ haveReview, exhibitionId }) {
+  const navigate = useNavigate();
+  const toReview = () => {
+    navigate(`/createReview/${exhibitionId}`);
+  };
+  const toDetail = () => {
+    navigate(`/detail/${exhibitionId}`);
+  };
+
   return (
-    <Btn haveReview={haveReview}>
+    <Btn haveReview={haveReview} onClick={!haveReview ? toReview : toDetail}>
       {haveReview ? "후기 보러가기" : "후기 작성하기"}
     </Btn>
   );
@@ -24,5 +33,6 @@ const Btn = styled.button`
 
   background: ${({ haveReview, theme }) =>
     haveReview ? theme.colors.Primary70 : "transparent"};
-  border: 1px solid ${({ haveReview, theme }) => (haveReview ? "none" : theme.colors.Primary50)};
+  border: 1px solid
+    ${({ haveReview, theme }) => (haveReview ? "none" : theme.colors.Primary50)};
 `;
