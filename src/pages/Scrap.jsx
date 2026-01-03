@@ -12,7 +12,7 @@ import KakaoBtn from "../components/myPage/KakaoBtn";
 
 function Scrap() {
   //const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
-  const [login, setLogin] = useState(false);
+  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
   const {
     data: scrapData,
     error,
