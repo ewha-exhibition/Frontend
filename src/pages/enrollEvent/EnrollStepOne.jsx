@@ -8,7 +8,7 @@ import CustomCheckbox from "../../components/enrollEvent/CustomCheckbox";
 //APIs
 import useS3Upload from "../../utils/hooks/useS3Upload";
 //아이콘
-import CameraIcon from "../../assets/icons/camera.svg?react";
+import CameraIcon from "../../assets/icons/Camera.svg?react";
 import ClockIcon from "../../assets/icons/Clock.svg?react";
 
 function EnrollStepOne({ data, setData }) {
