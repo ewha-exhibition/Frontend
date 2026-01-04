@@ -1,5 +1,7 @@
 import styled from "styled-components";
 
+import useCustomFetch from "../../utils/hooks/useCustomFetch";
+
 import Topbar from "../../components/Topbar";
 import WatchedHis from "../../components/myPage/WatchedHis";
 
@@ -9,61 +11,29 @@ import poster3 from "../../assets/mock/poster3.jpg";
 import poster4 from "../../assets/mock/poster4.jpg";
 
 function Watched() {
-  const mock_data = {
-    response: 200,
-    result: [
-      {
-        id: 1,
-        title: "Pile up strands - 섬유예술 전공 과제전시회 어쩌고저쩌고 텍스트",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster1,
-        haveReview: false,
-        onGoing: true,
-      },
-      {
-        id: 2,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.09.10-09.11",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster2,
-        haveReview: true,
-        onGoing: false,
-      },
-      {
-        id: 3,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster3,
-        haveReview: true,
-        onGoing: true,
-      },
-      {
-        id: 4,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster4,
-        haveReview: false,
-        onGoing: false,
-      },
-    ],
-  };
+
+  const {
+    data: myWatchedData,
+    error,
+    loading,
+  } = useCustomFetch(`/scraps/viewed?pageNum=0&limit=10`);
+
+  console.log(myWatchedData?.data.exhibitions);
 
   return (
     <Container>
       <Topbar title={"관람 내역"} icon={"none"} />
       <Content>
-        {mock_data?.result.map((data) => (
+        {myWatchedData?.data.exhibitions.map((data) => (
           <WatchedHis
-            key={data.id}
-            title={data.title}
-            date={data.date}
+            key={data.exhibitionId}
+            exhibitionId={data.exhibitionId}
+            title={data.exhibitionName}
+            startDate={data.startDate}
+            endDate={data.endDate}
             place={data.place}
-            poster={data.poster}
-            haveReview={data.haveReview}
-            onGoing={data.onGoing}
+            poster={data.posterUrl}
+            haveReview={data.reviewed}
           />
         ))}
       </Content>

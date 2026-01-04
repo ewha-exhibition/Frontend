@@ -1,29 +1,75 @@
 import styled from "styled-components";
-
 import ShowBtn from "./ShowBtn";
 
-function ShowItem({ id, title, date, place, poster, code, onGoing }) {
+function ShowItem({
+  exhibitionId,
+  title,
+  date,
+  startDate,
+  endDate,
+  place,
+  poster,
+  code,
+  onGoing,
+  link,
+  onCopySuccess,
+}) {
+  function formatDate(dateString) {
+    return dateString.replace(/-/g, ".");
+  }
+
+  const formatStartDate = formatDate(startDate);
+  const formatEndDate = formatDate(endDate);
+
+  const copyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      onCopySuccess?.("code");
+    } catch (e) {
+      console.error("초대코드 복사 실패", e);
+    }
+  };
+
+  const copyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      onCopySuccess?.("url");
+    } catch (e) {
+      console.error("URL 복사 실패", e);
+    }
+  };
+
   return (
     <Container>
       <ContentArea>
-        <img src={poster} alt="포스터 이미지" />
+        <ImgWrapper>
+          <img src={poster} alt="포스터 이미지" />
+          {onGoing == "CLOSE" && (
+            <Overlay>
+              <span>종료</span>
+            </Overlay>
+          )}
+        </ImgWrapper>
+
         <Right>
           <TextArea>
             <p className="title">{title}</p>
-            <p className="place">{date}</p>
+            <p className="place">
+              {formatStartDate}~{formatEndDate}
+            </p>
             <p className="place">{place}</p>
           </TextArea>
           <CodeArea>
             <p className="grenBg">초대코드</p>
             <p className="code">{code}</p>
-            <button>복사</button>
+            <button onClick={copyCode}>복사</button>
           </CodeArea>
         </Right>
       </ContentArea>
 
       <BtnArea>
         <ShowBtn name={"수정"} icon={"Edit"} />
-        <ShowBtn name={"URL 복사"} icon={"Link"} />
+        <ShowBtn name={"URL 복사"} icon={"Link"} onClick={copyUrl} />
       </BtnArea>
     </Container>
   );
@@ -42,20 +88,13 @@ const Container = styled.div`
 const ContentArea = styled.div`
   display: flex;
   gap: 12px;
-
-  img {
-    width: 92px;
-    height: 130px;
-    border-radius: 3px;
-    object-fit: contain;
-    background-color: ${({ theme }) => theme.colors.gray2};
-  }
 `;
 const BtnArea = styled.div`
   display: flex;
   gap: 8px;
 `;
 const Right = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -118,5 +157,34 @@ const CodeArea = styled.div`
     font-size: ${({ theme }) => theme.font.fontSize.label12};
     font-weight: ${({ theme }) => theme.font.fontWeight.regular};
     line-height: ${({ theme }) => theme.font.lineHeight.normal};
+  }
+`;
+const ImgWrapper = styled.div`
+  position: relative;
+  width: 92px;
+  height: 130px;
+  background-color: ${({ theme }) => theme.colors.gray2};
+
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+    object-fit: contain;
+  }
+`;
+const Overlay = styled.div`
+  position: absolute;
+  inset: 0;
+  background-color: rgba(17, 17, 17, 0.3);
+  border-radius: 3px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  span {
+    color: ${({ theme }) => theme.colors.white};
+    font-size: ${({ theme }) => theme.font.fontSize.label12};
+    font-weight: ${({ theme }) => theme.font.fontWeight.semiBold};
   }
 `;

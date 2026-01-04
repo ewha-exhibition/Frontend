@@ -8,8 +8,11 @@ import Scraped from "../components/scrap/Scraped";
 import MenuTrigger from "../components/menu/MenuTrigger";
 import TabBar from "../components/home/TabBar";
 import ViewedModal from "../components/scrap/ViewedModal";
+import KakaoBtn from "../components/myPage/KakaoBtn";
 
 function Scrap() {
+  //const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
+  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
   const {
     data: scrapData,
     error,
@@ -61,24 +64,32 @@ function Scrap() {
         <MenuTrigger variant="black" />
       </Header>
 
-      <Content>
-        {scrapData?.data.exhibitions.map((data) => (
-          <Scraped
-            key={data.exhibitionId}
-            exhibitionId={data.exhibitionId}
-            title={data.exhibitionName}
-            endDate={data.endDate}
-            startDate={data.startDate}
-            place={data.place}
-            poster={data.posterUrl}
-            scraped={true}
-            viewed={data.viewed}
-            reviewed={data.reviewed}
-            onDelete={handleDeleteBookmark}
-            onViewedChange={handleViewedChange}
-          />
-        ))}
-      </Content>
+      {login ? (
+        <Content>
+          {scrapData?.data.exhibitions.map((data) => (
+            <Scraped
+              key={data.exhibitionId}
+              exhibitionId={data.exhibitionId}
+              title={data.exhibitionName}
+              endDate={data.endDate}
+              startDate={data.startDate}
+              place={data.place}
+              poster={data.posterUrl}
+              scraped={true}
+              viewed={data.viewed}
+              reviewed={data.reviewed}
+              onDelete={handleDeleteBookmark}
+              onViewedChange={handleViewedChange}
+            />
+          ))}
+        </Content>
+      ) : (
+        <LoginContainer>
+          <p>로그인 후 스크랩 기능을 이용해보세요!</p>
+          <KakaoBtn />
+        </LoginContainer>
+      )}
+
       <TabBar />
     </Container>
   );
@@ -98,9 +109,11 @@ const Header = styled.div`
 
 const Container = styled.div`
   width: 100%;
-  min-height: calc(100vh - 46px - 50px);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   padding: 12px 20px 0 20px;
-  background: #fff;
+  background: ${({ theme }) => theme.colors.white};
 `;
 
 const PageTitle = styled.h3`
@@ -113,4 +126,22 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding-bottom: 80px;
+`;
+const LoginContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  margin-bottom: 60px;
+
+  text-align: center;
+  p {
+    font-weight: ${({ theme }) => theme.textStyles.semiBold};
+    color: ${({ theme }) => theme.colors.gray7};
+  }
 `;

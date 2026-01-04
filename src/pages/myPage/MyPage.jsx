@@ -2,6 +2,8 @@ import styled, { useTheme } from "styled-components";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import useCustomFetch from "../../utils/hooks/useCustomFetch";
+
 import MypageHeader from "../../components/myPage/MypageHeader";
 import Banner from "../../components/myPage/Banner";
 import TabBar from "../../components/home/TabBar";
@@ -68,12 +70,18 @@ function MyPage() {
   };
 
   const theme = useTheme();
-  const [login, setLogin] = useState(!!sessionStorage.getItem("memberId"));
+  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
   const nickname = sessionStorage.getItem("nickname");
+
+  const {
+    data: myWatchedData,
+    error,
+    loading,
+  } = useCustomFetch(`/scraps/viewed?pageNum=0&limit=10`);
+  console.log(myWatchedData?.data.exhibitions);
 
   const navigate = useNavigate();
 
-  //라우팅 설정하고 경로 수정
   const firstTabs = [
     { name: "관람 내역", path: "watched" },
     { name: "작성한 후기", path: "myReviews" },
@@ -115,12 +123,12 @@ function MyPage() {
 
                 {login && tab.path === "watched" && (
                   <>
-                    {mock_data.response === 200 ? (
+                    {myWatchedData?.status === 200 ? (
                       <ShowListArea>
-                        {mock_data?.result?.map((data) => (
+                        {myWatchedData?.data?.exhibitions.map((data) => (
                           <ShowList key={data.id}>
-                            <img src={data.poster} alt="포스터 이미지" />
-                            <p>{data.title}</p>
+                            <img src={data.posterUrl} alt="포스터 이미지" />
+                            <p>{data.exhibitionName}</p>
                           </ShowList>
                         ))}
                       </ShowListArea>
