@@ -1,43 +1,35 @@
-import axios from "axios";
+// src/utils/hooks/useS3Upload.js
+import { uploadImageToS3 } from "../apis/uploadImageToS3";
+import useCustomFetch from "./useCustomFetch";
 
-export default function useS3Upload() {
-  const uploadToS3 = async (file) => {
+const useS3Upload = () => {
+  const { fetchData } = useCustomFetch();
+
+  const uploadToS3 = async (file, url) => {
+    if (!file) return null;
+
     try {
-      const extension = file.name.split(".").pop();
-      const contentType = file.type;
+      // Presigned URL 발급
+      const res = await fetchData(url, "GET");
+      const presignedUrl = res?.data?.data?.url;
 
-      // accessToken 가져오기
-      const token = localStorage.getItem("accessToken");
-      if (!token) throw new Error("Access Token이 없습니다.");
+      if (!presignedUrl) {
+        console.error("Presigned URL 발급 실패", res);
+        return null;
+      }
 
-      // presigned URL 요청
-      const presignedRes = await axios.post(
-        "https://api.greenknock.xyz/api/files/presigned",
-        {
-          fileName: `poster_${Date.now()}.${extension}`,
-          contentType,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      //s3 업로드
+      await uploadImageToS3(file, presignedUrl);
 
-      const { uploadUrl, fileUrl } = presignedRes.data.data;
-
-      // 파일 업로드
-      await axios.put(uploadUrl, file, {
-        headers: { "Content-Type": contentType },
-      });
-
-      // URL 반환
-      return fileUrl;
-    } catch (err) {
-      console.error("S3 업로드 실패:", err);
+      // URL 정제
+      return presignedUrl.split("?")[0];
+    } catch (error) {
+      console.error("S3 업로드 중 에러 발생:", error);
       return null;
     }
   };
 
   return { uploadToS3 };
-}
+};
+
+export default useS3Upload;

@@ -1,12 +1,12 @@
 import styled from "styled-components";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useState } from "react";
 
 import AttachedPicture from "../../components/AttachedPicture";
 import Preview from "../../components/enrollEvent/Preview";
 import PreviewIcon from "../../assets/icons/Eyes.svg?react";
 import CameraIcon from "../../assets/icons/Camera.svg?react";
 import useS3Upload from "../../utils/hooks/useS3Upload";
-//
+
 export default function EnrollStepTwo({
   text,
   setText,
@@ -14,18 +14,13 @@ export default function EnrollStepTwo({
   setPictures,
   stepOneData, //부모 전달
 }) {
-  useEffect(() => {
-    console.log("🔥 stepOneData.startDate:", stepOneData.startDate);
-    console.log("🔥 stepOneData.endDate:", stepOneData.endDate);
-  }, [stepOneData.startDate, stepOneData.endDate]);
-
+  const { uploadToS3 } = useS3Upload();
   const [previewMode, setPreviewMode] = useState(false);
 
   const textRef = useRef(null);
   const fileInputRef = useRef(null);
-  const { uploadToS3 } = useS3Upload();
 
-  /* ===== textarea 자동 높이 조절 ===== */
+  // textarea 자동 높이 조절
   const handleChange = (e) => {
     const el = e.target;
     el.style.height = "auto";
@@ -33,30 +28,36 @@ export default function EnrollStepTwo({
     setText(el.value);
   };
 
-  useEffect(() => {
-    if (textRef.current) {
-      textRef.current.style.height = "auto";
-      textRef.current.style.height = `${textRef.current.scrollHeight}px`;
+  const handleImageUpload = async (e) => {
+    const fileList = e.target.files;
+    if (!fileList || fileList.length === 0) return;
+    const files = Array.from(fileList);
+
+    const uploadPromises = files.map((file) =>
+      uploadToS3(file, "/exhibition/images")
+    );
+
+    try {
+      const uploadedUrls = await Promise.all(uploadPromises);
+      // null(실패) 제외하고 유효한 URL만 필터링
+      const validUrls = uploadedUrls.filter((url) => url !== null);
+
+      if (validUrls.length > 0) {
+        const newPictures = validUrls.map((url) => ({ url: url }));
+        setPictures((prev) => [...prev, ...newPictures]);
+      }
+    } catch (error) {
+      console.error("업로드 중 오류:", error);
+    } finally {
+      if (e.target) e.target.value = "";
     }
-  }, []);
-
-  /* ===== 이미지 업로드 ===== */
-  const handleUploadImage = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const previewUrl = URL.createObjectURL(file);
-    const s3Url = await uploadToS3(file);
-
-    setPictures((prev) => [...prev, { url: s3Url, preview: previewUrl }]);
   };
 
-  /* ===== 이미지 삭제 ===== */
-  const handleDelete = (idx) => {
-    setPictures(pictures.filter((_, i) => i !== idx));
+  //이미지 삭제
+  const handleDelete = (index) => {
+    setPictures((prev) => prev.filter((_, i) => i !== index));
   };
-
-  /* ===== 이미지 순서 위로 ===== */
+  // 이미지 순서 위로
   const handleMoveUp = (idx) => {
     if (idx === 0) return;
     setPictures((prev) => {
@@ -66,7 +67,7 @@ export default function EnrollStepTwo({
     });
   };
 
-  /* ===== 이미지 순서 아래로 ===== */
+  // 이미지 순서 아래로
   const handleMoveDown = (idx) => {
     setPictures((prev) => {
       if (idx === prev.length - 1) return prev;
@@ -104,8 +105,9 @@ export default function EnrollStepTwo({
           <HiddenInput
             ref={fileInputRef}
             type="file"
+            multiple
             accept="image/*"
-            onChange={handleUploadImage}
+            onChange={handleImageUpload}
           />
 
           <InfoBox>
@@ -147,7 +149,7 @@ export default function EnrollStepTwo({
               : `${stepOneData.startTime}`,
 
             content: text,
-            images: pictures.map((p) => p.preview || p.url),
+            images: pictures.map((pic) => pic.url),
           }}
           onBack={() => setPreviewMode(false)}
         />

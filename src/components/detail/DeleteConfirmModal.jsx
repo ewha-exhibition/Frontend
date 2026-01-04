@@ -1,16 +1,21 @@
 import styled from "styled-components";
 
-export default function ConfirmModal({ isOpen, target, onClose, onConfirm }) {
+export default function DeleteConfirmModal({
+  isOpen,
+  type,
+  onClose,
+  onConfirm,
+}) {
   if (!isOpen) return null;
 
   const messageMap = {
+    cheer: "해당 응원을 삭제할까요?",
     question: "해당 질문을 삭제할까요?",
     review: "해당 후기를 삭제할까요?",
-    cheer: "해당 응원글을 삭제할까요?",
     reply: "해당 답글을 삭제할까요?",
   };
 
-  const message = messageMap[target] || "이 항목을 삭제할까요?";
+  const message = messageMap[type];
 
   return (
     <Overlay>
@@ -49,13 +54,13 @@ const ModalBox = styled.div`
   background: ${({ theme }) => theme.colors.white};
   border-radius: 14px;
 
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(32px);
 
   .message {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 59px;
+    padding: 19px 16px;
     ${({ theme }) => theme.textStyles.label1SemiBold};
     color: ${({ theme }) => theme.colors.black};
   }
@@ -69,8 +74,8 @@ const ModalBox = styled.div`
     flex: 1;
     background: ${({ theme }) => theme.colors.white};
     border-radius: 14px 0 0 14px;
-    border-right: 0.5px solid ${({ theme }) => theme.colors.gray4};
-    color: ${({ theme }) => theme.colors.Primary60};
+    border-right: 0.5px solid ${({ theme }) => theme.colors.gray5};
+    color: ${({ theme }) => theme.colors.gray};
     ${({ theme }) => theme.textStyles.label2Medium};
     padding: 12px 0;
   }

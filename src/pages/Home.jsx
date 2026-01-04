@@ -16,11 +16,11 @@ import useRankingExhibitions from "../utils/hooks/useRankingExhibitions";
 import useLatestExhibitions from "../utils/hooks/useLatestExhibitions";
 
 //top10 컴포넌트
-function TopTenItem({ rank, exhibitionId, title, poster, scraped }) {
+function TopTenItem({ rank, exhibitionId, title, poster, scraped, onClick }) {
   return (
     <Card>
       <Poster poster={poster}>
-        <Overlay />
+        <Overlay onClick={onClick} />
         <Bar>
           <Rank>{rank}</Rank>
           <BookmarkIcon width={16} height={19} />
@@ -101,6 +101,7 @@ export default function Home() {
                 title={item.exhibitionName}
                 rank={index + 1}
                 poster={item.posterUrl}
+                onClick={() => navigate(`/detail/${item.exhibitionId}`)}
               />
             ))}
         </TopTenList>

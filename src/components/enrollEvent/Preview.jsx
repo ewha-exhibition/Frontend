@@ -3,18 +3,17 @@ import locationIcon from "../../assets/icons/Location.svg";
 import ticketIcon from "../../assets/icons/Ticket.svg";
 import userIcon from "../../assets/icons/User.svg";
 import CalenderIcon from "../../assets/icons/Calender.svg?react";
-import clockIcon from "../../assets/icons/Clock.svg";
+import ClockIcon from "../../assets/icons/Clock.svg?react";
 
-export default function PreviewModeDetail({ detail, onBack }) {
+export default function PreviewModeDetail({ detail }) {
   const categories = [
-    { key: "detail", label: "상세" },
-    { key: "question", label: "질문" },
-    { key: "cheer", label: "응원" },
-    { key: "review", label: "후기" },
+    { key: "detail", label: "상세정보" },
+    { key: "question", label: "질문 (1)" },
+    { key: "cheer", label: "응원 (2)" },
+    { key: "review", label: "후기 (0)" },
   ];
   return (
     <Container>
-      {/* HEADER */}
       <Header>
         <img className="img" src={detail.posterUrl} alt={detail.title} />
         <h1 className="h1">{detail.title}</h1>
@@ -36,20 +35,21 @@ export default function PreviewModeDetail({ detail, onBack }) {
           </div>
 
           <div className="div">
-            <CalenderIcon width={18} height={18} color="#57B190" />
+            <CalenderIcon width={18} height={18} color="#57B190" alt="날짜" />
             <p className="p">{detail.period}</p>
           </div>
 
           <div className="div">
-            <img className="svgIcon" src={clockIcon} alt="시간" />
+            <ClockIcon width={18} height={18} color="#57B190" alt="시간" />
             <p className="p">{detail.duration}</p>
           </div>
         </Summary>
       </Header>
+
       {/* 카테고리 탭 */}
       <Categories>
         {categories.map(({ key, label }) => (
-          <Category key={key} isSelected={detail}>
+          <Category key={key} isSelected={key == "detail"}>
             <p>{label}</p>
           </Category>
         ))}
@@ -69,13 +69,11 @@ export default function PreviewModeDetail({ detail, onBack }) {
   );
 }
 
-/* ========= styled-components ========= */
-
 const Container = styled.div`
   width: 100%;
   height: 100vh;
   padding-top: 46px;
-  background: ${({ theme }) => theme.colors.gray1};
+  background-color: ${({ theme }) => theme.colors.white};
 `;
 
 const Header = styled.div`
@@ -130,6 +128,11 @@ const Categories = styled.div`
   padding: 0 20px;
   justify-content: space-between;
   border-bottom: 1px solid ${({ theme }) => theme.colors.gray3};
+
+  position: sticky;
+  top: 46px;
+  z-index: 100;
+  background-color: ${({ theme }) => theme.colors.white};
 `;
 
 const Category = styled.div`

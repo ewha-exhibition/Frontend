@@ -2,10 +2,10 @@ import styled from "styled-components";
 import Bookmark from "../../assets/icons/Bookmark.svg?react";
 import BookmarkOL from "../../assets/icons/BookmarkOL.svg?react";
 
-function EventList({ id, title, date, place, poster, onGoing, scraped }) {
+function EventList({ id, title, date, place, poster, scraped, onClick }) {
   return (
     <Component>
-      <Container>
+      <Container onClick={onClick}>
         <img src={poster} alt={title} />
         <TextArea>
           <div className="titleBox">{title}</div>

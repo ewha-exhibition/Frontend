@@ -1,38 +1,61 @@
-import styled from "styled-components";
 import { useState, useRef } from "react";
+import styled from "styled-components";
+//컴포넌트
 import InputBox from "../../components/enrollEvent/InputBox";
+import TimePickerModal from "../../components/enrollEvent/TimePickerModal";
 import Calender from "../../components/Calender";
 import CustomCheckbox from "../../components/enrollEvent/CustomCheckbox";
-import CameraIcon from "../../assets/icons/camera.svg?react";
+//APIs
 import useS3Upload from "../../utils/hooks/useS3Upload";
+//아이콘
+import CameraIcon from "../../assets/icons/camera.svg?react";
+import ClockIcon from "../../assets/icons/Clock.svg?react";
 
 function EnrollStepOne({ data, setData }) {
   const fileInputRef = useRef(null);
+  const { uploadToS3 } = useS3Upload();
   const [isFree, setIsFree] = useState(false);
   const [noTicket, setNoTicket] = useState(false);
+
+  // 시간 입력 모달
+  const [isStartTimeOpen, setIsStartTimeOpen] = useState(false);
+  const [isEndTimeOpen, setIsEndTimeOpen] = useState(false);
+
   const update = (key, value) => {
     setData((prev) => ({ ...prev, [key]: value }));
   };
-  const { uploadToS3 } = useS3Upload();
+
+  // 포스터 업로드
   const handlePosterChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // 1. 미리보기용 URL
+    // 미리보기
     const previewUrl = URL.createObjectURL(file);
+    update("posterPreviewUrl", previewUrl);
 
-    // 2. S3 업로드
-    const s3Url = await uploadToS3(file);
+    // 실제 S3 업로드 실행 (Hook 호출)
+    const s3Url = await uploadToS3(file, "/exhibition/posters");
 
-    // 3. 상태 저장
-    setData((prev) => ({
-      ...prev,
-      posterPreviewUrl: previewUrl, // 미리보기
-      posterUrl: s3Url, // S3 URL (등록 API에 들어감)
-    }));
+    if (s3Url) {
+      console.log("S3 업로드 성공:", s3Url);
+      // 업로드 된 실제 URL을 데이터에 저장
+      update("posterUrl", s3Url);
+    } else {
+      // 업로드 실패 시 미리보기 취소
+      update("posterPreviewUrl", "");
+    }
   };
+
   return (
     <Container>
+      <ExplainTxt>
+        <p>
+          녹녹은 이화인들의 공간입니다! 홍보글은 이화여대 재학생 및 졸업생이
+          포함된 팀이라면 누구나 올릴 수 있어요.
+        </p>
+      </ExplainTxt>
+
       {/* 카테고리 */}
       <Section>
         <Label>카테고리 선택 *</Label>
@@ -56,6 +79,7 @@ function EnrollStepOne({ data, setData }) {
           max={38}
           value={data.exhibitionName}
           onChange={(v) => update("exhibitionName", v)}
+          required={true}
         />
       </Section>
 
@@ -65,20 +89,29 @@ function EnrollStepOne({ data, setData }) {
         <ExplainTxt>
           <p>A4 비율이 가장 좋아요</p>
         </ExplainTxt>
-        <UploadBox onClick={() => fileInputRef.current?.click()}>
-          <CameraIcon width={24} height={24} />
-          첨부
-        </UploadBox>
+
+        {/* 1. 미리보기가 없을 때: 업로드 버튼 보이기 */}
+        {!data.posterPreviewUrl && (
+          <UploadBox onClick={() => fileInputRef.current?.click()}>
+            <CameraIcon width={24} height={24} />
+            첨부
+          </UploadBox>
+        )}
+
+        {/* 2. 미리보기가 있을 때: 이미지 + 수정 오버레이 보이기 */}
+        {data.posterPreviewUrl && (
+          <PosterPreview
+            src={data.posterPreviewUrl}
+            onClick={() => fileInputRef.current?.click()}
+            alt="poster-preview"
+          />
+        )}
         <HiddenInput
           type="file"
           accept="image/*"
           ref={fileInputRef}
           onChange={handlePosterChange}
         />
-
-        {data.posterPreviewUrl && (
-          <PosterPreview src={data.posterPreviewUrl} alt="poster-preview" />
-        )}
       </Section>
 
       {/* 장소 */}
@@ -96,6 +129,7 @@ function EnrollStepOne({ data, setData }) {
           placeholder="장소명"
           value={data.place}
           onChange={(v) => update("place", v)}
+          required={true}
         />
       </Section>
 
@@ -114,23 +148,25 @@ function EnrollStepOne({ data, setData }) {
 
       {/* 시간 */}
       <Section2>
-        <Section>
-          <Label>시작시간 *</Label>
+        <Section style={{ flex: 1 }}>
+          <Label>시작 시간 *</Label>
           <InputBox
-            placeholder="00:00"
+            placeholder="-"
             value={data.startTime}
-            onChange={(v) => update("startTime", v)}
+            Icon={ClockIcon}
+            onClick={() => setIsStartTimeOpen(true)}
+            readOnly={true} // 키보드 입력 방지
+            required={true}
           />
-          <ExplainTxt>
-            <p>&nbsp;입력 방법: 오후 4시 → 16:30 </p>
-          </ExplainTxt>
         </Section>
-        <Section>
+        <Section style={{ flex: 1 }}>
           <Label>끝나는 시간</Label>
           <InputBox
-            placeholder="00:00"
+            placeholder="-"
             value={data.endTime}
-            onChange={(v) => update("endTime", v)}
+            Icon={ClockIcon}
+            onClick={() => setIsEndTimeOpen(true)}
+            readOnly={true}
           />
         </Section>
       </Section2>
@@ -140,7 +176,7 @@ function EnrollStepOne({ data, setData }) {
         <Label>일시 예외사항</Label>
         <ExplainTxt>
           <p>일시 관련하여 예외사항이 있다면 작성해주세요</p>
-          <p>예시) 토요일만 14시 마감</p>
+          <p>예시) 토요일만 4시 마감, 화요일은 휴관</p>
         </ExplainTxt>
         <InputBox
           max={25}
@@ -158,8 +194,9 @@ function EnrollStepOne({ data, setData }) {
             checked={isFree}
             onChange={(checked) => {
               setIsFree(checked);
-              update("price", checked ? 0 : "");
+              update("price", checked ? "무료" : "");
             }}
+            required={true}
           />
           <span>무료</span>
         </CheckBoxArea>
@@ -180,7 +217,7 @@ function EnrollStepOne({ data, setData }) {
               update("link", checked ? "" : data.link);
             }}
           />
-          <span>예매 필요 없음</span>
+          <span>예매 필요 없음 (자유 입장) </span>
         </CheckBoxArea>
 
         {!noTicket && (
@@ -204,8 +241,24 @@ function EnrollStepOne({ data, setData }) {
           placeholder="최대한 짧게 작성해주세요"
           value={data.clubName}
           onChange={(v) => update("clubName", v)}
+          required={true}
         />
       </Section>
+
+      {/* 시간 입력 모달*/}
+      <TimePickerModal
+        isOpen={isStartTimeOpen}
+        onClose={() => setIsStartTimeOpen(false)}
+        onSelect={(time) => update("startTime", time)}
+        title="시작 시간"
+      />
+
+      <TimePickerModal
+        isOpen={isEndTimeOpen}
+        onClose={() => setIsEndTimeOpen(false)}
+        onSelect={(time) => update("endTime", time)}
+        title="끝나는 시간"
+      />
     </Container>
   );
 }
@@ -216,7 +269,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 25px;
-
   margin-top: 16px;
 `;
 const Section = styled.div`
@@ -299,6 +351,8 @@ const CheckBoxArea = styled.div`
     font-size: ${({ theme }) => theme.font.fontSize.body14};
     font-weight: ${({ theme }) => theme.font.fontWeight.regular};
     line-height: ${({ theme }) => theme.font.lineHeight.wide};
+
+    padding-bottom: 5px;
   }
 `;
 

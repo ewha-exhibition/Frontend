@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ChevronLeft from "../assets/icons/ChevronLeft.svg?react";
 import Link from "../assets/icons/Link.svg?react";
 
-function Topbar({ title, icon }) {
+function Topbar({ title, icon, onClick }) {
   const navigate = useNavigate();
   const goBack = () => {
     navigate(-1);
@@ -14,12 +14,10 @@ function Topbar({ title, icon }) {
     <Container>
       <ChevronLeft height={14} width={24} onClick={goBack} />
       <h3>{title}</h3>
-
-      {icon === "Link" ? (
-        <Link height={18} width={24} />
-      ) : (
-        // 오른쪽 공간 맞추기용 더미
-        <Spacer />
+      {icon === null && <Spacer />}
+      {icon === "Link" && <Link height={18} width={24} onClick={onClick} />}
+      {icon === "EnrollEvent" && (
+        <TextButton onClick={onClick}>등록하기</TextButton>
       )}
     </Container>
   );
@@ -52,6 +50,11 @@ const Container = styled.div`
   }
 `;
 
+const TextButton = styled.div`
+  color: ${({ theme }) => theme.colors.Primary50};
+  ${({ theme }) => theme.textStyles.titleMedium};
+  padding: 13px 15px;
+`;
 const Spacer = styled.div`
   width: 24px;
   height: 18px;

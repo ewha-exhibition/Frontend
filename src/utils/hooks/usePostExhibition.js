@@ -1,19 +1,23 @@
-import usePostRequest from "./usePostRequest";
+import useCustomFetch from "./useCustomFetch";
 
-export default function usePostExhibition() {
-  const { post, loading, error } = usePostRequest();
+const usePostExhibition = () => {
+  const { fetchData } = useCustomFetch();
 
-  const createExhibition = async ({ exhibition, club, images, token }) => {
-    const url = "/exhibitions";
+  const createExhibition = async (payload) => {
+    try {
+      // API 명세에 따른 POST 요청
+      const response = await fetchData("/exhibition", "POST", payload);
 
-    const body = {
-      exhibition,
-      club,
-      images,
-    };
-
-    return await post(url, body, token);
+      if (response && response.status === 200) {
+        return { success: true, data: response.data };
+      }
+    } catch (error) {
+      console.error("전시 등록 에러:", error);
+      return { success: false };
+    }
   };
 
-  return { createExhibition, loading, error };
-}
+  return { createExhibition };
+};
+
+export default usePostExhibition;
