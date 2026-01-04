@@ -6,37 +6,46 @@ import { toggleScrap } from "../../utils/apis/toggleScrap";
 import Bookmark from "../../assets/icons/Bookmark.svg?react";
 import BookmarkOL from "../../assets/icons/BookmarkOL.svg?react";
 
-export default function EventList({ id, title, date, place, poster, scraped, onClick, onToggleScrap}) {
- {
-  const { fetchData } = useCustomFetch();
+export default function EventList({
+  id,
+  title,
+  date,
+  place,
+  poster,
+  scraped,
+  onClick,
+  onToggleScrap,
+}) {
+  {
+    const { fetchData } = useCustomFetch();
 
-  const handleScrapClick = async () => {
-    const success = await toggleScrap(fetchData, id, scraped);
+    const handleScrapClick = async () => {
+      const success = await toggleScrap(fetchData, id, scraped);
 
-    if (success) {
-      onToggleScrap(id);
-    }
-  };
-  return (
-    <Component>
-      <Container onClick={onClick}>
-        <img src={poster} alt={title} />
-        <TextArea>
-          <div className="titleBox">{title}</div>
-          <p>{place}</p>
-          <p>{date}</p>
-        </TextArea>
-        {scraped ? (
-          <GreenBookmark width={24} height={24} onClick={handleScrapClick} />
-        ) : (
-          <BookmarkOL width={24} height={24} onClick={handleScrapClick} />
-        )}
-      </Container>
-      <Br />
-    </Component>
-  );
+      if (success) {
+        onToggleScrap(id);
+      }
+    };
+    return (
+      <Component>
+        <Container onClick={onClick}>
+          <img src={poster} alt={title} />
+          <TextArea>
+            <div className="titleBox">{title}</div>
+            <p>{place}</p>
+            <p>{date}</p>
+          </TextArea>
+          {scraped ? (
+            <GreenBookmark width={24} height={24} onClick={handleScrapClick} />
+          ) : (
+            <BookmarkOL width={24} height={24} onClick={handleScrapClick} />
+          )}
+        </Container>
+        <Br />
+      </Component>
+    );
+  }
 }
-
 
 const GreenBookmark = styled(Bookmark)`
   color: ${({ theme }) => theme.colors.Primary50};

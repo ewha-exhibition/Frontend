@@ -143,6 +143,7 @@ export default function Home() {
                 poster={item.posterUrl}
                 onGoing={item.open}
                 scraped={item.scrap}
+                onClick={() => navigate(`/detail/${item.exhibitionId}`)}
                 onToggleScrap={handleToggleScrap}
               />
             ))}

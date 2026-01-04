@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import TopBar from "../components/Topbar";
 import BookingBar from "../components/detail/BookingBar";
-import DeleteConfirmModal from "../components/detail/DeleteConfirmModal";
+import ConfirmModal from "../components/detail/ConfirmModal";
 import { Cheer, Question, Review } from "../components/detail/TabContents";
 //TODO: 호스트의 경우 햄버거 메뉴로 변경
 //TODO: 링크 복사 완료 모달
@@ -537,7 +537,7 @@ export default function Detail() {
       />
 
       {/* 삭제 확인 모달 */}
-      <DeleteConfirmModal
+      <ConfirmModal
         isOpen={modalState.isOpen}
         type={modalState.type}
         onClose={closeModal}

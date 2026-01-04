@@ -14,10 +14,6 @@ export default function EnrollEvent() {
   const navigate = useNavigate();
 
   const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
-  // sessionStorage.setItem(
-  //   "accessToken",
-  //   "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc2NzQ4NDkzNSwiZXhwIjoxNzY3NDg4NTM1fQ.bkNbMH6XCtAitgEFToocwOtd-tqdFOPLf_X8HlCJv5Q"
-  // );
 
   const [step, setStep] = useState(1);
 

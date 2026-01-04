@@ -1,11 +1,6 @@
 import styled from "styled-components";
 
-export default function DeleteConfirmModal({
-  isOpen,
-  type,
-  onClose,
-  onConfirm,
-}) {
+export default function ConfirmModal({ isOpen, type, onClose, onConfirm }) {
   if (!isOpen) return null;
 
   const messageMap = {
