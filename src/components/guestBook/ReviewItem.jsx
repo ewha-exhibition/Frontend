@@ -12,16 +12,20 @@ function ReivewItem({
   poster,
   title,
   review,
-  pic,
+  imageUrls,
   exhibitionId,
   postId,
   mine,
   onRequestDelete,
 }) {
+  console.log("pics1:", imageUrls);
+  console.log(imageUrls.length);
+
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
 
   const navigate = useNavigate();
+  const urlLength = imageUrls.length;
 
   const goDetail = () => {
     navigate(`/detail/${exhibitionId}`);
@@ -51,9 +55,10 @@ function ReivewItem({
       </Upper>
 
       <TextArea>{review}</TextArea>
-      {pic && pic.length > 0 && (
+      {imageUrls && imageUrls.length > 0 && (
         <PhotoArea
-          pics={pic}
+          imageUrls={imageUrls}
+          urlLength={urlLength}
           onOpen={(i) => {
             setIndex(i);
             setOpen(true);
@@ -62,7 +67,8 @@ function ReivewItem({
       )}
       {open && (
         <PhotoViewer
-          pics={pic}
+          imageUrls={imageUrls}
+          urlLength={urlLength}
           index={index}
           setIndex={setIndex}
           onClose={() => setOpen(false)}
