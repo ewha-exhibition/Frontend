@@ -25,8 +25,8 @@ import useTestLogin from "../utils/hooks/useTestLogin"; //임시 토큰
 
 export default function Detail() {
   //임시 토큰
-  const { token } = useTestLogin(1);
-  console.log(localStorage.getItem("accessToken"));
+  //const { token } = useTestLogin(1);
+  //console.log(localStorage.getItem("accessToken"));
   // 현재 사용자
   const [currentUser] = useState({
     id: 1,
