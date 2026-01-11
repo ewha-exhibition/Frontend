@@ -1,118 +1,177 @@
 import styled from "styled-components";
-import { useState, useRef, useEffect } from "react";
+import { useRef, useState } from "react";
 
 import AttachedPicture from "../../components/AttachedPicture";
+import Preview from "../../components/enrollEvent/Preview";
 import PreviewIcon from "../../assets/icons/Eyes.svg?react";
 import CameraIcon from "../../assets/icons/Camera.svg?react";
-import mockPicture from "../../assets/mock/poster1.jpg";
-import mockPicture2 from "../../assets/mock/poster2.jpg";
+import useS3Upload from "../../utils/hooks/useS3Upload";
 
-//NOTE: header 고정 필요
-export default function RegisterDetail() {
-  const [pictures, setPictures] = useState([mockPicture, mockPicture2]);
-  const [text, setText] = useState(
-    "안녕하세요~! 이화여대 오케스트라 동아리 에세이오스입니다. 저희에 여름 정기공연에 초대합니다.\n\n이번 공연에는 이런이런 곡을 연주합니다.\n기대많이 해주세요."
-  );
+export default function EnrollStepTwo({
+  text,
+  setText,
+  pictures,
+  setPictures,
+  stepOneData, //부모 전달
+}) {
+  const { uploadToS3 } = useS3Upload();
+  const [previewMode, setPreviewMode] = useState(false);
 
   const textRef = useRef(null);
+  const fileInputRef = useRef(null);
 
+  // textarea 자동 높이 조절
   const handleChange = (e) => {
     const el = e.target;
     el.style.height = "auto";
     el.style.height = `${el.scrollHeight}px`;
-    setText(e.target.value);
+    setText(el.value);
   };
 
-  useEffect(() => {
-    if (textRef.current) {
-      textRef.current.style.height = "auto";
-      textRef.current.style.height = `${textRef.current.scrollHeight}px`;
-    }
-  }, []);
+  const handleImageUpload = async (e) => {
+    const fileList = e.target.files;
+    if (!fileList || fileList.length === 0) return;
+    const files = Array.from(fileList);
 
+    const uploadPromises = files.map((file) =>
+      uploadToS3(file, "/exhibition/images")
+    );
+
+    try {
+      const uploadedUrls = await Promise.all(uploadPromises);
+      // null(실패) 제외하고 유효한 URL만 필터링
+      const validUrls = uploadedUrls.filter((url) => url !== null);
+
+      if (validUrls.length > 0) {
+        const newPictures = validUrls.map((url) => ({ url: url }));
+        setPictures((prev) => [...prev, ...newPictures]);
+      }
+    } catch (error) {
+      console.error("업로드 중 오류:", error);
+    } finally {
+      if (e.target) e.target.value = "";
+    }
+  };
+
+  //이미지 삭제
   const handleDelete = (index) => {
     setPictures((prev) => prev.filter((_, i) => i !== index));
   };
-
-  const handleMoveUp = (index) => {
-    if (index <= 0) return;
+  // 이미지 순서 위로
+  const handleMoveUp = (idx) => {
+    if (idx === 0) return;
     setPictures((prev) => {
-      const updated = [...prev];
-      const [moved] = updated.splice(index, 1);
-      updated.splice(index - 1, 0, moved);
-      return updated;
+      const arr = [...prev];
+      [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
+      return arr;
     });
   };
 
-  const handleMoveDown = (index) => {
-    if (index >= pictures.length - 1) return;
+  // 이미지 순서 아래로
+  const handleMoveDown = (idx) => {
     setPictures((prev) => {
-      const updated = [...prev];
-      const [moved] = updated.splice(index, 1);
-      updated.splice(index + 1, 0, moved);
-      return updated;
+      if (idx === prev.length - 1) return prev;
+      const arr = [...prev];
+      [arr[idx + 1], arr[idx]] = [arr[idx], arr[idx + 1]];
+      return arr;
     });
   };
 
   return (
     <Container>
-      <WritingBox>
-        <TextArea
-          ref={textRef}
-          value={text}
-          onChange={handleChange}
-          placeholder="상세 정보를 자유롭게 입력해주세요!"
-        />
-        <PictureList>
-          {pictures.map((pic, index) => (
-            <AttachedPicture
-              key={index}
-              picture={pic}
-              onDelete={() => handleDelete(index)}
-              onMoveUp={() => handleMoveUp(index)}
-              onMoveDown={() => handleMoveDown(index)}
+      {!previewMode ? (
+        <>
+          <WritingBox>
+            <TextArea
+              ref={textRef}
+              value={text}
+              onChange={handleChange}
+              placeholder="상세 정보를 자유롭게 입력해주세요!"
             />
-          ))}
-        </PictureList>
-      </WritingBox>
 
-      <InfoBox>
-        <p>•&nbsp;등록 후 기본 정보 및 상세 정보 수정 가능</p>
-        <p>
-          •&nbsp;등록 후 초대코드를 통해 다른 사람에게 작성자 권한 부여 가능
-        </p>
-        <p>
-          •&nbsp;작성자 권한 : 글 수정/삭제, 질문/응원/후기에 댓글 작성 권한
-        </p>
-      </InfoBox>
+            <PictureList>
+              {pictures.map((pic, index) => (
+                <AttachedPicture
+                  key={index}
+                  picture={pic.preview || pic.url}
+                  onDelete={() => handleDelete(index)}
+                  onMoveUp={() => handleMoveUp(index)}
+                  onMoveDown={() => handleMoveDown(index)}
+                />
+              ))}
+            </PictureList>
+          </WritingBox>
 
-      <BottomBar>
-        <BottomButton>
-          <CameraIcon alt="첨부" width={24} height={24} />
-          첨부
-        </BottomButton>
-        <BottomButton>
-          <PreviewIcon alt="미리보기" width={24} height={24} />
-          미리보기
-        </BottomButton>
-      </BottomBar>
+          <HiddenInput
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={handleImageUpload}
+          />
+
+          <InfoBox>
+            <p>• 등록 후 기본 정보 및 상세 정보 수정 가능</p>
+            <p>• 초대코드로 작성자 권한 부여 가능</p>
+            <p>• 작성자 권한: 수정/삭제, 질문·응원·후기 댓글 작성</p>
+          </InfoBox>
+
+          <BottomBar>
+            <BottomButton onClick={() => fileInputRef.current.click()}>
+              <CameraIcon width={24} height={24} />
+              첨부
+            </BottomButton>
+
+            <BottomButton onClick={() => setPreviewMode(true)}>
+              <PreviewIcon width={24} height={24} />
+              미리보기
+            </BottomButton>
+          </BottomBar>
+        </>
+      ) : (
+        <Preview
+          detail={{
+            ...stepOneData,
+            title: stepOneData.exhibitionName,
+            posterUrl: stepOneData.posterUrl,
+            place: stepOneData.place,
+            clubName: stepOneData.clubName,
+
+            price: stepOneData.price === 0 ? "무료" : `${stepOneData.price}원`,
+
+            period:
+              stepOneData.startDate === stepOneData.endDate
+                ? stepOneData.startDate
+                : `${stepOneData.startDate} - ${stepOneData.endDate}`,
+
+            duration: stepOneData.endTime
+              ? `${stepOneData.startTime} - ${stepOneData.endTime}`
+              : `${stepOneData.startTime}`,
+
+            content: text,
+            images: pictures.map((pic) => pic.url),
+          }}
+          onBack={() => setPreviewMode(false)}
+        />
+      )}
     </Container>
   );
 }
 
-/* ====== 스타일 ====== */
 const Container = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
+
+  /* 헤더가 fixed(46px)라서 그만큼 위를 비워줘야 함 */
+  padding-top: 46px;
 `;
 
 const WritingBox = styled.div`
   width: 100%;
-  height: 70%;
+  height: calc(100vh - 76px); /* BottomBar 높이 제외 */
+  padding-bottom: 100px; /* InfoBox + 여유 공간 */
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -139,14 +198,13 @@ const PictureList = styled.div`
   align-items: center;
   gap: 8px;
   margin: 16px 0;
-  margin-top: 20px;
 `;
 
 const InfoBox = styled.div`
-  position: fixed;
-  bottom: 90px;
+  width: 100%;
   background-color: ${({ theme }) => theme.colors.gray1};
   padding: 15px 20px;
+  margin-top: 20px;
   border-radius: 6px;
 
   p {
@@ -157,13 +215,13 @@ const InfoBox = styled.div`
 
 const BottomBar = styled.div`
   position: fixed;
-  bottom: 0px;
+  bottom: 0;
   width: 100%;
+
   height: 76px;
   padding-left: 20px;
   padding-bottom: 26px;
   display: flex;
-  flex-direction: row;
   gap: 8px;
   border-top: 0.5px solid ${({ theme }) => theme.colors.gray3};
   background-color: ${({ theme }) => theme.colors.white};
@@ -179,4 +237,7 @@ const BottomButton = styled.button`
   background: none;
   color: ${({ theme }) => theme.colors.gray8};
   ${({ theme }) => theme.textStyles.label1Medium};
+`;
+const HiddenInput = styled.input`
+  display: none;
 `;

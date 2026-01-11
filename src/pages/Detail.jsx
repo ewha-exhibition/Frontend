@@ -1,225 +1,375 @@
-import { useState, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import TopBar from "../components/Topbar";
 import BookingBar from "../components/detail/BookingBar";
 import ConfirmModal from "../components/detail/ConfirmModal";
-import { Cheer, Review, Question } from "../components/detail/Comment";
+import { Cheer, Question, Review } from "../components/detail/TabContents";
+//TODO: 호스트의 경우 햄버거 메뉴로 변경
+//TODO: 링크 복사 완료 모달
+//TODO: 회원가입 모달
 
 // Icons
 import locationIcon from "../assets/icons/Location.svg";
 import ticketIcon from "../assets/icons/Ticket.svg";
 import userIcon from "../assets/icons/User.svg";
-import CalenderIcon from "../assets/icons/Calender.svg?react";
-import clockIcon from "../assets/icons/Clock.svg";
+import ClockIcon from "../assets/icons/Clock.svg?react";
 import sendIcon from "../assets/icons/Send.svg";
+import CalenderIcon from "../assets/icons/Calender.svg?react";
 import Nothing from "../assets/icons/Nothing.svg?react";
 
 // API
-import useExhibitionDetail from "../utils/hooks/useExhibitionDetail";
-import useCommentList from "../utils/hooks/useCommentList";
-import usePostComment from "../utils/hooks/usePostComment";
-import useDeleteComment from "../utils/hooks/useDeleteCommnet";
-import useTestLogin from "../utils/hooks/useTestLogin"; //임시 토큰
+import { getExhibitionApi } from "../utils/apis/exhibition";
+import {
+  getCommentsApi,
+  createCommentApi,
+  deleteCommentApi,
+} from "../utils/apis/comment";
+import useAxios from "../utils/hooks/useAxios";
 
 export default function Detail() {
-  //임시 토큰
-  //const { token } = useTestLogin(1);
-  //console.log(localStorage.getItem("accessToken"));
-  // 현재 사용자
-  const [currentUser] = useState({
-    id: 1,
-    nickname: "호스트1",
-  });
 
-  // 페이지 파라미터: 전시 ID
+  const PAGE_SIZE = 10;
+  useAxios();
   const { id } = useParams();
-  const { detail, loading, error } = useExhibitionDetail(id);
+  const navigate = useNavigate();
 
-  // 현재 카테고리
-  const [currentCategory, setCurrentCategory] = useState("detail");
-
-  // 댓글, 응원 리스트 가져오기
-  const {
-    comments: commentList,
-    pageInfo,
-    loading: commentLoading,
-    error: commentError,
-    refetch,
-  } = useCommentList(currentCategory, id);
-
-  // 입력값
-  const [inputValue, setInputValue] = useState("");
-
-  // 등록 API
-  const { postComment } = usePostComment();
-  // 삭제 API
-  const { deleteContent } = useDeleteComment();
-
-  // detail 로컬 저장 (카운트 반영)
-  const [localDetail, setLocalDetail] = useState(null);
+  // 전시 정보 불러오기
+  const [exhibition, setExhibition] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    if (detail) setLocalDetail(detail);
-  }, [detail]);
+    if (!id) return;
+    async function fetchExhibition() {
+      try {
+        const res = await getExhibitionApi(id);
+        const json = res?.data ?? {};
+        setExhibition(json);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsLoading(false); // 성공하든 실패하든 로딩 종료
+      }
+    }
+    fetchExhibition();
+  }, [id]);
 
-  // 모달 상태
+  // 모달 창 관리
   const [modalState, setModalState] = useState({
     isOpen: false,
     type: null,
     targetId: null,
   });
 
-  const openModal = (type, targetId) =>
-    setModalState({ isOpen: true, type, targetId });
+  function openDeleteModal(postId) {
+    setModalState({ isOpen: true, type: currentTab, targetId: postId });
+  }
+  function openLoginModal() {
+    setModalState({ isOpen: true, type: "login", targetId: null });
+  }
+  function closeModal() {
+    setModalState({ isOpen: false, type: null, targetId: null });
+  }
 
-  const closeModal = () =>
-    setModalState((prev) => ({ ...prev, isOpen: false }));
+  // 로그인 상태
+  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
 
-  // 삭제 확정
-  const handleConfirm = async () => {
-    const { type, targetId } = modalState;
-
-    const res = await deleteContent({
-      type, // cheer, question, review
-      id: targetId,
-      token,
-    });
-
-    if (res?.status === 204) {
-      // 리스트 리패치
-      if (typeof refetch === "function") refetch();
-
-      //카운트 감소
-      if (type === "question") {
-        setLocalDetail((prev) => ({
-          ...prev,
-          questionCount: (prev.questionCount || 1) - 1,
-        }));
-      }
-
-      if (type === "cheer") {
-        setLocalDetail((prev) => ({
-          ...prev,
-          cheerCount: (prev.cheerCount || 1) - 1,
-        }));
-      }
-    }
-
-    closeModal();
+  // 댓글 입력
+  const [inputValue, setInputValue] = useState("");
+  const handleInputValueChange = (e) => {
+    setInputValue(e.target.value);
   };
 
-  // 입력값 변경
-  const handleInputChange = (e) => setInputValue(e.target.value);
+  // 탭, 카테고리
+  const [currentTab, setCurrentTab] = useState("detail");
+  const questionCount = exhibition?.questionCount ?? 0;
+  const cheerCount = exhibition?.cheerCount ?? 0;
+  const reviewCount = exhibition?.reviewCount ?? 0;
+  const categories = [
+    { key: "detail", label: "상세정보", count: null },
+    { key: "question", label: "질문", count: exhibition?.questionCount ?? 0 },
+    { key: "cheer", label: "응원", count: exhibition?.cheerCount ?? 0 },
+    { key: "review", label: "후기", count: exhibition?.reviewCount ?? 0 },
+  ];
+  const handleTabChange = (tab) => {
+    if (tab === currentTab) return;
+    setCurrentTab(tab);
+    if (tab === "detail") return;
+    setInputValue("");
+  };
 
-  // 등록
-  const handleSubmit = async () => {
-    if (!token) {
-      alert("토큰 발급 중입니다. 잠시 후 시도해주세요.");
+  //댓글 리스트 상태
+  const initialListState = {
+    items: [],
+    page: 0,
+    hasNext: true,
+    loading: false,
+  };
+  // 댓글 리스트, 현재 탭의 리스트만 관리
+  const [commentList, setCommentList] = useState({
+    ...initialListState,
+  });
+
+  // ♥️ 댓글 목록 불러오기 - 초기화
+  async function resetAndFetchFirstPage(tab) {
+    if (tab === "detail") return;
+    const exhibitionId = exhibition?.exhibitionId;
+    if (!exhibitionId) return;
+    // 로딩 시작
+    setCommentList((prev) => ({ ...prev, loading: true }));
+    try {
+      const res = await getCommentsApi({
+        exhibitionId: exhibitionId,
+        type: tab,
+        page: 0,
+        limit: PAGE_SIZE,
+      });
+
+      // 서버 응답 구조에 맞게 items 추출
+      const items = res?.data?.comments ?? [];
+      const pageInfo = res?.data?.pageInfo ?? {};
+      const hasNext = (pageInfo.pageNum ?? 0) < (pageInfo.totalPages ?? 0) - 1;
+      setCommentList({
+        items,
+        page: 1,
+        hasNext,
+        loading: false,
+      });
+    } catch (e) {
+      console.error(e);
+      setCommentList({ ...initialListState });
+    }
+  }
+
+  // ♥️ 댓글 목록 불러오기 - 다음 페이지
+  async function fetchNextPage(tab) {
+    if (currentTab === "detail") return;
+
+    const exhibitionId = exhibition?.exhibitionId;
+    if (!exhibitionId) return;
+
+    // 로딩 중이거나 더 가져올 게 없으면 중단
+    if (!commentList.hasNext || commentList.loading) return;
+
+    setCommentList((prev) => ({ ...prev, loading: true }));
+
+    try {
+      const res = await getCommentsApi({
+        exhibitionId: exhibitionId,
+        type: currentTab,
+        page: commentList.page,
+        limit: PAGE_SIZE,
+      });
+
+      const newItems = res?.data?.comments ?? [];
+      const pageInfo = res?.data?.pageInfo ?? {};
+      const hasNext = (pageInfo.pageNum ?? 0) < (pageInfo.totalPages ?? 0) - 1;
+
+      setCommentList((prev) => ({
+        ...prev,
+        items: [...prev.items, ...newItems],
+        page: prev.page + 1, // 다음 호출을 위해 +1
+        hasNext,
+        loading: false,
+      }));
+    } catch (e) {
+      console.error(e);
+      setCommentList((prev) => ({ ...prev, loading: false }));
+    }
+  }
+  // ♥️ 댓글 작성하기 (수정: 임시 로컬 갱신 -> 서버 재요청)
+  async function handleSubmitComment() {
+    if (!login) {
+      openLoginModal();
       return;
     }
-    if (!inputValue.trim()) return;
 
-    const res = await postComment({
-      type: currentCategory,
-      exhibitionId: id,
-      content: inputValue,
-      token,
-    });
+    const content = inputValue.trim();
+    if (!content) return;
 
-    if (res?.status === 200 || res?.status === 201) {
+    try {
+      const exhibitionId = exhibition?.exhibitionId;
+      if (!exhibitionId) return;
+
+      // 1. API 호출 (서버에 저장)
+      await createCommentApi({
+        exhibitionId: exhibitionId,
+        type: currentTab,
+        content,
+      });
+
+      // 2. 입력창 비우기
       setInputValue("");
 
-      if (typeof refetch === "function") refetch();
+      // 3. 목록 새로고침
+      await resetAndFetchFirstPage(currentTab);
 
-      // 카운트 증가
-      if (currentCategory === "question") {
-        setLocalDetail((prev) => ({
+      // 4. 카운트 갱신 (로컬)
+      setExhibition((prev) => {
+        const countKey = `${currentTab}Count`;
+        return {
           ...prev,
-          questionCount: (prev.questionCount || 0) + 1,
-        }));
-      }
-      if (currentCategory === "cheer") {
-        setLocalDetail((prev) => ({
+          [countKey]: (prev[countKey] || 0) + 1,
+        };
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  // ♥️ 주최자 대댓글 작성하기
+  const handleHostReply = async (targetId, replyContent) => {
+    // 1. 로그인 체크
+    if (!login) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    // 2. 빈 내용 체크
+    if (!replyContent.trim()) {
+      alert("답변 내용을 입력해주세요.");
+      return;
+    }
+
+    try {
+      // 3. API 호출
+      // ★ 예외 규칙 적용: exhibitionId 자리에 '부모 댓글 ID(targetId)'를 전달
+      await createCommentApi({
+        exhibitionId: targetId,
+        type: "comment", // 타입 고정
+        content: replyContent,
+      });
+
+      // 4. 성공 시 목록 새로고침
+      await resetAndFetchFirstPage(currentTab);
+    } catch (e) {
+      console.error("답변 등록 실패:", e);
+    }
+  };
+  // ♥️ 댓글 삭제하기
+  async function handleConfirmDelete() {
+    if (modalState.type === "copy") return;
+    const postId = modalState.targetId;
+    const type = modalState.type;
+
+    if (!postId) return;
+
+    try {
+      // 1. API 호출
+      await deleteCommentApi({ postId, type: currentTab });
+
+      closeModal();
+
+      // 2. 화면 즉시 갱신 (리스트에서 제거)
+      setCommentList((prev) => ({
+        ...prev,
+        items: prev.items.filter((item) => {
+          const itemId = item.postId;
+          return itemId !== postId;
+        }),
+      }));
+
+      // 3. 카운트 즉시 갱신 (-1)
+      setExhibition((prev) => {
+        const countKey = `${currentTab}Count`;
+        return {
           ...prev,
-          cheerCount: (prev.cheerCount || 0) + 1,
-        }));
-      }
+          [countKey]: Math.max(0, (prev[countKey] || 0) - 1),
+        };
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  // 탭 변경 시 리셋 로드
+  useEffect(() => {
+    if (currentTab === "detail") return;
+    if (!exhibition?.exhibitionId) return;
+
+    resetAndFetchFirstPage(currentTab);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTab, exhibition?.exhibitionId]);
+
+  // ♥️ 후기 작성 페이지 이동
+  const handleMoveToReview = () => {
+    navigate(`/createReview/${id}`); // 경로 예시
+  };
+  // ♥️ 공유 (링크 복사) 기능
+  const handleCopyLink = async () => {
+    try {
+      const currentUrl = window.location.href;
+      await navigator.clipboard.writeText(currentUrl);
+
+      setModalState({
+        isOpen: true,
+        type: "copy",
+        targetId: null,
+      });
+    } catch (error) {
+      console.error("링크 복사 실패:", error);
     }
   };
 
-  // 진행 여부 계산
-  const isOnGoing = useMemo(() => {
-    if (!detail?.period) return false;
-    try {
-      const [start, end] = detail.period.split(" - ");
-      if (!start || !end) return false;
+  // ♥️ 무한 스크롤 감지
+  const observerRef = useRef();
+  const lastElementRef = useCallback(
+    (node) => {
+      if (commentList.loading) return;
+      if (observerRef.current) observerRef.current.disconnect();
 
-      const today = new Date();
-      const startDate = new Date(start.replace(/\./g, "-"));
-      const endDate = new Date(end.replace(/\./g, "-"));
-      endDate.setHours(23, 59, 59, 999);
+      observerRef.current = new IntersectionObserver((entries) => {
+        // 화면에 보이고 & 다음 페이지가 있다면 호출
+        if (entries[0].isIntersecting && commentList.hasNext) {
+          fetchNextPage();
+        }
+      });
 
-      return today >= startDate && today <= endDate;
-    } catch (e) {
-      return false;
-    }
-  }, [detail?.period]);
+      if (node) observerRef.current.observe(node);
+    },
+    [commentList.loading, commentList.hasNext, currentTab]
+  );
 
-  // 무료 여부
-  const isFree = useMemo(() => {
-    return detail?.price === "무료";
-  }, [detail?.price]);
-
-  // 로딩처리
-  if (loading) return <div>Loading...</div>;
-  if (error || !detail?.exhibitionId)
-    return <div>데이터를 불러올 수 없습니다.</div>;
-
-  const categories = [
-    { key: "detail", label: "상세", count: 0 },
-    { key: "question", label: "질문", count: localDetail?.questionCount || 0 },
-    { key: "cheer", label: "응원", count: localDetail?.cheerCount || 0 },
-    { key: "review", label: "후기", count: localDetail?.reviewCount || 0 },
-  ];
-
+  //======================================UI=============================================
+  if (isLoading || !exhibition) {
+    return (
+      <div style={{ padding: "100px", textAlign: "center" }}>Loading...</div>
+    );
+  }
   return (
     <Container>
-      <TopBar title={null} icon={"Link"} />
-
+      <TopBar title={null} icon={"Link"} onClick={handleCopyLink} />
       {/* 공연 정보 */}
       <Header>
         <img
           className="img"
-          src={detail.posterUrl}
-          alt={detail.exhibitionName}
+          src={exhibition.posterUrl}
+          alt={exhibition.exhibitionName}
         />
-        <h1 className="h1">{detail.exhibitionName}</h1>
+        <h1 className="h1">{exhibition.exhibitionName}</h1>
 
         <Summary>
           <div className="div">
             <img className="svgIcon" src={locationIcon} alt="장소" />
-            <p className="p">{detail.place}</p>
+            <p className="p">{exhibition.place}</p>
           </div>
 
           <div className="div">
             <img className="svgIcon" src={ticketIcon} alt="가격" />
-            <p className="p">{detail.price}</p>
+            <p className="p">{exhibition.price}</p>
           </div>
 
           <div className="div">
             <img className="svgIcon" src={userIcon} alt="주최" />
-            <p className="p">{detail.clubName}</p>
+            <p className="p">{exhibition.clubName}</p>
           </div>
 
           <div className="div">
-            <CalenderIcon width={18} height={18} color="#57B190" />
-            <p className="p">{detail.period}</p>
+            <CalenderIcon width={18} height={18} color="#57B190" alt="날짜" />
+            <p className="p">{exhibition.period}</p>
           </div>
 
           <div className="div">
-            <img className="svgIcon" src={clockIcon} alt="시간" />
-            <p className="p">{detail.duration}</p>
+            <ClockIcon width={18} height={18} color="#57B190" alt="시간" />
+            <p className="p">{exhibition.duration}</p>
           </div>
         </Summary>
       </Header>
@@ -229,112 +379,177 @@ export default function Detail() {
         {categories.map(({ key, label, count }) => (
           <Category
             key={key}
-            isSelected={currentCategory === key}
-            onClick={() => {
-              setCurrentCategory(key);
-              setInputValue("");
-            }}
+            isSelected={currentTab === key}
+            onClick={() => handleTabChange(key)}
           >
             <p>{label}</p>
-            {count > 0 && <span>&nbsp;({count})</span>}
+            {count !== null && count > 0 && <span>&nbsp;({count})</span>}
           </Category>
         ))}
       </Categories>
 
       <Content>
         {/* 상세 */}
-        {currentCategory === "detail" && (
+        {currentTab === "detail" && (
           <DetailSection>
-            <p className="p">{detail.content}</p>
-            {detail.images?.map((img, idx) => (
-              <img className="img" key={idx} src={img} alt={`상세-${idx}`} />
+            <p className="p">{exhibition.content}</p>
+            {exhibition.images?.map((img, idx) => (
+              <img
+                className="img"
+                key={idx}
+                src={img}
+                alt={`상세 정보 이미지-${idx}`}
+              />
             ))}
           </DetailSection>
         )}
 
         {/* 질문 */}
-        {currentCategory === "question" && (
+        {currentTab === "question" && (
           <CommentSection>
-            <InputBox>
-              <div className="left">
-                <p className="nickname">익명</p>
-                <Input
-                  placeholder="주최자 분들에게 궁금한 점을 질문하세요!"
-                  value={inputValue}
-                  onChange={handleInputChange}
+            {!exhibition.host && (
+              <InputBox>
+                <div className="left">
+                  <p className="nickname">익명</p>
+                  <Input
+                    placeholder="주최자 분들에게 궁금한 점을 질문하세요!"
+                    value={inputValue}
+                    onChange={handleInputValueChange}
+                  />
+                </div>
+                <SendBtn
+                  src={sendIcon}
+                  alt="send"
+                  onClick={handleSubmitComment}
+                  onReply={handleHostReply}
                 />
-              </div>
-              <SendBtn src={sendIcon} alt="send" onClick={handleSubmit} />
-            </InputBox>
+              </InputBox>
+            )}
 
-            {commentLoading ? (
-              <p>Loading...</p>
-            ) : commentList.length === 0 ? (
-              <Nothing />
+            {/* 리스트 출력 */}
+            {commentList.items.length === 0 && !commentList.loading ? (
+              <CenteredDiv>
+                <Nothing />
+              </CenteredDiv>
             ) : (
-              commentList.map((comment) => (
-                <Question
-                  key={comment.id}
-                  comment={comment}
-                  openModal={openModal}
-                  currentUser={currentUser}
-                />
-              ))
+              commentList.items.map((comment, index) => {
+                // 마지막 요소에 ref 연결 (무한 스크롤)
+                const isLast = index === commentList.items.length - 1;
+                return (
+                  <div key={comment.id} ref={isLast ? lastElementRef : null}>
+                    <Question
+                      comment={comment}
+                      isHost={exhibition.host}
+                      openModal={() => openDeleteModal(comment.postId)}
+                      onReply={handleHostReply}
+                    />
+                  </div>
+                );
+              })
+            )}
+            {/* 로딩 표시 */}
+            {commentList.loading && (
+              <p style={{ textAlign: "center" }}>Loading...</p>
             )}
           </CommentSection>
         )}
 
         {/* 응원 */}
-        {currentCategory === "cheer" && (
+        {currentTab === "cheer" && (
           <CommentSection>
-            <InputBox>
-              <div className="left">
-                <p className="nickname">익명</p>
-                <Input
-                  placeholder="응원의 한마디를 남겨주세요!"
-                  value={inputValue}
-                  onChange={handleInputChange}
+            {!exhibition.host && (
+              <InputBox>
+                <div className="left">
+                  <p className="nickname">익명</p>
+                  <Input
+                    placeholder="응원의 한마디를 남겨주세요!"
+                    value={inputValue}
+                    onChange={handleInputValueChange}
+                  />
+                </div>
+                <SendBtn
+                  src={sendIcon}
+                  alt="send"
+                  onClick={handleSubmitComment}
                 />
-              </div>
-              <SendBtn src={sendIcon} alt="send" onClick={handleSubmit} />
-            </InputBox>
+              </InputBox>
+            )}
 
-            {commentLoading ? (
-              <p>Loading...</p>
-            ) : commentList.length === 0 ? (
-              <Nothing />
+            {commentList.items.length === 0 && !commentList.loading ? (
+              <CenteredDiv>
+                <Nothing />
+              </CenteredDiv>
             ) : (
-              commentList.map((comment) => (
-                <Cheer
-                  key={comment.id}
-                  comment={comment}
-                  openModal={openModal}
-                  currentUser={currentUser}
-                />
-              ))
+              commentList.items.map((comment, index) => {
+                const isLast = index === commentList.items.length - 1;
+                return (
+                  <div key={comment.id} ref={isLast ? lastElementRef : null}>
+                    <Cheer
+                      comment={comment}
+                      isHost={exhibition.host}
+                      openModal={() => openDeleteModal(comment.postId)}
+                      onReply={handleHostReply}
+                    />
+                  </div>
+                );
+              })
+            )}
+            {commentList.loading && (
+              <p style={{ textAlign: "center" }}>Loading...</p>
             )}
           </CommentSection>
         )}
 
         {/* 후기 */}
-        {currentCategory === "review" && (
+        {currentTab === "review" && (
           <CommentSection>
             <div className="review">
               <DropShape>관람 후 느낀 점을 나눠주세요!</DropShape>
-              <WriteReviewButton>후기 작성하기</WriteReviewButton>
+              <WriteReviewButton onClick={handleMoveToReview}>
+                후기 작성하기
+              </WriteReviewButton>
             </div>
+            {commentList.items.length === 0 && !commentList.loading ? (
+              <CenteredDiv>
+                <Nothing />
+              </CenteredDiv>
+            ) : (
+              commentList.items.map((comment, index) => {
+                const isLast = index === commentList.items.length - 1;
+                return (
+                  <div key={comment.id} ref={isLast ? lastElementRef : null}>
+                    <Review
+                      comment={comment}
+                      isHost={exhibition.host}
+                      openModal={() => openDeleteModal(comment.postId)}
+                      onReply={handleHostReply}
+                    />
+                  </div>
+                );
+              })
+            )}
+            {commentList.loading && (
+              <p style={{ textAlign: "center" }}>Loading...</p>
+            )}{" "}
           </CommentSection>
         )}
       </Content>
 
-      <BookingBar isOnGoing={isOnGoing} isFree={isFree} />
+      <BookingBar
+        exhibitionId={exhibition.exhibitionId}
+        isScraped={exhibition.isScraped}
+        period={exhibition?.period}
+        price={exhibition?.price}
+        scrapCount={exhibition?.scrapCount}
+        link={exhibition?.link}
+      />
 
       {/* 삭제 확인 모달 */}
       <ConfirmModal
         isOpen={modalState.isOpen}
         type={modalState.type}
         onClose={closeModal}
-        onConfirm={handleConfirm}
+        onConfirm={handleConfirmDelete}
       />
     </Container>
   );
@@ -342,9 +557,13 @@ export default function Detail() {
 
 // 스타일 컴포넌트들
 const Container = styled.div`
-  width: 100%;
+  width: 100vw;
+  max-width: 540px;
   height: 100vh;
   padding-top: 46px;
+  display: flex;
+  flex-direction: column;
+  padding: 0px 20px 0px 20px;
 `;
 
 const Header = styled.div`
@@ -352,7 +571,6 @@ const Header = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 0px 20px 0px 20px;
   gap: 20px;
   .img {
     width: 200px;
@@ -385,6 +603,7 @@ const Summary = styled.div`
   .svgIcon {
     width: 18px;
     height: 18px;
+    color: ${({ theme }) => theme.colors.Primary30};
   }
   .p {
     ${({ theme }) => theme.textStyles.label2Medium};
@@ -400,6 +619,11 @@ const Categories = styled.div`
   padding: 0 20px;
   justify-content: space-between;
   border-bottom: 1px solid ${({ theme }) => theme.colors.gray3};
+
+  position: sticky;
+  top: 46px;
+  z-index: 100;
+  background-color: ${({ theme }) => theme.colors.white || "#fff"};
 `;
 
 const Category = styled.div`
@@ -440,11 +664,12 @@ const DetailSection = styled.div`
 `;
 
 const CommentSection = styled.div`
-  width: 100%;
   display: flex;
+  width: 100%;
   flex-direction: column;
-  align-items: center;
-  padding: 22px 19px 120px 19px;
+  justify-content: flex-start;
+  padding: 22px 19px 120px 25px;
+  background: ${({ theme }) => theme.colors.gray1};
 
   .review {
     display: flex;
@@ -456,7 +681,6 @@ const CommentSection = styled.div`
 
 const InputBox = styled.div`
   width: 100%;
-  max-width: 336px;
   height: 44px;
   margin-bottom: 15px;
   padding: 10px 14px;
@@ -527,8 +751,19 @@ const WriteReviewButton = styled.button`
   border-radius: 6px;
   background-color: ${({ theme }) => theme.colors.white};
   border: 1px solid ${({ theme }) => theme.colors.Primary60};
-
   ${({ theme }) => theme.textStyles.titleSemibold};
   color: ${({ theme }) => theme.colors.Primary60};
+  text-align: center;
+  &:hover {
+    border: 1px solid ${({ theme }) => theme.colors.Primary60};
+  }
+`;
+const CenteredDiv = styled.div`
+  width: 100%;
+  min-height: 300px; /* 최소 높이를 줘야 세로 중앙 정렬이 티가 납니다 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 세로 중앙 */
+  align-items: center; /* 가로 중앙 */
   text-align: center;
 `;

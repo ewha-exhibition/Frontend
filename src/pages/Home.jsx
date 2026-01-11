@@ -16,11 +16,11 @@ import useRankingExhibitions from "../utils/hooks/useRankingExhibitions";
 import useLatestExhibitions from "../utils/hooks/useLatestExhibitions";
 
 //top10 컴포넌트
-function TopTenItem({ rank, exhibitionId, title, poster, scraped }) {
+function TopTenItem({ rank, exhibitionId, title, poster, scraped, onClick }) {
   return (
     <Card>
       <Poster poster={poster}>
-        <Overlay />
+        <Overlay onClick={onClick} />
         <Bar>
           <Rank>{rank}</Rank>
           <BookmarkIcon width={16} height={19} />
@@ -106,6 +106,7 @@ export default function Home() {
                 title={item.exhibitionName}
                 rank={index + 1}
                 poster={item.posterUrl}
+                onClick={() => navigate(`/detail/${item.exhibitionId}`)}
               />
             ))}
         </TopTenList>
@@ -142,6 +143,7 @@ export default function Home() {
                 poster={item.posterUrl}
                 onGoing={item.open}
                 scraped={item.scrap}
+                onClick={() => navigate(`/detail/${item.exhibitionId}`)}
                 onToggleScrap={handleToggleScrap}
               />
             ))}
@@ -160,10 +162,7 @@ const Container = styled.div`
   width: 100%;
   max-width: 540px;
   margin: 0 auto;
-
-  /* 헤더가 fixed(46px)라서 그만큼 위를 비워줘야 함 */
-  padding-top: 46px;
-
+  /* padding-top: 46px; */
   background: linear-gradient(
     to bottom,
     #00664f 0%,
@@ -174,11 +173,11 @@ const Container = styled.div`
 `;
 
 const Header = styled.div`
-  position: fixed;
+  /* ✅ 변경: fixed -> sticky */
+  position: sticky;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(540px, 100vw);
+  width: 100%;
+  box-sizing: border-box;
   background: #00664f;
   display: flex;
   justify-content: space-between;
@@ -196,8 +195,6 @@ const StyledSearchIcon = styled(SearchIcon)`
   height: 24px;
   color: #dbf3ec;
 `;
-//padding: 18.812 to 19
-//gap: 92.19 to 92
 const SearchBar = styled.div`
   width: 100%;
   display: inline-flex;
