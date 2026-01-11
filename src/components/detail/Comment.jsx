@@ -1,4 +1,4 @@
-import styled from "styled-components";
+/*import styled from "styled-components";
 import PhotoArea from "../guestBook/PhotoArea";
 import commentIcon from "../../assets/icons/comment.svg";
 import deleteIcon from "../../assets/icons/DeleteComment.svg";
@@ -133,7 +133,7 @@ function Reply({ reply, openModal, currentUser }) {
           <div className="info">
             <p className="id">{reply.nickname}</p>
             <p className="date">{reply.date}</p>
-          </div>{" "}
+          </div>
           {currentUser?.nickname === reply.nickname && (
             <img
               className="delete"
