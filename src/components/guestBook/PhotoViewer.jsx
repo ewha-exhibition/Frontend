@@ -3,7 +3,15 @@ import { useEffect, useRef } from "react";
 
 import XIcon from "../../assets/icons/X.svg?react";
 
-export default function PhotoViewer({ pics, index, onClose, setIndex }) {
+export default function PhotoViewer({
+  imageUrls,
+  index,
+  onClose,
+  setIndex,
+  urlLength,
+}) {
+  //console.log("pics2:", imageUrls);
+  console.log(urlLength);
   const startX = useRef(null);
   const endX = useRef(null);
 
@@ -18,8 +26,8 @@ export default function PhotoViewer({ pics, index, onClose, setIndex }) {
     return () => window.removeEventListener("keydown", handleKey);
   }, [index]);
 
-  const next = () => setIndex((prev) => (prev + 1) % pics.length);
-  const prev = () => setIndex((prev) => (prev - 1 + pics.length) % pics.length);
+  const next = () => setIndex((prev) => (prev + 1) % urlLength);
+  const prev = () => setIndex((prev) => (prev - 1 + urlLength) % urlLength);
 
   // 모바일 스와이프 핸들러
   const handleTouchStart = (e) => {
@@ -50,7 +58,7 @@ export default function PhotoViewer({ pics, index, onClose, setIndex }) {
       <TopArea>
         <StyledX width={24} height={24} onClick={onClose} />
         <p>
-          {index + 1}/{pics.length}
+          {index + 1}/{urlLength}
         </p>
       </TopArea>
 
@@ -60,7 +68,7 @@ export default function PhotoViewer({ pics, index, onClose, setIndex }) {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <img src={pics[index].src} alt="선택사진" />
+        <img src={imageUrls[index].src} alt="선택사진" />
       </Viewer>
     </Overlay>
   );

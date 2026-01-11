@@ -29,7 +29,7 @@ import {
 import useAxios from "../utils/hooks/useAxios";
 
 export default function Detail() {
-  // limit: 한 페이지당 댓글 개수
+
   const PAGE_SIZE = 10;
   useAxios();
   const { id } = useParams();

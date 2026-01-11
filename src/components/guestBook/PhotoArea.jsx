@@ -1,17 +1,22 @@
 import styled from "styled-components";
 
-function PhotoArea({ pics, onOpen }) {
-  const count = pics.length;
+function PhotoArea({ imageUrls, onOpen, urlLength }) {
+  console.log(imageUrls);
+  const count = urlLength;
 
   const handleClick = (i) => {
     if (onOpen) onOpen(i);
   };
 
+  if (!Array.isArray(imageUrls) || imageUrls.length === 0) {
+    return <Wrapper />;
+  }
+
   if (count === 1) {
     return (
       <Wrapper>
         <OneImg>
-          <img onClick={() => handleClick(0)} src={pics[0].src} alt="사진1" />
+          <img onClick={() => handleClick(0)} src={imageUrls[0]} alt="사진1" />
         </OneImg>
       </Wrapper>
     );
@@ -21,12 +26,12 @@ function PhotoArea({ pics, onOpen }) {
     return (
       <Wrapper>
         <TwoImg>
-          {pics.map((p, i) => (
+          {imageUrls.map((p, i) => (
             <img
-              onClick={() => handleClick(i)}
               key={i}
-              src={p.src}
+              src={p}
               alt={`사진 ${i + 1}`}
+              onClick={() => handleClick(i)}
             />
           ))}
         </TwoImg>
@@ -39,11 +44,23 @@ function PhotoArea({ pics, onOpen }) {
       <Wrapper>
         <ThreeImg>
           <div className="left">
-            <img onClick={() => handleClick(0)} src={pics[0].src} alt="사진1" />
+            <img
+              onClick={() => handleClick(0)}
+              src={imageUrls[0]}
+              alt="사진1"
+            />
           </div>
           <div className="right">
-            <img onClick={() => handleClick(1)} src={pics[1].src} alt="사진2" />
-            <img onClick={() => handleClick(2)} src={pics[2].src} alt="사진3" />
+            <img
+              onClick={() => handleClick(1)}
+              src={imageUrls[1]}
+              alt="사진2"
+            />
+            <img
+              onClick={() => handleClick(2)}
+              src={imageUrls[2]}
+              alt="사진3"
+            />
           </div>
         </ThreeImg>
       </Wrapper>
@@ -55,12 +72,28 @@ function PhotoArea({ pics, onOpen }) {
       <Wrapper>
         <FourImg>
           <div className="left">
-            <img onClick={() => handleClick(0)} src={pics[0].src} alt="사진1" />
-            <img onClick={() => handleClick(2)} src={pics[2].src} alt="사진3" />
+            <img
+              onClick={() => handleClick(0)}
+              src={imageUrls[0]}
+              alt="사진1"
+            />
+            <img
+              onClick={() => handleClick(2)}
+              src={imageUrls[2]}
+              alt="사진3"
+            />
           </div>
           <div className="right">
-            <img onClick={() => handleClick(1)} src={pics[1].src} alt="사진2" />
-            <img onClick={() => handleClick(4)} src={pics[3].src} alt="사진4" />
+            <img
+              onClick={() => handleClick(1)}
+              src={imageUrls[1]}
+              alt="사진2"
+            />
+            <img
+              onClick={() => handleClick(3)}
+              src={imageUrls[3]}
+              alt="사진4"
+            />
           </div>
         </FourImg>
       </Wrapper>
