@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
-import ReivewItem from "../../components/guestBook/ReviewItem";
+import ReviewItem from "../../components/guestBook/ReviewItem";
 
 import poster1 from "../../assets/mock/poster1.jpg";
 import poster2 from "../../assets/mock/poster2.jpg";
@@ -76,7 +76,7 @@ function Review() {
   return (
     <Container>
       {reviewData?.data.posts.map((data) => (
-        <ReivewItem
+        <ReviewItem
           key={data.postId}
           poster={data.posterUrl}
           title={data.title}

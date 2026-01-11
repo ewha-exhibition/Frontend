@@ -3,6 +3,7 @@ import styled from "styled-components";
 function InputBox({
   placeholder,
   Icon,
+  type,
   max,
   value = "",
   onChange,
@@ -12,10 +13,20 @@ function InputBox({
 }) {
   const handleChange = (e) => {
     const inputVal = e.target.value;
+    if (type === "number") {
+      const rawNumber = inputVal.replace(/[^0-9]/g, "");
 
-    if (max && inputVal.length > max) return;
-
-    onChange?.(inputVal);
+      if (rawNumber === "") {
+        onChange?.("");
+        return;
+      }
+      // 콤마 포맷팅
+      const formattedValue = Number(rawNumber).toLocaleString();
+    } else {
+      // 일반 텍스트 입력일 경우
+      if (max && inputVal.length > max) return;
+      onChange?.(inputVal);
+    }
   };
 
   return (
@@ -23,6 +34,8 @@ function InputBox({
       <Box onClick={onClick}>
         <input
           placeholder={placeholder}
+          type={type === "number" ? "text" : type}
+          inputMode={type === "number" ? "numeric" : "text"}
           value={value}
           onChange={handleChange}
           readOnly={readOnly}

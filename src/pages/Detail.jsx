@@ -9,7 +9,6 @@ import { Cheer, Question, Review } from "../components/detail/TabContents";
 //TODO: 호스트의 경우 햄버거 메뉴로 변경
 //TODO: 링크 복사 완료 모달
 //TODO: 회원가입 모달
-//TODO: 호스트 댓글 작성 모달
 
 // Icons
 import locationIcon from "../assets/icons/Location.svg";
@@ -74,10 +73,6 @@ export default function Detail() {
 
   // 로그인 상태
   const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
-  sessionStorage.setItem(
-    "accessToken",
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc2NzQ4NDkzNSwiZXhwIjoxNzY3NDg4NTM1fQ.bkNbMH6XCtAitgEFToocwOtd-tqdFOPLf_X8HlCJv5Q"
-  ); //테스트용***
 
   // 댓글 입력
   const [inputValue, setInputValue] = useState("");
@@ -252,6 +247,7 @@ export default function Detail() {
   };
   // ♥️ 댓글 삭제하기
   async function handleConfirmDelete() {
+    if (modalState.type === "copy") return;
     const postId = modalState.targetId;
     const type = modalState.type;
 
@@ -300,8 +296,14 @@ export default function Detail() {
   // ♥️ 공유 (링크 복사) 기능
   const handleCopyLink = async () => {
     try {
-      const currentUrl = window.location.href; // 현재 페이지 URL 가져오기
+      const currentUrl = window.location.href;
       await navigator.clipboard.writeText(currentUrl);
+
+      setModalState({
+        isOpen: true,
+        type: "copy",
+        targetId: null,
+      });
     } catch (error) {
       console.error("링크 복사 실패:", error);
     }
@@ -426,7 +428,9 @@ export default function Detail() {
 
             {/* 리스트 출력 */}
             {commentList.items.length === 0 && !commentList.loading ? (
-              <Nothing />
+              <CenteredDiv>
+                <Nothing />
+              </CenteredDiv>
             ) : (
               commentList.items.map((comment, index) => {
                 // 마지막 요소에 ref 연결 (무한 스크롤)
@@ -472,7 +476,9 @@ export default function Detail() {
             )}
 
             {commentList.items.length === 0 && !commentList.loading ? (
-              <Nothing />
+              <CenteredDiv>
+                <Nothing />
+              </CenteredDiv>
             ) : (
               commentList.items.map((comment, index) => {
                 const isLast = index === commentList.items.length - 1;
@@ -504,7 +510,9 @@ export default function Detail() {
               </WriteReviewButton>
             </div>
             {commentList.items.length === 0 && !commentList.loading ? (
-              <Nothing />
+              <CenteredDiv>
+                <Nothing />
+              </CenteredDiv>
             ) : (
               commentList.items.map((comment, index) => {
                 const isLast = index === commentList.items.length - 1;
@@ -549,7 +557,8 @@ export default function Detail() {
 
 // 스타일 컴포넌트들
 const Container = styled.div`
-  width: 100%;
+  width: 100vw;
+  max-width: 540px;
   height: 100vh;
   padding-top: 46px;
   display: flex;
@@ -748,4 +757,13 @@ const WriteReviewButton = styled.button`
   &:hover {
     border: 1px solid ${({ theme }) => theme.colors.Primary60};
   }
+`;
+const CenteredDiv = styled.div`
+  width: 100%;
+  min-height: 300px; /* 최소 높이를 줘야 세로 중앙 정렬이 티가 납니다 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 세로 중앙 */
+  align-items: center; /* 가로 중앙 */
+  text-align: center;
 `;

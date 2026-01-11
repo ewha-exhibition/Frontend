@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 //컴포넌트
 import InputBox from "../../components/enrollEvent/InputBox";
@@ -11,7 +11,7 @@ import useS3Upload from "../../utils/hooks/useS3Upload";
 import CameraIcon from "../../assets/icons/Camera.svg?react";
 import ClockIcon from "../../assets/icons/Clock.svg?react";
 
-function EnrollStepOne({ data, setData }) {
+function EnrollStepOne({ data, setData, setIsNextActive }) {
   const fileInputRef = useRef(null);
   const { uploadToS3 } = useS3Upload();
   const [isFree, setIsFree] = useState(false);
@@ -25,6 +25,32 @@ function EnrollStepOne({ data, setData }) {
     setData((prev) => ({ ...prev, [key]: value }));
   };
 
+  //입력값 검사
+  useEffect(() => {
+    const safeStr = (val) => String(val || "").trim();
+
+    const hasCategory = !!data.category;
+    const hasName = safeStr(data.exhibitionName) !== "";
+    const hasPlace = safeStr(data.place) !== "";
+    const hasDate = !!data.startDate;
+    const hasStartTime = !!data.startTime;
+    const hasClubName = safeStr(data.clubName) !== "";
+
+    const hasPrice = isFree || safeStr(data.price) !== "";
+    const hasLink = noTicket || safeStr(data.link) !== "";
+
+    const isValid =
+      hasCategory &&
+      hasName &&
+      hasPlace &&
+      hasDate &&
+      hasStartTime &&
+      hasPrice &&
+      hasLink &&
+      hasClubName;
+    setIsNextActive?.(isValid);
+  }, [data, isFree, noTicket, setIsNextActive]);
+
   // 포스터 업로드
   const handlePosterChange = async (e) => {
     const file = e.target.files?.[0];
@@ -34,7 +60,7 @@ function EnrollStepOne({ data, setData }) {
     const previewUrl = URL.createObjectURL(file);
     update("posterPreviewUrl", previewUrl);
 
-    // 실제 S3 업로드 실행 (Hook 호출)
+    // 실제 S3 업로드 실행
     const s3Url = await uploadToS3(file, "/exhibition/posters");
 
     if (s3Url) {
@@ -202,7 +228,11 @@ function EnrollStepOne({ data, setData }) {
         </CheckBoxArea>
 
         {!isFree && (
-          <InputBox value={data.price} onChange={(v) => update("price", v)} />
+          <InputBox
+            value={data.price}
+            type="number"
+            onChange={(v) => update("price", v)}
+          />
         )}
       </Section>
 

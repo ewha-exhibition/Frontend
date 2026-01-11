@@ -16,6 +16,7 @@ export default function EnrollEvent() {
   const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
 
   const [step, setStep] = useState(1);
+  const [isNextActive, setIsNextActive] = useState(false);
 
   const { createExhibition } = usePostExhibition();
 
@@ -178,8 +179,18 @@ export default function EnrollEvent() {
       <Content>
         {step === 1 && (
           <>
-            <EnrollStepOne data={stepOneData} setData={setStepOneData} />
-            <NextButton onClick={handleNextStep}>다음으로</NextButton>
+            <EnrollStepOne
+              data={stepOneData}
+              setData={setStepOneData}
+              setIsNextActive={setIsNextActive}
+            />
+            <NextButton
+              disabled={!isNextActive}
+              $isActive={isNextActive}
+              onClick={handleNextStep}
+            >
+              다음으로
+            </NextButton>
           </>
         )}
 
@@ -202,6 +213,7 @@ const Container = styled.div`
   width: 100%;
   height: 100vh;
   padding-top: 46px;
+  background-color: white;
 
   display: flex;
   flex-direction: column;
@@ -268,6 +280,9 @@ const NextButton = styled.button`
   align-items: center;
   border-radius: 6px;
   ${({ theme }) => theme.textStyles.label0SemiBold};
-  background-color: ${({ theme }) => theme.colors.Primary50};
-  color: ${({ theme }) => theme.colors.white};
+  background-color: ${({ $isActive, theme }) =>
+    $isActive ? theme.colors.Primary50 : theme.colors.gray3};
+
+  color: ${({ $isActive, theme }) =>
+    $isActive ? theme.colors.white : theme.colors.gray6};
 `;

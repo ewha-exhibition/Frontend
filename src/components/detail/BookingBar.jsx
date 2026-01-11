@@ -111,7 +111,7 @@ export default function BookingBar({
         method: method,
       });
 
-      // 성공하면 아무것도 안 해도 됨 (이미 화면은 바뀌어 있음)
+      // 성공
       console.log("스크랩 변경 성공");
     } catch (e) {
       console.error("스크랩 에러:", e);
@@ -119,7 +119,6 @@ export default function BookingBar({
       // 실패 시 원상복구 (
       setIsScraped(prevScraped);
       setCount(prevCount);
-      alert("스크랩 변경에 실패했습니다.");
     }
   };
 
@@ -153,11 +152,17 @@ export default function BookingBar({
 }
 
 const Container = styled.div`
-  width: min(540px, 100vw);
-  height: 60px;
   position: fixed;
   bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 540px;
+  height: 60px;
+
   padding-left: 20px;
+  box-sizing: border-box;
 
   display: flex;
   flex-direction: row;
@@ -166,6 +171,8 @@ const Container = styled.div`
 
   background-color: ${({ theme }) => theme.colors.white};
   border-top: 0.5px solid ${({ theme }) => theme.colors.gray3};
+
+  z-index: 100;
 `;
 //CHECK: 스크랩 버튼 터치 영역?
 const ScrapButton = styled.button`
