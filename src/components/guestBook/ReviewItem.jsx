@@ -19,7 +19,7 @@ function ReivewItem({
   onRequestDelete,
 }) {
   console.log("pics1:", imageUrls);
-  console.log(imageUrls.length);
+  //console.log(imageUrls.length);
 
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);

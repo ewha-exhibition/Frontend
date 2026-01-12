@@ -37,7 +37,7 @@ function MyReviews() {
 
   return (
     <Container>
-      <Topbar title={"작성한 후기"} icon={"none"} />
+      <Topbar title={"작성한 후기"} icon={null} />
       <Content>
         {myReviewData?.data?.items.map((data) => (
           <ReivewItem
@@ -47,7 +47,7 @@ function MyReviews() {
             poster={data.posterUrl}
             title={data.exhibitionName}
             review={data.content}
-            pic={data.images}
+            imageUrls={data.imageUrls}
             mine={data.mine}
             onRequestDelete={(postId) => {
               setTargetPostId(postId);
