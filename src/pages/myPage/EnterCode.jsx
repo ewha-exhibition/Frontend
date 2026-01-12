@@ -49,7 +49,7 @@ function EnterCode() {
         />
       )}
 
-      <Topbar title={"초대코드 입력하기"} icon={"none"} />
+      <Topbar title={"초대코드 입력하기"} icon={null} />
       <Content>
         <SubTitle>공연/전시 초대코드를 입력해 주세요.</SubTitle>
         <CustomInput>

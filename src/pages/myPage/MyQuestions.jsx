@@ -34,7 +34,7 @@ function MyQuestions() {
 
   return (
     <Container>
-      <Topbar title={"작성한 질문"} icon={"none"} />
+      <Topbar title={"작성한 질문"} icon={null} />
       <Content>
         {myQData?.data?.previews.map((data) => (
           <CheeringItem

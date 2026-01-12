@@ -34,7 +34,7 @@ function MyExpectations() {
 
   return (
     <Container>
-      <Topbar title={"작성한 기대평"} icon={"none"} />
+      <Topbar title={"작성한 기대평"} icon={null} />
       <Content>
         {myExData?.data.previews.map((data) => (
           <CheeringItem
