@@ -5,10 +5,6 @@ import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import ReviewItem from "../../components/guestBook/ReviewItem";
 
-import poster1 from "../../assets/mock/poster1.jpg";
-import poster2 from "../../assets/mock/poster2.jpg";
-import poster3 from "../../assets/mock/poster3.jpg";
-
 function Review() {
 
   const [pageNow, setPageNow] = useState(0);
