@@ -1,5 +1,5 @@
 import styled from "styled-components";
-
+import { useState } from "react";
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
 import { toggleScrap } from "../../utils/apis/toggleScrap";
 
@@ -14,31 +14,33 @@ export default function EventList({
   poster,
   scraped,
   onClick,
-  onToggleScrap,
+  onScrapClick,
 }) {
   {
+    const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
     const { fetchData } = useCustomFetch();
 
-    const handleScrapClick = async () => {
-      const success = await toggleScrap(fetchData, id, scraped);
-
-      if (success) {
-        onToggleScrap(id);
-      }
+    const handleBookmarkClick = () => {
+      onScrapClick(id, scraped, fetchData);
     };
+
     return (
       <Component>
-        <Container onClick={onClick}>
-          <img src={poster} alt={title} />
-          <TextArea>
+        <Container>
+          <img src={poster} alt={title} onClick={onClick} />
+          <TextArea onClick={onClick}>
             <div className="titleBox">{title}</div>
             <p>{place}</p>
             <p>{date}</p>
           </TextArea>
           {scraped ? (
-            <GreenBookmark width={24} height={24} onClick={handleScrapClick} />
+            <GreenBookmark
+              width={24}
+              height={24}
+              onClick={handleBookmarkClick}
+            />
           ) : (
-            <BookmarkOL width={24} height={24} onClick={handleScrapClick} />
+            <BookmarkOL width={24} height={24} onClick={handleBookmarkClick} />
           )}
         </Container>
         <Br />
