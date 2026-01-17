@@ -110,6 +110,7 @@ function CreateReview() {
           <p className="noti">
             작성한 글은 삭제는 가능하나 수정할 수 없습니다.
           </p>
+          <p className="noti">사진은 최대 4장까지 첨부 가능합니다.</p>
         </div>
       </Content>
       <UploadBtn disabled={!content.trim()} onClick={handleSubmit}>

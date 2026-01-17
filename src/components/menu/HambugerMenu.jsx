@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import styled, { keyframes } from "styled-components";
 import theme from "../../style/Theme.jsx";
 import MenuBanner from "../../assets/icons/MenuBanner.png";
+import DeepGreenLogo from "../../assets/icons/logo_darkgreen.png";
 
 export default function HamburgerMenu({ open, onClose }) {
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function HamburgerMenu({ open, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <Header>
-          <Brand>綠’ KNOCK</Brand>
+          <Logo src={DeepGreenLogo} alt="녹색 로고"/>
         </Header>
 
         <MenuContainer>
@@ -87,10 +88,8 @@ const Header = styled.div`
   padding: 83px 23px 0;
 `;
 
-const Brand = styled.div`
-  ${theme.textStyles.headline2Bold};
-  color: ${theme.colors.Primary60};
-  letter-spacing: ${theme.font.letterSpacing.default};
+const Logo = styled.img`
+  width: 88px;
 `;
 
 const MenuContainer = styled.div`

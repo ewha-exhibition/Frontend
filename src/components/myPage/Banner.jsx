@@ -1,37 +1,26 @@
 import styled from "styled-components";
+import NewBanner from "../../assets/icons/my_banner_new.png";
 
 function Banner() {
   return (
     <Container>
-      <div>
-        <span className="logo">綠’ KNOCK</span> 홈 화면에 추가해서 앱처럼 사용하는 방법!
-      </div>
+      <BannerImage src={NewBanner} alt="홈 화면에 추가 안내 배너" />
     </Container>
   );
 }
 
 export default Banner;
 
-//배너 내용 변경될 걸 생각하여 컴포넌트로 제작함
-//기본 내용으로 작성됨
 const Container = styled.div`
   width: 100%;
-  height: 70px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
+  height: 70px; 
+  overflow: hidden; 
   background-color: ${({ theme }) => theme.colors.Primary10};
+`;
 
-  color: ${({ theme }) => theme.colors.Primary60};
-  font-size: ${({ theme }) => theme.font.fontSize.body14};
-  font-weight: ${({ theme }) => theme.font.fontWeight.semiBold};
-  line-height: ${({ theme }) => theme.font.lineHeight.normal};
-
-  .logo {
-    font-size: ${({ theme }) => theme.font.fontSize.headline18};
-    font-weight: ${({ theme }) => theme.font.fontWeight.regular};
-    line-height: ${({ theme }) => theme.font.lineHeight.normal};
-  }
+const BannerImage = styled.img`
+  width: 100%;
+  height: 100%; 
+  object-fit: contain; 
+  display: block;
 `;
