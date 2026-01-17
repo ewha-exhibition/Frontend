@@ -8,6 +8,15 @@ export const GlobalStyle = createGlobalStyle`
     }
 
     @font-face {
+    font-family: "GMarketSans";
+    font-style: normal;
+    font-weight: 700;
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff") format("woff");
+    font-display: swap;
+}
+
+
+    @font-face {
         font-family: 'SUIT-Variable';
         font-style: normal;
         font-weight: 100 900;
