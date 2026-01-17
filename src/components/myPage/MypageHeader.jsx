@@ -1,11 +1,11 @@
 import styled from "styled-components";
-
 import MenuTrigger from "../menu/MenuTrigger";
+import NewLogo from "../../assets/icons/Logo.svg";
 
 function MypageHeader({ color, authorized, nickname }) {
   return (
     <Container color={color}>
-      {authorized ? <Nickname>{nickname} 님</Nickname> : <Logo>綠’ KNOCK</Logo>}
+      {authorized ? <Nickname>{nickname}</Nickname> : <Logo src={NewLogo} />}
       <MenuTrigger />
     </Container>
   );
@@ -25,15 +25,15 @@ const Container = styled.div`
   padding: 14px 20px;
 `;
 
-const Logo = styled.div`
-  color: ${({ theme }) => theme.colors.white};
-  font-size: ${({ theme }) => theme.font.fontSize.headline18};
-  font-weight: ${({ theme }) => theme.font.fontWeight.regular};
-  line-height: ${({ theme }) => theme.font.lineHeight.normal};
+const Logo = styled.img`
+  width: 80px;
 `;
+
 const Nickname = styled.div`
-  color: ${({ theme }) => theme.colors.white};
+  font-family: "GMarketSans", "SUIT-Variable", sans-serif;
+  font-weight: 700;
+
+  color: ${({ theme }) => theme.colors.SubColor1};
   font-size: ${({ theme }) => theme.font.fontSize.headline18};
-  font-weight: ${({ theme }) => theme.font.fontWeight.medium};
   line-height: ${({ theme }) => theme.font.lineHeight.normal};
 `;

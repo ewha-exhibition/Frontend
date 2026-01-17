@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-import ChevronLeft from "../assets/icons/ChevronLeft.svg?react";
+import ChevronLeftIcon from "../assets/icons/ChevronLeft.svg?react";
 import Link from "../assets/icons/Link.svg?react";
 
 function Topbar({ title, icon, onClick }) {
@@ -58,4 +58,12 @@ const TextButton = styled.div`
 const Spacer = styled.div`
   width: 24px;
   height: 18px;
+`;
+
+const ChevronLeft = styled(ChevronLeftIcon)`
+  width: 24px;
+  height: 14px;
+  cursor: pointer;
+
+  color: ${({ theme }) => theme.colors.gray10};
 `;
