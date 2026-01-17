@@ -18,57 +18,6 @@ import poster3 from "../../assets/mock/poster3.jpg";
 import poster4 from "../../assets/mock/poster4.jpg";
 
 function MyPage() {
-  const mock_data = {
-    response: 200,
-    result: [
-      {
-        id: 1,
-        title: "Pile up strands - 섬유예술 전공 과제전시회 어쩌고저쩌고 텍스트",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster1,
-        haveReview: false,
-        onGoing: true,
-      },
-      {
-        id: 2,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.09.10-09.11",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster2,
-        haveReview: true,
-        onGoing: false,
-      },
-      {
-        id: 3,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster3,
-        haveReview: true,
-        onGoing: true,
-      },
-      {
-        id: 4,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster4,
-        haveReview: false,
-        onGoing: false,
-      },
-      {
-        id: 5,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster4,
-        haveReview: false,
-        onGoing: false,
-      },
-    ],
-  };
-
   const theme = useTheme();
   const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
   const nickname = sessionStorage.getItem("nickname");
@@ -78,7 +27,7 @@ function MyPage() {
     error,
     loading,
   } = useCustomFetch(`/scraps/viewed?pageNum=0&limit=10`);
-  console.log(myWatchedData?.data.exhibitions);
+  console.log(myWatchedData?.data.exhibitions.length);
 
   const navigate = useNavigate();
 
@@ -123,7 +72,15 @@ function MyPage() {
 
                 {login && tab.path === "watched" && (
                   <>
-                    {myWatchedData?.status === 200 ? (
+                    {myWatchedData?.data.exhibitions?.length === 0 ? (
+                      <History>
+                        <p className="notice">아직 관람 내역이 없어요.</p>
+                        <p className="notice">
+                          관람한 행사가 있다면 후기를 작성하거나 스크랩 목록에서
+                          “관람했어요” 버튼을 눌러주세요.
+                        </p>
+                      </History>
+                    ) : (
                       <ShowListArea>
                         {myWatchedData?.data?.exhibitions.map((data) => (
                           <ShowList key={data.id}>
@@ -132,14 +89,6 @@ function MyPage() {
                           </ShowList>
                         ))}
                       </ShowListArea>
-                    ) : (
-                      <History>
-                        <p className="notice">아직 관람 내역이 없어요.</p>
-                        <p className="notice">
-                          관람한 행사가 있다면 후기를 작성하거나 스크랩 목록에서
-                          “관람했어요” 버튼을 눌러주세요.
-                        </p>
-                      </History>
                     )}
                   </>
                 )}
@@ -272,6 +221,8 @@ const ShowList = styled.div`
     height: 130px;
     aspect-ratio: 46/65;
     border-radius: 3px;
+    object-fit: contain;
+    background-color: ${({ theme }) => theme.colors.gray2};
   }
   p {
     display: -webkit-box;
