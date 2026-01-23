@@ -69,10 +69,6 @@ export default function Home() {
     useLatestExhibitions(category, 0, 10);
   //console.log(latestList);
 
-  const handleToggleScrap = () => {
-    window.location.reload();
-  };
-
   const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
   const [showLoginModal, setShowLoginModal] = useState(false);
 
@@ -82,6 +78,7 @@ export default function Home() {
       return;
     }
     toggleScrap(fetchData, id, scraped);
+    window.location.reload();
   };
 
   return (
@@ -164,7 +161,6 @@ export default function Home() {
                 onGoing={item.open}
                 scraped={item.scrap}
                 onClick={() => navigate(`/detail/${item.exhibitionId}`)}
-                onToggleScrap={handleToggleScrap}
                 onScrapClick={handleScrapClick}
               />
             ))}

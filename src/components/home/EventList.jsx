@@ -17,7 +17,6 @@ export default function EventList({
   onScrapClick,
 }) {
   {
-    const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
     const { fetchData } = useCustomFetch();
 
     const handleBookmarkClick = () => {
