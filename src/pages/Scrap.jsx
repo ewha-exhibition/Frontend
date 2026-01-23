@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useState } from "react";
 
 import useCustomFetch from "../utils/hooks/useCustomFetch";
+import useLogin from "../utils/hooks/useLogin";
 
 import Scraped from "../components/scrap/Scraped";
 import MenuTrigger from "../components/menu/MenuTrigger";
@@ -12,7 +13,7 @@ import KakaoBtn from "../components/myPage/KakaoBtn";
 import Nothing from "../components/Nothing";
 
 function Scrap() {
-  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
+  const login = useLogin();
   const {
     data: scrapData,
     error,
