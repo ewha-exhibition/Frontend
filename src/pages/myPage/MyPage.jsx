@@ -3,23 +3,18 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
+import useLogin from "../../utils/hooks/useLogin";
 
 import MypageHeader from "../../components/myPage/MypageHeader";
 import Banner from "../../components/myPage/Banner";
 import TabBar from "../../components/home/TabBar";
 import KakaoBtn from "../../components/myPage/KakaoBtn";
 
-import Kakao from "../../assets/icons/Kakao.png";
 import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
-
-import poster1 from "../../assets/mock/poster1.jpg";
-import poster2 from "../../assets/mock/poster2.jpg";
-import poster3 from "../../assets/mock/poster3.jpg";
-import poster4 from "../../assets/mock/poster4.jpg";
 
 function MyPage() {
   const theme = useTheme();
-  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
+  const login = useLogin();
   const nickname = sessionStorage.getItem("nickname");
 
   const {
@@ -32,15 +27,15 @@ function MyPage() {
   const navigate = useNavigate();
 
   const firstTabs = [
-    { name: "관람 내역", path: "watched" },
-    { name: "작성한 후기", path: "myReviews" },
-    { name: "작성한 질문", path: "questions" },
-    { name: "작성한 기대평", path: "expectations" },
+    { name: "관람 내역", path: "/mypage/watched" },
+    { name: "작성한 후기", path: "/mypage/myReviews" },
+    { name: "작성한 질문", path: "/mypage/questions" },
+    { name: "작성한 기대평", path: "/mypage/expectations" },
   ];
   const secondTabs = [
-    { name: "공연/전시 등록하기", path: "upload" },
-    { name: "행사 초대코드 입력하기", path: "enterCode" },
-    { name: "내 공연/전시", path: "myShows" },
+    { name: "공연/전시 등록하기", path: "/enrollEvent" },
+    { name: "행사 초대코드 입력하기", path: "/mypage/enterCode" },
+    { name: "내 공연/전시", path: "/mypage/myShows" },
   ];
 
   return (
@@ -65,12 +60,12 @@ function MyPage() {
           <TabList>
             {firstTabs.map((tab) => (
               <div key={tab.path}>
-                <TabItem onClick={() => navigate(`/mypage/${tab.path}`)}>
+                <TabItem onClick={() => navigate(`${tab.path}`)}>
                   {tab.name}
                   <StyledChevron />
                 </TabItem>
 
-                {login && tab.path === "watched" && (
+                {login && tab.path === "/mypage/watched" && (
                   <>
                     {myWatchedData?.data.exhibitions?.length === 0 ? (
                       <History>
@@ -101,7 +96,7 @@ function MyPage() {
             {secondTabs.map((tab) => (
               <TabItem
                 key={tab.path}
-                onClick={() => navigate(`/mypage/${tab.path}`)}
+                onClick={() => navigate(`${tab.path}`)}
               >
                 {tab.name}
                 <StyledChevron />
