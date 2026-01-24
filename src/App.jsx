@@ -8,7 +8,7 @@ import CreateReview from "./pages/review/CreateReview.jsx";
 import GuestBook from "./pages/guestBook/GuestBook.jsx";
 import Detail from "./pages/Detail.jsx";
 import EnrollEvent from "./pages/enrollEvent/EnrollEvent.jsx";
-
+import EditEvent from "./pages/EditEvent.jsx";
 import MyPage from "./pages/myPage/MyPage.jsx";
 import MyReviews from "./pages/myPage/MyReviews.jsx";
 import Watched from "./pages/myPage/Watched.jsx";
@@ -27,8 +27,8 @@ export default function App() {
       <AppLayout>
         <Routes>
           <Route path="/" element={<Home />} />
-          
-          <Route path="/oauth" element={<KakaoCallback />}/>
+
+          <Route path="/oauth" element={<KakaoCallback />} />
 
           <Route path="/scrap" element={<Scrap />} />
           <Route
@@ -40,6 +40,7 @@ export default function App() {
 
           <Route path="/detail/:id" element={<Detail />} />
           <Route path="/enrollEvent" element={<EnrollEvent />} />
+          <Route path="/enrollEvent/:id/edit" element={<EditEvent />} />
 
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/mypage/myReviews" element={<MyReviews />} />

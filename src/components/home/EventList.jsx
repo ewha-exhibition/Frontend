@@ -35,11 +35,18 @@ export default function EventList({
             <p>{place}</p>
             <p>{date}</p>
           </TextArea>
-          {scraped ? (
-            <GreenBookmark width={24} height={24} onClick={handleScrapClick} />
-          ) : (
-            <BookmarkOL width={24} height={24} onClick={handleScrapClick} />
-          )}
+          <BookmarkWrapper
+            onClick={(e) => {
+              e.stopPropagation();
+              handleScrapClick();
+            }}
+          >
+            {scraped ? (
+              <GreenBookmark width={24} height={24} />
+            ) : (
+              <GreenBookmarkOL width={24} height={24} />
+            )}
+          </BookmarkWrapper>
         </Container>
         <Br />
       </Component>
@@ -50,6 +57,9 @@ export default function EventList({
 const GreenBookmark = styled(Bookmark)`
   color: ${({ theme }) => theme.colors.Primary50};
 `;
+const GreenBookmarkOL = styled(BookmarkOL)`
+  color: ${({ theme }) => theme.colors.gray8};
+`;
 const Component = styled.div`
   width: 100%;
   display: flex;
@@ -59,10 +69,11 @@ const Component = styled.div`
 const Container = styled.div`
   width: 100%;
   position: relative;
-
+  align-items: flex-start;
   padding-top: 12px;
   display: flex;
   gap: 12px 20px;
+  box-sizing: border-box;
 
   img {
     width: 92px;
@@ -79,16 +90,18 @@ const Br = styled.div`
 `;
 const TextArea = styled.div`
   display: flex;
+  flex: 1 1 0%;
   flex-direction: column;
+  min-width: 0;
 
   .titleBox {
     color: ${({ theme }) => theme.colors.gray10};
     font-size: ${({ theme }) => theme.font.fontSize.title15};
     font-weight: ${({ theme }) => theme.font.fontWeight.semiBold};
     line-height: ${({ theme }) => theme.font.lineHeight.normal};
-
+    width: 100%;
+    padding-right: 30px;
     display: -webkit-box;
-    width: 190px;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
@@ -103,4 +116,15 @@ const TextArea = styled.div`
     font-weight: ${({ theme }) => theme.font.fontWeight.medium};
     line-height: ${({ theme }) => theme.font.lineHeight.normal};
   }
+`;
+const BookmarkWrapper = styled.div`
+  position: absolute;
+  top: 12px;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
 `;

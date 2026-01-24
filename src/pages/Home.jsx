@@ -8,6 +8,7 @@ import EventList from "../components/home/EventList.jsx";
 
 import SearchIcon from "../assets/icons/Search.svg?react";
 import BookmarkIcon from "../assets/icons/Bookmark.svg?react";
+import BookmarkOLIcon from "../assets/icons/BookmarkOL.svg?react";
 import Logo from "../assets/icons/Logo.svg?react";
 
 //API
@@ -16,14 +17,14 @@ import useRankingExhibitions from "../utils/hooks/useRankingExhibitions";
 import useLatestExhibitions from "../utils/hooks/useLatestExhibitions";
 
 //top10 컴포넌트
-function TopTenItem({ rank, exhibitionId, title, poster, scraped, onClick }) {
+function TopTenItem({ rank, exhibitionId, title, poster, scrap, onClick }) {
   return (
     <Card>
       <Poster poster={poster}>
         <Overlay onClick={onClick} />
         <Bar>
           <Rank>{rank}</Rank>
-          <BookmarkIcon width={16} height={19} />
+          {scrap ? <WhiteBookmark /> : <WhiteBookmarkOL />}
         </Bar>
       </Poster>
       <Title>{title}</Title>
@@ -33,11 +34,7 @@ function TopTenItem({ rank, exhibitionId, title, poster, scraped, onClick }) {
 
 export default function Home() {
   //top10
-  const {
-    list: top10List,
-    loading: top10Loading,
-    error: top10Error,
-  } = useRankingExhibitions();
+  const { list: top10List, loading: top10Loading } = useRankingExhibitions();
 
   //검색
   const navigate = useNavigate(); // 검색 화면 이동
@@ -105,6 +102,7 @@ export default function Home() {
                 key={item.exhibitionId}
                 title={item.exhibitionName}
                 rank={index + 1}
+                scrap={item.scrap}
                 poster={item.posterUrl}
                 onClick={() => navigate(`/detail/${item.exhibitionId}`)}
               />
@@ -280,6 +278,16 @@ const Overlay = styled.div`
     rgba(0, 0, 0, 0) 43.65%
   );
 `;
+const WhiteBookmark = styled(BookmarkIcon)`
+  width: 16px;
+  height: 19px;
+  color: white;
+`;
+const WhiteBookmarkOL = styled(BookmarkOLIcon)`
+  width: 16px;
+  height: 19px;
+  color: white;
+`;
 
 const Bar = styled.div`
   position: absolute;
@@ -370,5 +378,5 @@ const CategoryButton = styled.div`
 const EventListWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0px 0px;
+  width: 95%;
 `;

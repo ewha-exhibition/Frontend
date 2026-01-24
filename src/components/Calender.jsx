@@ -10,7 +10,7 @@ import CalendarIcon from "../assets/icons/Calender.svg?react";
 export default function Calender({ startDate, endDate, onChange }) {
   // 부모에서 받은 날짜를 초기값으로 설정
   const [tempStart, setTempStart] = useState(
-    startDate ? new Date(startDate) : null
+    startDate ? new Date(startDate) : null,
   );
   const [tempEnd, setTempEnd] = useState(endDate ? new Date(endDate) : null);
 
@@ -43,7 +43,7 @@ export default function Calender({ startDate, endDate, onChange }) {
     d
       ? `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(
           2,
-          "0"
+          "0",
         )}.${String(d.getDate()).padStart(2, "0")}`
       : "";
 
@@ -193,6 +193,7 @@ const StyledCalender = createGlobalStyle`
     padding-bottom: 5px;
     border-bottom: 1px solid ${({ theme }) => theme.colors.gray4};
     ${({ theme }) => theme.textStyles.label0SemiBold};
+      color: light-dark(#393a40, white);
   }
 
   .react-datepicker__month-container,

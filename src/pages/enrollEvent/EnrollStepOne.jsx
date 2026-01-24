@@ -22,8 +22,17 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
   const [isEndTimeOpen, setIsEndTimeOpen] = useState(false);
 
   const update = (key, value) => {
+    console.log("업데이트 호출됨:", key, value);
     setData((prev) => ({ ...prev, [key]: value }));
   };
+
+  //전시 수정 (추가)
+  useEffect(() => {
+    // 가격
+    setIsFree(data.price === "무료");
+    // 링크
+    setNoTicket(!data.link || data.link === "");
+  }, [data.price, data.link]);
 
   //입력값 검사
   useEffect(() => {
@@ -229,7 +238,7 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
 
         {!isFree && (
           <InputBox
-            value={data.price}
+            value={data.price || ""}
             type="number"
             onChange={(v) => update("price", v)}
           />

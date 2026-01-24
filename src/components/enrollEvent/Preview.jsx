@@ -151,7 +151,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  min-height: 300px;
+  min-height: 100vh;
   background: ${({ theme }) => theme.colors.gray1};
 `;
 const DetailSection = styled.div`

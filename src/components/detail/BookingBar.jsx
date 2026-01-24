@@ -233,8 +233,7 @@ const Free = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${({ theme }) => theme.colors.Primary20};
-  p {
+  background-color: #DAF1E6;
     color: ${({ theme }) => theme.colors.Primary60};
     text-align: center;
     font-size: 14px;
