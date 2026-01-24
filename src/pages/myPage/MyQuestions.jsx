@@ -85,7 +85,7 @@ export default MyQuestions;
 
 const Container = styled.div`
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   padding-top: 46px;
 
   display: flex;
