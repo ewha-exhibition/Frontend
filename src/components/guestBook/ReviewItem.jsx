@@ -18,7 +18,6 @@ function ReivewItem({
   mine,
   onRequestDelete,
 }) {
-
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
 
@@ -26,7 +25,7 @@ function ReivewItem({
   const urlLength = imageUrls.length;
 
   const goDetail = () => {
-    navigate(`/detail/${exhibitionId}`);
+    navigate(`/detail/${exhibitionId}`, { state: { currentTab: "review" } });
   };
 
   return (

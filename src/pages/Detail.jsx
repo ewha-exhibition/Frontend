@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import TopBar from "../components/Topbar";
@@ -33,6 +33,7 @@ export default function Detail() {
   useAxios();
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // 전시 정보 불러오기
   const [exhibition, setExhibition] = useState(null);
@@ -80,7 +81,9 @@ export default function Detail() {
   };
 
   // 탭, 카테고리
-  const [currentTab, setCurrentTab] = useState("detail");
+  const [currentTab, setCurrentTab] = useState(
+    location.state?.currentTab || "detail",
+  );
   const questionCount = exhibition?.questionCount ?? 0;
   const cheerCount = exhibition?.cheerCount ?? 0;
   const reviewCount = exhibition?.reviewCount ?? 0;
