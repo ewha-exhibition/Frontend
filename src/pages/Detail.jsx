@@ -561,11 +561,10 @@ export default function Detail() {
 const Container = styled.div`
   width: 100vw;
   max-width: 540px;
-  height: 100vh;
-  padding-top: 46px;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 0px 20px 0px 20px;
+  padding: 46px 20px 0px 20px;
 `;
 
 const Header = styled.div`

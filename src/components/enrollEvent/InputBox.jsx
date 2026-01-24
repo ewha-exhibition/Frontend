@@ -63,7 +63,7 @@ const MaxNum = styled.div`
   display: flex;
   justify-content: flex-end;
   .current {
-    color: ${({ theme }) => theme.colors.black};
+    color: ${({ theme }) => theme.colors.blackMain};
     font-size: ${({ theme }) => theme.font.fontSize.label12};
     font-weight: ${({ theme }) => theme.font.fontWeight.medium};
     line-height: ${({ theme }) => theme.font.lineHeight.normal};

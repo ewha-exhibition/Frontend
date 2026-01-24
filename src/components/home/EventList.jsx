@@ -81,6 +81,8 @@ const Br = styled.div`
 const TextArea = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-width: 0;
 
   .titleBox {
     color: ${({ theme }) => theme.colors.gray10};
