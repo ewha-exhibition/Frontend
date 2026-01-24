@@ -22,7 +22,7 @@ function MyPage() {
     error,
     loading,
   } = useCustomFetch(`/scraps/viewed?pageNum=0&limit=10`);
-  console.log(myWatchedData?.data.exhibitions.length);
+  console.log(myWatchedData?.data.exhibitions);
 
   const navigate = useNavigate();
 
@@ -78,7 +78,12 @@ function MyPage() {
                     ) : (
                       <ShowListArea>
                         {myWatchedData?.data?.exhibitions.map((data) => (
-                          <ShowList key={data.id}>
+                          <ShowList
+                            key={data.id}
+                            onClick={() =>
+                              navigate(`/detail/${data?.exhibitionId}`)
+                            }
+                          >
                             <img src={data.posterUrl} alt="포스터 이미지" />
                             <p>{data.exhibitionName}</p>
                           </ShowList>
@@ -94,10 +99,7 @@ function MyPage() {
           <SubTitle>벗들에게 공연/전시 홍보하기</SubTitle>
           <TabList>
             {secondTabs.map((tab) => (
-              <TabItem
-                key={tab.path}
-                onClick={() => navigate(`${tab.path}`)}
-              >
+              <TabItem key={tab.path} onClick={() => navigate(`${tab.path}`)}>
                 {tab.name}
                 <StyledChevron />
               </TabItem>

@@ -29,7 +29,6 @@ import {
 import useAxios from "../utils/hooks/useAxios";
 
 export default function Detail() {
-
   const PAGE_SIZE = 10;
   useAxios();
   const { id } = useParams();
@@ -325,7 +324,7 @@ export default function Detail() {
 
       if (node) observerRef.current.observe(node);
     },
-    [commentList.loading, commentList.hasNext, currentTab]
+    [commentList.loading, commentList.hasNext, currentTab],
   );
 
   //======================================UI=============================================
