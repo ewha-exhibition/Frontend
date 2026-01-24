@@ -30,7 +30,7 @@ function MyShow() {
         <ConfirmModal message={modalText} onClose={() => setIsOpen(false)} />
       )}
 
-      <Topbar title={"내 공연/전시"} icon={"none"} />
+      <Topbar title={"내 공연/전시"} icon={null} />
 
       <Content>
         {myShowData?.data.exhibitions.map((data) => (

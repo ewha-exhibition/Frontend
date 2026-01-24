@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import MenuTrigger from "../components/menu/MenuTrigger.jsx";
 import TabBar from "../components/home/TabBar.jsx";
 import EventList from "../components/home/EventList.jsx";
+import NeeedLogin from "../components/home/NeedLogin.jsx";
 
 import SearchIcon from "../assets/icons/Search.svg?react";
 import BookmarkIcon from "../assets/icons/Bookmark.svg?react";
@@ -14,6 +15,7 @@ import Logo from "../assets/icons/Logo.svg?react";
 import useSearchExhibitions from "../utils/hooks/useSearchExhibitions";
 import useRankingExhibitions from "../utils/hooks/useRankingExhibitions";
 import useLatestExhibitions from "../utils/hooks/useLatestExhibitions";
+import { toggleScrap } from "../utils/apis/toggleScrap";
 
 //top10 컴포넌트
 function TopTenItem({ rank, exhibitionId, title, poster, scraped, onClick }) {
@@ -67,12 +69,27 @@ export default function Home() {
     useLatestExhibitions(category, 0, 10);
   //console.log(latestList);
 
-  const handleToggleScrap = () => {
+  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  const handleScrapClick = (id, scraped, fetchData) => {
+    if (!login) {
+      setShowLoginModal(true);
+      return;
+    }
+    toggleScrap(fetchData, id, scraped);
     window.location.reload();
   };
 
   return (
     <Container>
+      {showLoginModal && (
+        <NeeedLogin onClose={() => setShowLoginModal(false)}>
+          <p>카카오톡으로 간편 로그인하고</p>
+          <p>모든 기능을 이용해보세요!</p>
+        </NeeedLogin>
+      )}
+
       <Header>
         <Logo />
         <MenuTrigger />
@@ -144,7 +161,7 @@ export default function Home() {
                 onGoing={item.open}
                 scraped={item.scrap}
                 onClick={() => navigate(`/detail/${item.exhibitionId}`)}
-                onToggleScrap={handleToggleScrap}
+                onScrapClick={handleScrapClick}
               />
             ))}
           </EventListWrapper>

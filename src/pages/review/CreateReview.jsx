@@ -101,7 +101,7 @@ function CreateReview() {
           link={`/guestBook`}
         />
       )}
-      <Topbar title={"후기 작성"} />
+      <Topbar title={"후기 작성"} icon={null}/>
       <Content>
         <p className="guide">관람 후 느낀 점을 벗들과 나눠주세요!</p>
         <TextBox onChange={handleTextBoxChange} />

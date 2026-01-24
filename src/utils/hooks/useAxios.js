@@ -17,23 +17,31 @@ const useAxios = () => {
     async (error) => {
       const originalRequest = error.config;
 
-      // accessToken 만료 시, refreshToken 개발 대비
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
-        const refreshToken = sessionStorage.getItem("refreshToken");
-
-        if (!refreshToken) {
-          console.error("refreshToken 없음 → 로그인 페이지로 이동");
-          navigate("/login", { replace: true });
-          return Promise.reject(error);
-        }
 
         try {
-          originalRequest.headers.Authorization = `Bearer ${refreshToken}`;
+          const refreshResponse = await axiosInstance.post(
+            "/api/auth/refresh",
+            null,
+            { withCredentials: true }
+          );
+
+          const newAccessToken = refreshResponse.data.accessToken;
+
+          // 새 accessToken 저장
+          sessionStorage.setItem("accessToken", newAccessToken);
+
+          // 요청에 새 토큰 사용
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
           return axiosInstance(originalRequest);
         } catch (refreshError) {
-          console.error("refreshToken도 만료 → 로그인 페이지로 이동");
-          navigate("/login", { replace: true });
+          // refresh 실패 → 로그아웃
+          sessionStorage.removeItem("accessToken");
+          sessionStorage.removeItem("refreshToken");
+
+          navigate("/mypage", { replace: true });
           return Promise.reject(refreshError);
         }
       }

@@ -17,7 +17,7 @@ function CheeringItem({
   const navigate = useNavigate();
 
   const goDetail = () => {
-    navigate(`/detail/${id}`);
+    navigate(`/detail/${id}`, { state: { currentTab: "cheer" } });
   };
 
   return (
