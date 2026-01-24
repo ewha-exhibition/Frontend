@@ -11,7 +11,7 @@ export default function PhotoViewer({
   urlLength,
 }) {
   //console.log("pics2:", imageUrls);
-  console.log(urlLength);
+  console.log(imageUrls);
   const startX = useRef(null);
   const endX = useRef(null);
 
@@ -68,7 +68,7 @@ export default function PhotoViewer({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <img src={imageUrls[index].src} alt="선택사진" />
+        <img src={imageUrls[index]} alt="선택사진" />
       </Viewer>
     </Overlay>
   );

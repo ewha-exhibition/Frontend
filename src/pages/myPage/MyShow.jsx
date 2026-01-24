@@ -30,7 +30,7 @@ function MyShow() {
         <ConfirmModal message={modalText} onClose={() => setIsOpen(false)} />
       )}
 
-      <Topbar title={"내 공연/전시"} icon={"none"} />
+      <Topbar title={"내 공연/전시"} icon={null} />
 
       <Content>
         {myShowData?.data.exhibitions.map((data) => (
@@ -69,7 +69,7 @@ function MyShow() {
 export default MyShow;
 
 const Container = styled.div`
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
   padding-top: 46px;
 

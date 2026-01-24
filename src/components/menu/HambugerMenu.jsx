@@ -40,7 +40,7 @@ export default function HamburgerMenu({ open, onClose }) {
             <MenuItem as="a" href="/scrap">
               스크랩
             </MenuItem>
-            <MenuItem as="a" href="/submit">
+            <MenuItem as="a" href="/EnrollEvent">
               공연/전시 등록하기
             </MenuItem>
           </MenuList>

@@ -3,74 +3,18 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
+import useLogin from "../../utils/hooks/useLogin";
 
 import MypageHeader from "../../components/myPage/MypageHeader";
 import Banner from "../../components/myPage/Banner";
 import TabBar from "../../components/home/TabBar";
 import KakaoBtn from "../../components/myPage/KakaoBtn";
 
-import Kakao from "../../assets/icons/Kakao.png";
 import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
 
-import poster1 from "../../assets/mock/poster1.jpg";
-import poster2 from "../../assets/mock/poster2.jpg";
-import poster3 from "../../assets/mock/poster3.jpg";
-import poster4 from "../../assets/mock/poster4.jpg";
-
 function MyPage() {
-  const mock_data = {
-    response: 200,
-    result: [
-      {
-        id: 1,
-        title: "Pile up strands - 섬유예술 전공 과제전시회 어쩌고저쩌고 텍스트",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster1,
-        haveReview: false,
-        onGoing: true,
-      },
-      {
-        id: 2,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.09.10-09.11",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster2,
-        haveReview: true,
-        onGoing: false,
-      },
-      {
-        id: 3,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster3,
-        haveReview: true,
-        onGoing: true,
-      },
-      {
-        id: 4,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster4,
-        haveReview: false,
-        onGoing: false,
-      },
-      {
-        id: 5,
-        title: "Pile up strands - 섬유예술 전공 과제전시회",
-        date: "2025.11.20-12.01",
-        place: "이화여대 조형예술관 A동  2,4층",
-        poster: poster4,
-        haveReview: false,
-        onGoing: false,
-      },
-    ],
-  };
-
   const theme = useTheme();
-  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
+  const login = useLogin();
   const nickname = sessionStorage.getItem("nickname");
 
   const {
@@ -83,15 +27,15 @@ function MyPage() {
   const navigate = useNavigate();
 
   const firstTabs = [
-    { name: "관람 내역", path: "watched" },
-    { name: "작성한 후기", path: "myReviews" },
-    { name: "작성한 질문", path: "questions" },
-    { name: "작성한 기대평", path: "expectations" },
+    { name: "관람 내역", path: "/mypage/watched" },
+    { name: "작성한 후기", path: "/mypage/myReviews" },
+    { name: "작성한 질문", path: "/mypage/questions" },
+    { name: "작성한 기대평", path: "/mypage/expectations" },
   ];
   const secondTabs = [
-    { name: "공연/전시 등록하기", path: "upload" },
-    { name: "행사 초대코드 입력하기", path: "enterCode" },
-    { name: "내 공연/전시", path: "myShows" },
+    { name: "공연/전시 등록하기", path: "/enrollEvent" },
+    { name: "행사 초대코드 입력하기", path: "/mypage/enterCode" },
+    { name: "내 공연/전시", path: "/mypage/myShows" },
   ];
 
   return (
@@ -116,23 +60,14 @@ function MyPage() {
           <TabList>
             {firstTabs.map((tab) => (
               <div key={tab.path}>
-                <TabItem onClick={() => navigate(`/mypage/${tab.path}`)}>
+                <TabItem onClick={() => navigate(`${tab.path}`)}>
                   {tab.name}
                   <StyledChevron />
                 </TabItem>
 
-                {login && tab.path === "watched" && (
+                {login && tab.path === "/mypage/watched" && (
                   <>
-                    {myWatchedData?.status === 200 ? (
-                      <ShowListArea>
-                        {myWatchedData?.data?.exhibitions.map((data) => (
-                          <ShowList key={data.id}>
-                            <img src={data.posterUrl} alt="포스터 이미지" />
-                            <p>{data.exhibitionName}</p>
-                          </ShowList>
-                        ))}
-                      </ShowListArea>
-                    ) : (
+                    {myWatchedData?.data.exhibitions?.length === 0 ? (
                       <History>
                         <p className="notice">아직 관람 내역이 없어요.</p>
                         <p className="notice">
@@ -140,6 +75,20 @@ function MyPage() {
                           “관람했어요” 버튼을 눌러주세요.
                         </p>
                       </History>
+                    ) : (
+                      <ShowListArea>
+                        {myWatchedData?.data?.exhibitions.map((data) => (
+                          <ShowList
+                            key={data.id}
+                            onClick={() =>
+                              navigate(`/detail/${data?.exhibitionId}`)
+                            }
+                          >
+                            <img src={data.posterUrl} alt="포스터 이미지" />
+                            <p>{data.exhibitionName}</p>
+                          </ShowList>
+                        ))}
+                      </ShowListArea>
                     )}
                   </>
                 )}
@@ -150,10 +99,7 @@ function MyPage() {
           <SubTitle>벗들에게 공연/전시 홍보하기</SubTitle>
           <TabList>
             {secondTabs.map((tab) => (
-              <TabItem
-                key={tab.path}
-                onClick={() => navigate(`/mypage/${tab.path}`)}
-              >
+              <TabItem key={tab.path} onClick={() => navigate(`${tab.path}`)}>
                 {tab.name}
                 <StyledChevron />
               </TabItem>
@@ -175,7 +121,7 @@ const StyledChevron = styled(ChevronRight)`
 `;
 const Container = styled.div`
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
 
   background-color: ${({ theme }) => theme.colors.gray1};
 `;
@@ -272,6 +218,8 @@ const ShowList = styled.div`
     height: 130px;
     aspect-ratio: 46/65;
     border-radius: 3px;
+    object-fit: contain;
+    background-color: ${({ theme }) => theme.colors.gray2};
   }
   p {
     display: -webkit-box;

@@ -44,10 +44,12 @@ export const GlobalStyle = createGlobalStyle`
         align-items: flex-start; 
     }
     
-    #root {
+    #root, body, html {
         width: 100%;
         display: flex;
         justify-content: center;
+        min-height: 100%;
+        background: ${({ theme }) => theme.colors.white};
     }
 
     p, h1, h2, h3 {

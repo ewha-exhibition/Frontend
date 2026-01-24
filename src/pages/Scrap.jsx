@@ -3,16 +3,17 @@ import styled from "styled-components";
 import { useState } from "react";
 
 import useCustomFetch from "../utils/hooks/useCustomFetch";
+import useLogin from "../utils/hooks/useLogin";
 
 import Scraped from "../components/scrap/Scraped";
 import MenuTrigger from "../components/menu/MenuTrigger";
 import TabBar from "../components/home/TabBar";
 import ViewedModal from "../components/scrap/ViewedModal";
 import KakaoBtn from "../components/myPage/KakaoBtn";
+import Nothing from "../components/Nothing";
 
 function Scrap() {
-  //const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
-  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
+  const login = useLogin();
   const {
     data: scrapData,
     error,
@@ -66,22 +67,26 @@ function Scrap() {
 
       {login ? (
         <Content>
-          {scrapData?.data.exhibitions.map((data) => (
-            <Scraped
-              key={data.exhibitionId}
-              exhibitionId={data.exhibitionId}
-              title={data.exhibitionName}
-              endDate={data.endDate}
-              startDate={data.startDate}
-              place={data.place}
-              poster={data.posterUrl}
-              scraped={true}
-              viewed={data.viewed}
-              reviewed={data.reviewed}
-              onDelete={handleDeleteBookmark}
-              onViewedChange={handleViewedChange}
-            />
-          ))}
+          {scrapData?.data.exhibitions?.length === 0 ? (
+            <Nothing text={"아직 스크랩한 글이 없어요"} />
+          ) : (
+            scrapData?.data.exhibitions?.map((data) => (
+              <Scraped
+                key={data.exhibitionId}
+                exhibitionId={data.exhibitionId}
+                title={data.exhibitionName}
+                endDate={data.endDate}
+                startDate={data.startDate}
+                place={data.place}
+                poster={data.posterUrl}
+                scraped={true}
+                viewed={data.viewed}
+                reviewed={data.reviewed}
+                onDelete={handleDeleteBookmark}
+                onViewedChange={handleViewedChange}
+              />
+            ))
+          )}
         </Content>
       ) : (
         <LoginContainer>

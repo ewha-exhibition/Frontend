@@ -18,12 +18,11 @@ export default function ConfirmModal({ isOpen, type, onClose, onConfirm }) {
       <ModalBox>
         <div className="message">{message}</div>
         <div className="buttons">
-          {isOpen ? (
+          {type === "copy" ? (
             <button className="full" onClick={onClose}>
               확인
             </button>
           ) : (
-            /* ✅ 기존 삭제(Confirm) 모달일 경우: 취소/삭제 버튼 노출 */
             <>
               <button className="left" onClick={onClose}>
                 아니요

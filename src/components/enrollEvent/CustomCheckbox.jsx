@@ -34,8 +34,6 @@ const CustomCheckbox = ({ checked, onChange }) => {
 export default CustomCheckbox;
 
 const Box = styled.div`
-    cursor: "pointer",
-    width: "24px",
-    height: "24px",
-    userSelect: "none",
+  width: 24px;
+  height: 24px;
 `;

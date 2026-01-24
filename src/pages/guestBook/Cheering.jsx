@@ -1,70 +1,81 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import CheeringItem from "../../components/guestBook/CheeringItem";
-
-import poster1 from "../../assets/mock/poster1.jpg";
-import poster2 from "../../assets/mock/poster2.jpg";
-import poster3 from "../../assets/mock/poster3.jpg";
+import Nothing from "../../components/Nothing";
 
 function Cheering() {
-  const mockData = {
-    status: 200,
-    result: [
-      {
-        poster: poster1,
-        title: "2025 조형예술대학 메이데이 전시",
-        id: 1,
-        review:
-          "기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평",
-        pic: [{ src: poster1 }, { src: poster2 }, { src: poster3 }],
-      },
-      {
-        poster: poster2,
-        title: "연극동아리 공연 “너를 걸어가는 시간",
-        id: 2,
-        review:
-          "기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평기대평",
-        pic: [],
-      },
-      {
-        poster: poster3,
-        title: "2025 조형예술대학 메이데이 전시",
-        id: 3,
-        review:
-          "퀄리티 대박! 너무 알찬 전시 잘 구경하고 갑니다! 무료 굿즈도 너무 감사합니다~ 금손벗들 졸업 축하드려요~ ",
-        pic: [
-          { src: poster1 },
-          { src: poster2 },
-          { src: poster3 },
-          { src: poster3 },
-        ],
-      },
-    ],
-  };
   const [pageNow, setPageNow] = useState(0);
+  const [items, setItems] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const observerRef = useRef(null);
 
   const {
     data: cheeringData,
     error,
     loading,
   } = useCustomFetch(`/guestbooks/cheers?pageNum=${pageNow}&limit=10`);
-  console.log(cheeringData?.data);
+  //console.log(cheeringData?.data);
+
+  useEffect(() => {
+    if (!cheeringData?.data?.posts) return;
+
+    setItems((prev) => {
+      const newItems = cheeringData.data.posts.filter(
+        (post) => !prev.some((p) => p.postId === post.postId),
+      );
+      return [...prev, ...newItems];
+    });
+
+    const { pageNum, totalPages } = cheeringData.data.pageInfo;
+
+    if (pageNum >= totalPages - 1) {
+      setHasMore(false);
+    }
+  }, [cheeringData]);
+
+  const lastItemRef = useCallback(
+    (node) => {
+      if (loading || !hasMore) return;
+
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          setPageNow((prev) => prev + 1);
+        }
+      });
+
+      if (node) observerRef.current.observe(node);
+    },
+    [loading, hasMore],
+  );
+
+  if (!loading && items.length === 0) {
+    return <Nothing text={"아직 작성된 응원이 없어요"} />;
+  }
 
   return (
     <Container>
-      {cheeringData?.data.posts.map((data) => (
-        <CheeringItem
-          key={data.postId}
-          poster={data.posterUrl}
-          title={data.title}
-          id={data.postId}
-          review={data.body}
-          pic={data.imageUrls}
-        />
-      ))}
+      {items.map((data, index) => {
+        const isLast = index === items.length - 1;
+
+        return (
+          <div ref={isLast ? lastItemRef : null} key={data.postId}>
+            <CheeringItem
+              key={data.postId}
+              poster={data.posterUrl}
+              title={data.title}
+              id={data.postId}
+              review={data.body}
+              pic={data.imageUrls}
+            />
+          </div>
+        );
+      })}
+      {loading && <p style={{ textAlign: "center" }}>로딩 중...</p>}
     </Container>
   );
 }

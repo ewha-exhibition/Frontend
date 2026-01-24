@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 function PhotoArea({ imageUrls, onOpen, urlLength }) {
-  console.log(imageUrls);
+  //console.log(imageUrls);
   const count = urlLength;
 
   const handleClick = (i) => {

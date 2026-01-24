@@ -2,12 +2,16 @@ import styled from "styled-components";
 import { useEffect, useState } from "react";
 
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
+import useLogin from "../../utils/hooks/useLogin";
 
 import Topbar from "../../components/Topbar";
 import CheeringItem from "../../components/guestBook/CheeringItem";
 import ConfirmModal from "../../components/detail/ConfirmModal";
+import KakaoBtn from "../../components/myPage/KakaoBtn";
+import Nothing from "../../components/Nothing";
 
 function MyQuestions() {
+  const login = useLogin();
   const {
     data: myQData,
     error,
@@ -34,31 +38,45 @@ function MyQuestions() {
 
   return (
     <Container>
-      <Topbar title={"작성한 질문"} icon={"none"} />
-      <Content>
-        {myQData?.data?.previews.map((data) => (
-          <CheeringItem
-            key={data.postId}
-            postId={data.postId}
-            poster={data.posterUrl}
-            title={data.exhibitionName}
-            id={data.exhibitionId}
-            review={data.content}
-            pic={data.imageUrls}
-            mine={true}
-            onRequestDelete={(postId) => {
-              setTargetPostId(postId);
-              setIsOpen(true);
-            }}
+      <Topbar title={"작성한 질문"} icon={null} />
+
+      {login ? (
+        <>
+          <Content>
+            {myQData?.data?.previews?.length === 0 ? (
+              <Nothing text={"아직 작성한 질문이 없어요"} />
+            ) : (
+              myQData?.data?.previews.map((data) => (
+                <CheeringItem
+                  key={data.postId}
+                  postId={data.postId}
+                  poster={data.posterUrl}
+                  title={data.exhibitionName}
+                  id={data.exhibitionId}
+                  review={data.content}
+                  pic={data.imageUrls}
+                  mine={true}
+                  onRequestDelete={(postId) => {
+                    setTargetPostId(postId);
+                    setIsOpen(true);
+                  }}
+                />
+              ))
+            )}
+          </Content>
+          <ConfirmModal
+            isOpen={isOpen}
+            type="question"
+            onClose={() => setIsOpen(false)}
+            onConfirm={handleDeleteConfirm}
           />
-        ))}
-      </Content>
-      <ConfirmModal
-        isOpen={isOpen}
-        target="question "
-        onClose={() => setIsOpen(false)}
-        onConfirm={handleDeleteConfirm}
-      />
+        </>
+      ) : (
+        <LoginContainer>
+          <p>로그인 후 기능을 이용해보세요!</p>
+          <KakaoBtn />
+        </LoginContainer>
+      )}
     </Container>
   );
 }
@@ -67,10 +85,27 @@ export default MyQuestions;
 
 const Container = styled.div`
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   padding-top: 46px;
 
   display: flex;
   flex-direction: column;
 `;
 const Content = styled.div``;
+const LoginContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  margin-bottom: 60px;
+
+  text-align: center;
+  p {
+    font-weight: ${({ theme }) => theme.textStyles.semiBold};
+    color: ${({ theme }) => theme.colors.gray7};
+  }
+`;
