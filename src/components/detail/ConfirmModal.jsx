@@ -63,7 +63,7 @@ const ModalBox = styled.div`
     justify-content: center;
     padding: 19px 16px;
     ${({ theme }) => theme.textStyles.label1SemiBold};
-    color: ${({ theme }) => theme.colors.blackMain};
+    color: light-dark(black, white);
     flex: 1;
   }
 

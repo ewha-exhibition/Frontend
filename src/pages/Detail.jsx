@@ -6,6 +6,7 @@ import TopBar from "../components/Topbar";
 import BookingBar from "../components/detail/BookingBar";
 import ConfirmModal from "../components/detail/ConfirmModal";
 import { Cheer, Question, Review } from "../components/detail/TabContents";
+import { HostMenu } from "../components/detail/HostView";
 //TODO: 호스트의 경우 햄버거 메뉴로 변경
 //TODO: 링크 복사 완료 모달
 //TODO: 회원가입 모달
@@ -20,7 +21,10 @@ import CalenderIcon from "../assets/icons/Calender.svg?react";
 import Nothing from "../assets/icons/Nothing.svg?react";
 
 // API
-import { getExhibitionApi } from "../utils/apis/exhibition";
+import {
+  getExhibitionApi,
+  deleteExhibitionApi,
+} from "../utils/apis/exhibition";
 import {
   getCommentsApi,
   createCommentApi,
@@ -61,6 +65,12 @@ export default function Detail() {
     targetId: null,
   });
 
+  // 호스트 메뉴
+  const [menuState, setMenuState] = useState(false);
+
+  //댓글창 높이 조절
+  const textareaRef = useRef(null);
+
   function openDeleteModal(postId) {
     setModalState({ isOpen: true, type: currentTab, targetId: postId });
   }
@@ -71,6 +81,15 @@ export default function Detail() {
     setModalState({ isOpen: false, type: null, targetId: null });
   }
 
+  // 메뉴 열기
+  const openMenu = () => {
+    setMenuState(true);
+  };
+
+  // 메뉴 닫기
+  const closeMenu = () => {
+    setMenuState(false);
+  };
   // 로그인 상태
   const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
 
@@ -78,8 +97,11 @@ export default function Detail() {
   const [inputValue, setInputValue] = useState("");
   const handleInputValueChange = (e) => {
     setInputValue(e.target.value);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"; // 높이 초기화
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // 내용 높이에 맞춰 설정
+    }
   };
-
   // 탭, 카테고리
   const [currentTab, setCurrentTab] = useState(
     location.state?.currentTab || "detail",
@@ -200,8 +222,11 @@ export default function Detail() {
         content,
       });
 
-      // 2. 입력창 비우기
+      // 2. 입력창 복구
       setInputValue("");
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "44px";
+      }
 
       // 3. 목록 새로고침
       await resetAndFetchFirstPage(currentTab);
@@ -295,21 +320,6 @@ export default function Detail() {
   const handleMoveToReview = () => {
     navigate(`/createReview/${id}`); // 경로 예시
   };
-  // ♥️ 공유 (링크 복사) 기능
-  const handleCopyLink = async () => {
-    try {
-      const currentUrl = window.location.href;
-      await navigator.clipboard.writeText(currentUrl);
-
-      setModalState({
-        isOpen: true,
-        type: "copy",
-        targetId: null,
-      });
-    } catch (error) {
-      console.error("링크 복사 실패:", error);
-    }
-  };
 
   // ♥️ 무한 스크롤 감지
   const observerRef = useRef();
@@ -329,16 +339,46 @@ export default function Detail() {
     },
     [commentList.loading, commentList.hasNext, currentTab],
   );
-
+  // ♥️ 메뉴/공유 기능
+  const handleShare = async () => {
+    try {
+      const currentUrl = window.location.href;
+      await navigator.clipboard.writeText(currentUrl);
+      setModalState({
+        isOpen: true,
+        type: "copy",
+        targetId: null,
+      });
+    } catch (error) {
+      console.error("링크 복사 실패:", error);
+    }
+  };
+  const handleEdit = async () => {
+    closeMenu();
+    navigate(`/enrollEvent/${id}/edit`);
+  };
+  const handleDelete = async () => {
+    try {
+      await deleteExhibitionApi(id);
+      navigate(-1);
+    } catch (e) {
+      console.error(e);
+    }
+  };
   //======================================UI=============================================
   if (isLoading || !exhibition) {
     return (
       <div style={{ padding: "100px", textAlign: "center" }}>Loading...</div>
     );
   }
+
   return (
     <Container>
-      <TopBar title={null} icon={"Link"} onClick={handleCopyLink} />
+      {!exhibition.host ? (
+        <TopBar title={null} icon={"Link"} onClick={handleShare} />
+      ) : (
+        <TopBar title={null} icon={"Menu"} onClick={openMenu} />
+      )}
       {/* 공연 정보 */}
       <Header>
         <img
@@ -411,9 +451,11 @@ export default function Detail() {
           <CommentSection>
             {!exhibition.host && (
               <InputBox>
-                <div className="left">
+                <div className="left" style={{ alignItems: "flex-end" }}>
                   <p className="nickname">익명</p>
-                  <Input
+                  <AutoHeightTextarea
+                    ref={textareaRef}
+                    rows={1}
                     placeholder="주최자 분들에게 궁금한 점을 질문하세요!"
                     value={inputValue}
                     onChange={handleInputValueChange}
@@ -539,11 +581,18 @@ export default function Detail() {
 
       <BookingBar
         exhibitionId={exhibition.exhibitionId}
-        isScraped={exhibition.isScraped}
+        isScraped={exhibition.scrap}
         period={exhibition?.period}
         price={exhibition?.price}
         scrapCount={exhibition?.scrapCount}
         link={exhibition?.link}
+      />
+      <HostMenu
+        isOpen={menuState}
+        closeHostMenu={closeMenu}
+        handleShare={handleShare}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
       />
 
       {/* 삭제 확인 모달 */}
@@ -562,6 +611,7 @@ const Container = styled.div`
   width: 100vw;
   max-width: 540px;
   min-height: 100vh;
+  padding-top: 46px;
   display: flex;
   flex-direction: column;
   padding: 46px 20px 0px 20px;
@@ -643,7 +693,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  min-height: 300px;
+  min-height: 100vh;
   background: ${({ theme }) => theme.colors.gray1};
 `;
 
@@ -681,14 +731,15 @@ const CommentSection = styled.div`
 `;
 
 const InputBox = styled.div`
+  position: relative;
   width: 100%;
-  height: 44px;
+  min-height: 44px;
   margin-bottom: 15px;
   padding: 10px 14px;
 
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
 
   background: ${({ theme }) => theme.colors.white};
   border: 1px solid ${({ theme }) => theme.colors.gray4};
@@ -701,6 +752,7 @@ const InputBox = styled.div`
     flex: 1;
   }
   .nickname {
+    align-self: center;
     color: ${({ theme }) => theme.colors.Primary50};
     ${({ theme }) => theme.textStyles.label2Medium};
     white-space: nowrap;
@@ -761,10 +813,43 @@ const WriteReviewButton = styled.button`
 `;
 const CenteredDiv = styled.div`
   width: 100%;
-  min-height: 300px; /* 최소 높이를 줘야 세로 중앙 정렬이 티가 납니다 */
+  min-height: 300px;
   display: flex;
   flex-direction: column;
   justify-content: center; /* 세로 중앙 */
   align-items: center; /* 가로 중앙 */
   text-align: center;
+`;
+const AutoHeightTextarea = styled.textarea`
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  ${({ theme }) => theme.textStyles.body1Regular};
+  color: ${({ theme }) => theme.colors.blackMain};
+  resize: none;
+  overflow-y: hidden;
+  padding: 0;
+  margin-left: 10px;
+  margin-right: 5px;
+  line-height: 1.4;
+  max-height: 120px;
+  vertical-align: center;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.gray6};
+  }
+`;
+
+const BookmarkWrapper = styled.div`
+  position: absolute;
+  top: 4px;
+  right: -10px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
 `;

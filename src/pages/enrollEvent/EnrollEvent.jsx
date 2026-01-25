@@ -68,6 +68,11 @@ export default function EnrollEvent() {
     window.scrollTo(0, 0); // 스크롤 최상단으로 이동
   };
 
+  const goBack = () => {
+    if (step === 1) navigate(-1);
+    if (step === 2) setStep(1);
+  };
+
   // 등록하기
   const handleSubmit = async () => {
     // 1. 동아리 이름 검증 (빈 값이면 아예 요청 안 보냄)
@@ -104,7 +109,7 @@ export default function EnrollEvent() {
     const categoryMap = {
       공연: "PERFORMANCE",
       전시: "EXHIBITION",
-      제휴: "PARTNERSHIP",
+      기타: "",
     };
     // 매핑된 값이 없으면 원래 값("공연") 전송
     const finalCategory =
@@ -150,7 +155,7 @@ export default function EnrollEvent() {
         // 서버가 주는 에러 메시지 확인
         console.error("서버 에러 응답:", res);
         alert(
-          `등록 실패: ${res?.message || res?.reason || "서버 내부 오류(500)"}`
+          `등록 실패: ${res?.message || res?.reason || "서버 내부 오류(500)"}`,
         );
       }
     } catch (error) {
@@ -165,6 +170,7 @@ export default function EnrollEvent() {
       ) : (
         <Topbar title={""} icon={"EnrollEvent"} onClick={handleSubmit} />
       )}
+      <PreStep onClick={goBack} />
       <Header>
         <ProgressBar>
           <LongBar />
@@ -210,6 +216,7 @@ export default function EnrollEvent() {
 }
 
 const Container = styled.div`
+  position: relative;
   width: 100%;
   min-height: 100vh;
   padding-top: 46px;
@@ -285,4 +292,16 @@ const NextButton = styled.button`
 
   color: ${({ $isActive, theme }) =>
     $isActive ? theme.colors.white : theme.colors.gray6};
+`;
+
+const PreStep = styled.button`
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 111;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  outline: none;
 `;

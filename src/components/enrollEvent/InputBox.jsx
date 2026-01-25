@@ -13,15 +13,28 @@ function InputBox({
 }) {
   const handleChange = (e) => {
     const inputVal = e.target.value;
+
     if (type === "number") {
+      // 1. 숫자만 남기기 (콤마 제거)
       const rawNumber = inputVal.replace(/[^0-9]/g, "");
 
+      // 2. 다 지웠을 때 처리
       if (rawNumber === "") {
         onChange?.("");
         return;
       }
-      // 콤마 포맷팅
-      const formattedValue = Number(rawNumber).toLocaleString();
+
+      // 3. 안전한 정수 변환 (01 -> 1, 문자가 섞여도 NaN 방지)
+      const parsedValue = parseInt(rawNumber, 10);
+
+      // 4. NaN 체크 (혹시 모를 오류 방지)
+      if (isNaN(parsedValue)) {
+        return;
+      }
+
+      // 5. 콤마 포맷팅 후 부모에게 전달
+      const formattedValue = parsedValue.toLocaleString();
+      onChange?.(formattedValue);
     } else {
       // 일반 텍스트 입력일 경우
       if (max && inputVal.length > max) return;
