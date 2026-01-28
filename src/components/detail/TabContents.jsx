@@ -5,22 +5,7 @@ import PhotoViewer from "../guestBook/PhotoViewer";
 
 import commentIcon from "../../assets/icons/comment.svg";
 import deleteIcon from "../../assets/icons/DeleteComment.svg";
-
-//역할: 하나의 댓글을 표시하는 컴포넌트
-//comment: 응원 및 질문 객체
-//postId: 댓글 고유 ID, 삭제나 수정 요청 시 필요
-//writer: 작성자 닉네임 (벗1 등)
-//createdAt: 댓글 등록 날짜
-//content: 댓글 내용
-//hasAnswer: 주최자 답변 여부
-//answer: 답변 내용
-//answerCreatedAt: 답변 등록 날짜
-//isWriter: 현재 로그인한 사용자가 해당 댓글의 작성자인지
-
-//Modal 타입: cheer, question, review, answer
-
-//TODO: 아이콘 객체화
-//TODO: [BE] 답변 삭제 기능 API 필요, 답변의 고유 ID 필요!!!
+import { deleteCommentApi } from "../../utils/apis/comment";
 
 export function Cheer({ comment, isHost, openModal, onReply }) {
   const [isReplying, setIsReplying] = useState(false); // 입력창 열림 여부
@@ -66,9 +51,9 @@ export function Cheer({ comment, isHost, openModal, onReply }) {
           type="cheer"
           date={comment.answerCreatedAt}
           text={comment.answer}
-          // *답변 삭제 기능 id: comment.answer.commentId, // commentId: 응원/질문에 대한 답변의 고유 ID
-          // *답변 삭제 기능 isHost={isHost} // 주최자가 작성한 답변인지 여부 전달, 답변 삭제 기능 제어용
-          // *답변 삭제 기능 openModal={openModal}
+          postId={comment.answerId} // commentId: 응원/질문에 대한 답변의 고유 ID
+          isHost={isHost} // 주최자가 작성한 답변인지 여부 전달, 답변 삭제 기능 제어용
+          openModal={openModal}
         />
       ) : isHost ? (
         <ReplySection>
@@ -141,12 +126,12 @@ export function Question({ comment, isHost, openModal, onReply }) {
       {/* 답변 로직 */}
       {comment.hasAnswer && comment.answer ? (
         <Answer
-          type="question"
+          type="cheer"
           date={comment.answerCreatedAt}
           text={comment.answer}
-          // *답변 삭제 기능 id: comment.answer.commentId, // commentId: 응원/질문에 대한 답변의 고유 ID
-          // *답변 삭제 기능 isHost={isHost} // 주최자가 작성한 답변인지 여부 전달, 답변 삭제 기능 제어용
-          // *답변 삭제 기능 openModal={openModal}
+          postId={comment.answerId} // commentId: 응원/질문에 대한 답변의 고유 ID
+          isHost={isHost} // 주최자가 작성한 답변인지 여부 전달, 답변 삭제 기능 제어용
+          openModal={openModal}
         />
       ) : isHost ? (
         <ReplySection>
@@ -177,7 +162,7 @@ export function Question({ comment, isHost, openModal, onReply }) {
 }
 
 // 답글 컴포넌트
-function Answer({ type, date, text, id, isHost, openModal }) {
+function Answer({ type, date, text, postId, isHost, openModal }) {
   return (
     <ReplyWrapper>
       <Arrow />
@@ -187,14 +172,14 @@ function Answer({ type, date, text, id, isHost, openModal }) {
             <p className="id">주최자</p>
             <p className="date">{date}</p>
           </div>
-          {/* {isHost && (
+          {isHost && (
             <img
               className="delete"
               src={deleteIcon}
-              alt="삭제하기"  
-              onClick={() => openModal("answer", id)} // 삭제 API 호출용 ID 전달
+              alt="삭제하기"
+              onClick={() => openModal(postId, "comment")}
             />
-          )} */}
+          )}
         </CommentHeader>
         <CommentContent>
           {type === "question" && <Tag type="answer">답변</Tag>}
@@ -269,9 +254,6 @@ export function Review({ comment, isHost, openModal, onReply }) {
           type="question"
           date={comment.answerCreatedAt}
           text={comment.answer}
-          // *답변 삭제 기능 id: comment.answer.commentId, // commentId: 응원/질문에 대한 답변의 고유 ID
-          // *답변 삭제 기능 isHost={isHost} // 주최자가 작성한 답변인지 여부 전달, 답변 삭제 기능 제어용
-          // *답변 삭제 기능 openModal={openModal}
         />
       ) : isHost ? (
         <ReplySection>

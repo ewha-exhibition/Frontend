@@ -6,6 +6,7 @@ export default function ConfirmModal({ isOpen, type, onClose, onConfirm }) {
   const messageMap = {
     cheer: "해당 응원을 삭제할까요?",
     question: "해당 질문을 삭제할까요?",
+    comment: "해당 답글을 삭제할까요?",
     review: "해당 후기를 삭제할까요?",
     reply: "해당 답글을 삭제할까요?",
     copy: "URL이 복사되었어요.",

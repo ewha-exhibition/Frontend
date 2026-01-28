@@ -106,10 +106,10 @@ export default function Detail() {
     setModalState({ isOpen: false, type: null, targetId: null });
   }
 
-  function openDeleteCommentModal(postId) {
+  function openDeleteCommentModal(postId, type) {
     setModalState({
       isOpen: true,
-      type: currentTab,
+      type: type,
       targetId: postId,
     });
   }
@@ -287,33 +287,35 @@ export default function Detail() {
   // ♥️ 댓글 삭제하기
   async function handleDeleteComment() {
     const postId = modalState.targetId;
+    const deleteType = modalState.type;
     if (!postId) return;
 
     try {
       // 1. API 호출
-      await deleteCommentApi({ postId, type: currentTab });
-
+      await deleteCommentApi({ postId, type: deleteType });
       closeModal();
 
-      // 2. 화면 즉시 갱신 (리스트에서 제거)
-      setCommentList((prev) => ({
-        ...prev,
-        items: prev.items.filter((item) => {
-          const itemId = item.postId;
-          return itemId !== postId;
-        }),
-      }));
-
-      // 3. 카운트 즉시 갱신 (-1)
-      setExhibition((prev) => {
-        const countKey = `${currentTab}Count`;
-        return {
+      if (deleteType === "comment") {
+        // ✅ 답글 삭제 시에는 데이터 구조가 깊으므로 깔끔하게 첫 페이지 다시 불러오기
+        await resetAndFetchFirstPage(currentTab);
+      } else {
+        // ✅ 일반 댓글 삭제 시에는 기존 로컬 필터링 로직 유지
+        setCommentList((prev) => ({
           ...prev,
-          [countKey]: Math.max(0, (prev[countKey] || 0) - 1),
-        };
-      });
+          items: prev.items.filter((item) => item.postId !== postId),
+        }));
+
+        // 카운트 감소
+        setExhibition((prev) => {
+          const countKey = `${currentTab}Count`;
+          return {
+            ...prev,
+            [countKey]: Math.max(0, (prev[countKey] || 0) - 1),
+          };
+        });
+      }
     } catch (e) {
-      console.error(e);
+      console.error("삭제 실패:", e);
     }
   }
   // 탭 변경 시 리셋 로드
@@ -495,7 +497,9 @@ export default function Detail() {
                     <Question
                       comment={comment}
                       isHost={exhibition.host}
-                      openModal={() => openDeleteCommentModal(comment.postId)}
+                      openModal={(postId, type) =>
+                        openDeleteCommentModal(postId, type || "question")
+                      }
                       onReply={handleHostReply}
                     />
                   </div>
@@ -545,7 +549,9 @@ export default function Detail() {
                     <Cheer
                       comment={comment}
                       isHost={exhibition.host}
-                      openModal={() => openDeleteCommentModal(comment.postId)}
+                      openModal={(postId, type) =>
+                        openDeleteCommentModal(postId, type || "cheer")
+                      }
                       onReply={handleHostReply}
                     />
                   </div>
@@ -579,7 +585,9 @@ export default function Detail() {
                     <Review
                       comment={comment}
                       isHost={exhibition.host}
-                      openModal={() => openDeleteCommentModal(comment.postId)}
+                      openModal={() =>
+                        openDeleteCommentModal(comment.postId, "review")
+                      }
                       onReply={handleHostReply}
                     />
                   </div>
