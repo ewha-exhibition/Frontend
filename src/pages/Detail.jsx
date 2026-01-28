@@ -287,15 +287,15 @@ export default function Detail() {
   // ♥️ 댓글 삭제하기
   async function handleDeleteComment() {
     const postId = modalState.targetId;
-    const deleteType = modalState.type;
+    const type = modalState.type;
     if (!postId) return;
 
     try {
       // 1. API 호출
-      await deleteCommentApi({ postId, type: deleteType });
+      await deleteCommentApi({ postId, type });
       closeModal();
 
-      if (deleteType === "comment") {
+      if (type === "comment") {
         // ✅ 답글 삭제 시에는 데이터 구조가 깊으므로 깔끔하게 첫 페이지 다시 불러오기
         await resetAndFetchFirstPage(currentTab);
       } else {
@@ -497,6 +497,7 @@ export default function Detail() {
                     <Question
                       comment={comment}
                       isHost={exhibition.host}
+                      club={exhibition.clubName}
                       openModal={(postId, type) =>
                         openDeleteCommentModal(postId, type || "question")
                       }
@@ -549,6 +550,7 @@ export default function Detail() {
                     <Cheer
                       comment={comment}
                       isHost={exhibition.host}
+                      club={exhibition.clubName}
                       openModal={(postId, type) =>
                         openDeleteCommentModal(postId, type || "cheer")
                       }

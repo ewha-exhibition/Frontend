@@ -5,9 +5,8 @@ import PhotoViewer from "../guestBook/PhotoViewer";
 
 import commentIcon from "../../assets/icons/comment.svg";
 import deleteIcon from "../../assets/icons/DeleteComment.svg";
-import { deleteCommentApi } from "../../utils/apis/comment";
 
-export function Cheer({ comment, isHost, openModal, onReply }) {
+export function Cheer({ comment, isHost, club, openModal, onReply }) {
   const [isReplying, setIsReplying] = useState(false); // 입력창 열림 여부
   const [replyText, setReplyText] = useState(""); // 입력된 텍스트
   const handleSubmit = () => {
@@ -36,23 +35,28 @@ export function Cheer({ comment, isHost, openModal, onReply }) {
             className="delete"
             src={deleteIcon}
             alt="삭제하기"
-            onClick={openModal} // 삭제 API 호출용 ID 전달
+            onClick={() => openModal(comment.postId, "cheer")}
           />
         )}
       </CommentHeader>
 
       <CommentContent>
-        <p className="text">{comment.content}</p>
+        {comment.isDeleted && comment.hasAnswer ? (
+          <p className="text">삭제된 응원이에요.</p>
+        ) : (
+          <p className="text">{comment.content}</p>
+        )}
       </CommentContent>
 
       {/* 답변이 있는 경우 */}
       {comment.hasAnswer && comment.answer ? (
         <Answer
-          type="cheer"
+          type="comment"
           date={comment.answerCreatedAt}
           text={comment.answer}
           postId={comment.answerId} // commentId: 응원/질문에 대한 답변의 고유 ID
           isHost={isHost} // 주최자가 작성한 답변인지 여부 전달, 답변 삭제 기능 제어용
+          club={club}
           openModal={openModal}
         />
       ) : isHost ? (
@@ -83,7 +87,7 @@ export function Cheer({ comment, isHost, openModal, onReply }) {
   );
 }
 
-export function Question({ comment, isHost, openModal, onReply }) {
+export function Question({ comment, isHost, club, openModal, onReply }) {
   const [isReplying, setIsReplying] = useState(false); // 입력창 열림 여부
   const [replyText, setReplyText] = useState(""); // 입력된 텍스트
   const handleSubmit = () => {
@@ -92,7 +96,7 @@ export function Question({ comment, isHost, openModal, onReply }) {
       return;
     }
     // 부모에게 전달 (댓글 ID, 내용)
-    onReply(comment.id || comment.postId, replyText);
+    onReply(comment.postId, replyText);
 
     // 초기화 및 닫기
     setReplyText("");
@@ -113,24 +117,29 @@ export function Question({ comment, isHost, openModal, onReply }) {
             className="delete"
             src={deleteIcon}
             alt="삭제하기"
-            onClick={openModal}
+            onClick={() => openModal(comment.postId, "question")}
           />
         )}
       </CommentHeader>
 
       <CommentContent>
         <Tag type="question">질문</Tag>
-        <p className="text">{comment.content}</p>
+        {comment.isDeleted && comment.hasAnswer ? (
+          <p className="text">삭제된 질문이에요.</p>
+        ) : (
+          <p className="text">{comment.content}</p>
+        )}
       </CommentContent>
 
       {/* 답변 로직 */}
       {comment.hasAnswer && comment.answer ? (
         <Answer
-          type="cheer"
+          type="comment"
           date={comment.answerCreatedAt}
           text={comment.answer}
           postId={comment.answerId} // commentId: 응원/질문에 대한 답변의 고유 ID
           isHost={isHost} // 주최자가 작성한 답변인지 여부 전달, 답변 삭제 기능 제어용
+          club={club}
           openModal={openModal}
         />
       ) : isHost ? (
@@ -162,14 +171,14 @@ export function Question({ comment, isHost, openModal, onReply }) {
 }
 
 // 답글 컴포넌트
-function Answer({ type, date, text, postId, isHost, openModal }) {
+function Answer({ type, date, text, postId, club, isHost, openModal }) {
   return (
     <ReplyWrapper>
       <Arrow />
       <ReplyBox>
         <CommentHeader>
           <div className="info">
-            <p className="id">주최자</p>
+            <p className="id">{club}</p>
             <p className="date">{date}</p>
           </div>
           {isHost && (
@@ -332,6 +341,7 @@ const CommentContent = styled.div`
     ${({ theme }) => theme.textStyles.body1Regular};
     word-break: break-word;
     white-space: pre-wrap;
+    align-self: center;
   }
 `;
 const ReplyWrapper = styled.div`
