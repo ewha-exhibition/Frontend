@@ -63,6 +63,8 @@ export default function Detail() {
     isOpen: false,
     type: null,
     targetId: null,
+    onClose: null,
+    onConfirm: null,
   });
 
   // 호스트 메뉴
@@ -70,16 +72,33 @@ export default function Detail() {
 
   //댓글창 높이 조절
   const textareaRef = useRef(null);
-
-  function openDeleteModal(postId) {
-    setModalState({ isOpen: true, type: currentTab, targetId: postId });
-  }
-  function openLoginModal() {
-    setModalState({ isOpen: true, type: "login", targetId: null });
-  }
   function closeModal() {
     setModalState({ isOpen: false, type: null, targetId: null });
   }
+  function openDeleteModal(postId) {
+    setModalState({
+      isOpen: true,
+      type: currentTab,
+      targetId: postId,
+      onConfirm: handleDelete,
+    });
+  }
+  function openLoginModal() {
+    setModalState({
+      isOpen: true,
+      type: "login",
+      onClose: null,
+      onConfirm: handleKakaoLogin,
+    });
+  }
+
+  // 카카오 로그인
+  const handleKakaoLogin = () => {
+    const client_id = import.meta.env.VITE_KAKAO_CLIENT_ID;
+    const redirect_uri = import.meta.env.VITE_KAKAO_REDIRECT_URI;
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code`;
+    window.location.href = KAKAO_AUTH_URL;
+  };
 
   // 메뉴 열기
   const openMenu = () => {
@@ -201,7 +220,7 @@ export default function Detail() {
       setCommentList((prev) => ({ ...prev, loading: false }));
     }
   }
-  // ♥️ 댓글 작성하기 (수정: 임시 로컬 갱신 -> 서버 재요청)
+  // ♥️ 댓글 작성하기 (수정: 임시 로컬 갱신)
   async function handleSubmitComment() {
     if (!login) {
       openLoginModal();
@@ -240,9 +259,10 @@ export default function Detail() {
         };
       });
     } catch (e) {
-      console.error(e);
+      //console.error(e);
     }
   }
+
   // ♥️ 주최자 대댓글 작성하기
   const handleHostReply = async (targetId, replyContent) => {
     // 1. 로그인 체크
@@ -365,7 +385,6 @@ export default function Detail() {
       console.error(e);
     }
   };
-  //======================================UI=============================================
   if (isLoading || !exhibition) {
     return (
       <div style={{ padding: "100px", textAlign: "center" }}>Loading...</div>
@@ -600,7 +619,7 @@ export default function Detail() {
         isOpen={modalState.isOpen}
         type={modalState.type}
         onClose={closeModal}
-        onConfirm={handleConfirmDelete}
+        onConfirm={modalState.onConfirm}
       />
     </Container>
   );

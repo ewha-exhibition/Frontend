@@ -1,5 +1,5 @@
 import styled from "styled-components";
-
+import LoginModal from "../home/NeedLogin";
 export default function ConfirmModal({ isOpen, type, onClose, onConfirm }) {
   if (!isOpen) return null;
 
@@ -9,32 +9,51 @@ export default function ConfirmModal({ isOpen, type, onClose, onConfirm }) {
     review: "해당 후기를 삭제할까요?",
     reply: "해당 답글을 삭제할까요?",
     copy: "URL이 복사되었어요.",
+    login: "로그인이 필요한 기능이에요.",
   };
 
   const message = messageMap[type];
 
   return (
-    <Overlay>
-      <ModalBox>
-        <div className="message">{message}</div>
-        <div className="buttons">
-          {type === "copy" ? (
-            <button className="full" onClick={onClose}>
-              확인
-            </button>
-          ) : (
-            <>
+    <>
+      {type === "login" ? (
+        <Overlay>
+          <ModalBox>
+            <div className="message">{message}</div>
+            <div className="buttons">
               <button className="left" onClick={onClose}>
-                아니요
+                닫기
               </button>
               <button className="right" onClick={onConfirm}>
-                삭제
+                로그인
               </button>
-            </>
-          )}
-        </div>
-      </ModalBox>
-    </Overlay>
+            </div>
+          </ModalBox>
+        </Overlay>
+      ) : (
+        <Overlay>
+          <ModalBox>
+            <div className="message">{message}</div>
+            <div className="buttons">
+              {type === "copy" ? (
+                <button className="full" onClick={onClose}>
+                  확인
+                </button>
+              ) : (
+                <>
+                  <button className="left" onClick={onClose}>
+                    아니요
+                  </button>
+                  <button className="right" onClick={onConfirm}>
+                    삭제
+                  </button>
+                </>
+              )}
+            </div>
+          </ModalBox>
+        </Overlay>
+      )}
+    </>
   );
 }
 
