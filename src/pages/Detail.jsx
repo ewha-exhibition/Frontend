@@ -7,9 +7,6 @@ import BookingBar from "../components/detail/BookingBar";
 import ConfirmModal from "../components/detail/ConfirmModal";
 import { Cheer, Question, Review } from "../components/detail/TabContents";
 import { HostMenu } from "../components/detail/HostView";
-//TODO: 호스트의 경우 햄버거 메뉴로 변경
-//TODO: 링크 복사 완료 모달
-//TODO: 회원가입 모달
 
 // Icons
 import locationIcon from "../assets/icons/Location.svg";
@@ -33,15 +30,43 @@ import {
 import useAxios from "../utils/hooks/useAxios";
 
 export default function Detail() {
+  // 1. Hooks & Constants
   const PAGE_SIZE = 10;
   useAxios();
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const textareaRef = useRef(null);
 
-  // 전시 정보 불러오기
+  // 2. State Management (상태 관리)
+  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
   const [exhibition, setExhibition] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [menuState, setMenuState] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [currentTab, setCurrentTab] = useState(
+    location.state?.currentTab || "detail",
+  );
+
+  // 모달 상태
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    type: null,
+    targetId: null,
+  });
+
+  // 댓글 리스트 상태
+  const initialListState = {
+    items: [],
+    page: 0,
+    hasNext: true,
+    loading: false,
+  };
+  const [commentList, setCommentList] = useState({
+    ...initialListState,
+  });
+
+  // 3. Side Effects (데이터 불러오기)
   useEffect(() => {
     if (!id) return;
     async function fetchExhibition() {
@@ -52,79 +77,13 @@ export default function Detail() {
       } catch (e) {
         console.error(e);
       } finally {
-        setIsLoading(false); // 성공하든 실패하든 로딩 종료
+        setIsLoading(false);
       }
     }
     fetchExhibition();
   }, [id]);
 
-  // 모달 창 관리
-  const [modalState, setModalState] = useState({
-    isOpen: false,
-    type: null,
-    targetId: null,
-    onClose: null,
-    onConfirm: null,
-  });
-
-  // 호스트 메뉴
-  const [menuState, setMenuState] = useState(false);
-
-  //댓글창 높이 조절
-  const textareaRef = useRef(null);
-  function closeModal() {
-    setModalState({ isOpen: false, type: null, targetId: null });
-  }
-  function openDeleteModal(postId) {
-    setModalState({
-      isOpen: true,
-      type: currentTab,
-      targetId: postId,
-      onConfirm: handleDelete,
-    });
-  }
-  function openLoginModal() {
-    setModalState({
-      isOpen: true,
-      type: "login",
-      onClose: null,
-      onConfirm: handleKakaoLogin,
-    });
-  }
-
-  // 카카오 로그인
-  const handleKakaoLogin = () => {
-    const client_id = import.meta.env.VITE_KAKAO_CLIENT_ID;
-    const redirect_uri = import.meta.env.VITE_KAKAO_REDIRECT_URI;
-    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code`;
-    window.location.href = KAKAO_AUTH_URL;
-  };
-
-  // 메뉴 열기
-  const openMenu = () => {
-    setMenuState(true);
-  };
-
-  // 메뉴 닫기
-  const closeMenu = () => {
-    setMenuState(false);
-  };
-  // 로그인 상태
-  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
-
-  // 댓글 입력
-  const [inputValue, setInputValue] = useState("");
-  const handleInputValueChange = (e) => {
-    setInputValue(e.target.value);
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto"; // 높이 초기화
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // 내용 높이에 맞춰 설정
-    }
-  };
-  // 탭, 카테고리
-  const [currentTab, setCurrentTab] = useState(
-    location.state?.currentTab || "detail",
-  );
+  // 4. Tab & Category Logic
   const questionCount = exhibition?.questionCount ?? 0;
   const cheerCount = exhibition?.cheerCount ?? 0;
   const reviewCount = exhibition?.reviewCount ?? 0;
@@ -134,6 +93,7 @@ export default function Detail() {
     { key: "cheer", label: "응원", count: exhibition?.cheerCount ?? 0 },
     { key: "review", label: "후기", count: exhibition?.reviewCount ?? 0 },
   ];
+
   const handleTabChange = (tab) => {
     if (tab === currentTab) return;
     setCurrentTab(tab);
@@ -141,17 +101,49 @@ export default function Detail() {
     setInputValue("");
   };
 
-  //댓글 리스트 상태
-  const initialListState = {
-    items: [],
-    page: 0,
-    hasNext: true,
-    loading: false,
+  // 5. Modal Functions (모달 제어)
+  function closeModal() {
+    setModalState({ isOpen: false, type: null, targetId: null });
+  }
+
+  function openDeleteCommentModal(postId) {
+    setModalState({
+      isOpen: true,
+      type: currentTab,
+      targetId: postId,
+    });
+  }
+
+  function openLoginModal() {
+    setModalState({
+      isOpen: true,
+      type: "login",
+    });
+  }
+
+  // 6. Event Handlers (입력, 메뉴, 로그인)
+  const handleInputValueChange = (e) => {
+    setInputValue(e.target.value);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
   };
-  // 댓글 리스트, 현재 탭의 리스트만 관리
-  const [commentList, setCommentList] = useState({
-    ...initialListState,
-  });
+
+  const openMenu = () => {
+    setMenuState(true);
+  };
+
+  const closeMenu = () => {
+    setMenuState(false);
+  };
+
+  const handleKakaoLogin = () => {
+    const client_id = import.meta.env.VITE_KAKAO_CLIENT_ID;
+    const redirect_uri = import.meta.env.VITE_KAKAO_REDIRECT_URI;
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code`;
+    window.location.href = KAKAO_AUTH_URL;
+  };
 
   // ♥️ 댓글 목록 불러오기 - 초기화
   async function resetAndFetchFirstPage(tab) {
@@ -244,7 +236,7 @@ export default function Detail() {
       // 2. 입력창 복구
       setInputValue("");
       if (textareaRef.current) {
-        textareaRef.current.style.height = "44px";
+        textareaRef.current.style.height = "auto";
       }
 
       // 3. 목록 새로고침
@@ -293,11 +285,8 @@ export default function Detail() {
     }
   };
   // ♥️ 댓글 삭제하기
-  async function handleConfirmDelete() {
-    if (modalState.type === "copy") return;
+  async function handleDeleteComment() {
     const postId = modalState.targetId;
-    const type = modalState.type;
-
     if (!postId) return;
 
     try {
@@ -499,11 +488,14 @@ export default function Detail() {
                 // 마지막 요소에 ref 연결 (무한 스크롤)
                 const isLast = index === commentList.items.length - 1;
                 return (
-                  <div key={comment.id} ref={isLast ? lastElementRef : null}>
+                  <div
+                    key={comment.commentId}
+                    ref={isLast ? lastElementRef : null}
+                  >
                     <Question
                       comment={comment}
                       isHost={exhibition.host}
-                      openModal={() => openDeleteModal(comment.postId)}
+                      openModal={() => openDeleteCommentModal(comment.postId)}
                       onReply={handleHostReply}
                     />
                   </div>
@@ -546,11 +538,14 @@ export default function Detail() {
               commentList.items.map((comment, index) => {
                 const isLast = index === commentList.items.length - 1;
                 return (
-                  <div key={comment.id} ref={isLast ? lastElementRef : null}>
+                  <div
+                    key={comment.commentId}
+                    ref={isLast ? lastElementRef : null}
+                  >
                     <Cheer
                       comment={comment}
                       isHost={exhibition.host}
-                      openModal={() => openDeleteModal(comment.postId)}
+                      openModal={() => openDeleteCommentModal(comment.postId)}
                       onReply={handleHostReply}
                     />
                   </div>
@@ -584,7 +579,7 @@ export default function Detail() {
                     <Review
                       comment={comment}
                       isHost={exhibition.host}
-                      openModal={() => openDeleteModal(comment.postId)}
+                      openModal={() => openDeleteCommentModal(comment.postId)}
                       onReply={handleHostReply}
                     />
                   </div>
@@ -619,7 +614,13 @@ export default function Detail() {
         isOpen={modalState.isOpen}
         type={modalState.type}
         onClose={closeModal}
-        onConfirm={modalState.onConfirm}
+        onConfirm={() => {
+          if (modalState.type === "login") {
+            handleKakaoLogin();
+          } else {
+            handleDeleteComment();
+          }
+        }}
       />
     </Container>
   );
