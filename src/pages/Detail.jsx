@@ -456,7 +456,7 @@ export default function Detail() {
                   <AutoHeightTextarea
                     ref={textareaRef}
                     rows={1}
-                    placeholder="주최자 분들에게 궁금한 점을 질문하세요!"
+                    placeholder="벗들에게 궁금한 점을 질문하세요!"
                     value={inputValue}
                     onChange={handleInputValueChange}
                   />
@@ -614,7 +614,7 @@ const Container = styled.div`
   padding-top: 46px;
   display: flex;
   flex-direction: column;
-  padding: 46px 20px 0px 20px;
+  padding: 46px 0;
 `;
 
 const Header = styled.div`
@@ -622,6 +622,7 @@ const Header = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  padding: 0 20px 0 20px;
   gap: 20px;
   .img {
     width: 200px;
@@ -640,7 +641,7 @@ const Summary = styled.div`
   display: flex;
   flex-direction: column;
   padding: 15px;
-  gap: 8px;
+  gap: 10px;
   border-radius: 8px;
   border: 0.5px solid ${({ theme }) => theme.colors.gray5};
   box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.06);
@@ -657,7 +658,7 @@ const Summary = styled.div`
     color: ${({ theme }) => theme.colors.Primary30};
   }
   .p {
-    ${({ theme }) => theme.textStyles.label2Medium};
+    ${({ theme }) => theme.textStyles.label1Medium};
     color: ${({ theme }) => theme.colors.gray10};
   }
 `;
@@ -666,7 +667,7 @@ const Categories = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-top: 24px;
+  margin-top: 23px;
   padding: 0 20px;
   justify-content: space-between;
   border-bottom: 1px solid ${({ theme }) => theme.colors.gray3};
@@ -704,6 +705,7 @@ const DetailSection = styled.div`
   gap: 8px;
   .p {
     ${({ theme }) => theme.textStyles.body1Regular};
+    font-size: 14px;
     white-space: pre-wrap;
   }
   .img {
@@ -739,8 +741,7 @@ const InputBox = styled.div`
 
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-
+  align-items: center;
   background: ${({ theme }) => theme.colors.white};
   border: 1px solid ${({ theme }) => theme.colors.gray4};
   border-radius: 6px;
@@ -763,6 +764,7 @@ const SendBtn = styled.img`
   width: 24px;
   height: 24px;
   cursor: pointer;
+  align-self: flex-end;
 `;
 
 const Input = styled.input`
@@ -773,6 +775,7 @@ const Input = styled.input`
   ${({ theme }) => theme.textStyles.body1Regular};
   color: ${({ theme }) => theme.colors.blackMain};
   text-align: left;
+  vertical-align: middle;
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.gray6};
@@ -839,17 +842,4 @@ const AutoHeightTextarea = styled.textarea`
   &::placeholder {
     color: ${({ theme }) => theme.colors.gray6};
   }
-`;
-
-const BookmarkWrapper = styled.div`
-  position: absolute;
-  top: 4px;
-  right: -10px;
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10;
 `;

@@ -8,7 +8,7 @@ export default function ConfirmModal({ isOpen, type, onClose, onConfirm }) {
     question: "해당 질문을 삭제할까요?",
     review: "해당 후기를 삭제할까요?",
     reply: "해당 답글을 삭제할까요?",
-    copy: "링크가 복사되었습니다.",
+    copy: "URL이 복사되었어요.",
   };
 
   const message = messageMap[type];
@@ -62,7 +62,7 @@ const ModalBox = styled.div`
     align-items: center;
     justify-content: center;
     padding: 19px 16px;
-    ${({ theme }) => theme.textStyles.label1SemiBold};
+    ${({ theme }) => theme.textStyles.label0SemiBold};
     color: light-dark(black, white);
     flex: 1;
   }
