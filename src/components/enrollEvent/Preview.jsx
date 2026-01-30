@@ -71,7 +71,7 @@ export default function PreviewModeDetail({ detail }) {
 
 const Container = styled.div`
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   padding-top: 46px;
   background-color: ${({ theme }) => theme.colors.white};
 `;
@@ -151,7 +151,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  min-height: 300px;
+  min-height: 100vh;
   background: ${({ theme }) => theme.colors.gray1};
 `;
 const DetailSection = styled.div`

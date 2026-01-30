@@ -47,7 +47,7 @@ const NavBar = styled.div`
   width: min(540px, 100vw);
   z-index: 100;
 
-  height: 50px;
+  height: 58px;
   background: ${({ theme }) => theme.colors.white};
   display: flex;
   justify-content: space-around;

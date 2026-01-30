@@ -78,6 +78,7 @@ function Review() {
               id={data.postId}
               review={data.body}
               imageUrls={data.imageUrls}
+              exhibitionId={data.exhibitionId}
             />
           </div>
         );

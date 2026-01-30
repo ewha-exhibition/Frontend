@@ -7,9 +7,8 @@ import Trash from "../../assets/icons/Trash.svg?react";
 function CheeringItem({
   poster,
   title,
-  id,
   review,
-  pic,
+  exhibitionId,
   mine,
   postId,
   onRequestDelete,
@@ -18,7 +17,7 @@ function CheeringItem({
   const navigate = useNavigate();
 
   const goDetail = () => {
-    navigate(`/detail/${id}`, { state: { currentTab: type } });
+    navigate(`/detail/${exhibitionId}`, { state: { currentTab: type } });
   };
 
   return (

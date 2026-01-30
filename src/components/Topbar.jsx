@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 import ChevronLeftIcon from "../assets/icons/ChevronLeft.svg?react";
 import Link from "../assets/icons/Link.svg?react";
-
+import DotsMenu from "../assets/icons/DotsMenu.svg?react";
 function Topbar({ title, icon, onClick }) {
   const navigate = useNavigate();
   const goBack = () => {
+    if (icon === "EnrollEvent") return;
     navigate(-1);
   };
 
@@ -16,6 +17,7 @@ function Topbar({ title, icon, onClick }) {
       <h3>{title}</h3>
       {icon === null && <Spacer />}
       {icon === "Link" && <Link height={18} width={24} onClick={onClick} />}
+      {icon === "Menu" && <DotsMenu height={24} onClick={onClick} />}
       {icon === "EnrollEvent" && (
         <TextButton onClick={onClick}>등록하기</TextButton>
       )}
