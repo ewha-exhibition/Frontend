@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
 import useLogin from "../../utils/hooks/useLogin";
@@ -12,17 +12,55 @@ import Nothing from "../../components/Nothing";
 
 function MyExpectations() {
   const login = useLogin();
+  const { fetchData } = useCustomFetch();
+
+  const [pageNow, setPageNow] = useState(0);
+  const [items, setItems] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const observerRef = useRef(null);
+  
+  const [isOpen, setIsOpen] = useState(false);
+  const [targetPostId, setTargetPostId] = useState(null);
+
   const {
     data: myExData,
     error,
     loading,
   } = useCustomFetch(`/cheers?pageNum=0&limit=10`);
-  console.log(myExData?.data);
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [targetPostId, setTargetPostId] = useState(null);
+  useEffect(() => {
+    if (!myExData?.data?.previews) return;
 
-  const { fetchData } = useCustomFetch();
+    setItems((prev) => {
+      const newItems = myExData.data.previews.filter(
+        (data) => !prev.some((p) => p.postId === data.postId),
+      );
+      return [...prev, ...newItems];
+    });
+    const { pageNum, totalPages } = myExData.data.pageInfo;
+
+    if (pageNum >= totalPages - 1) {
+      setHasMore(false);
+    }
+  }, [myExData]);
+
+  const lastItemRef = useCallback(
+    (node) => {
+      if (loading || !hasMore) return;
+
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          setPageNow((prev) => prev + 1);
+        }
+      });
+
+      if (node) observerRef.current.observe(node);
+    },
+    [loading, hasMore],
+  );
+
   const handleDeleteConfirm = async () => {
     try {
       await fetchData(`/cheers/${targetPostId}`, "DELETE");
@@ -36,31 +74,38 @@ function MyExpectations() {
     }
   };
 
+  console.log(items);
+
   return (
     <Container>
       <Topbar title={"작성한 기대평"} icon={null} />
       {login ? (
         <>
           <Content>
-            {myExData?.data?.previews?.length === 0 ? (
+            {!loading && items.length === 0 ? (
               <Nothing text={"아직 작성한 기대평이 없어요"} />
             ) : (
-              myExData?.data?.previews.map((data) => (
-                <CheeringItem
-                  key={data.postId}
-                  postId={data.postId}
-                  poster={data.posterUrl}
-                  title={data.exhibitionName}
-                  id={data.exhibitionId}
-                  review={data.content}
-                  pic={data.imageUrls}
-                  mine={true}
-                  onRequestDelete={(postId) => {
-                    setTargetPostId(postId);
-                    setIsOpen(true);
-                  }}
-                />
-              ))
+              items.map((data, index) => {
+                const isLast = index === items.length - 1;
+                return (
+                  <div ref={isLast ? lastItemRef : null} key={data.postId}>
+                    <CheeringItem
+                      key={data.postId}
+                      postId={data.postId}
+                      poster={data.posterUrl}
+                      title={data.exhibitionName}
+                      id={data.exhibitionId}
+                      review={data.content}
+                      pic={data.imageUrls}
+                      mine={true}
+                      onRequestDelete={(postId) => {
+                        setTargetPostId(postId);
+                        setIsOpen(true);
+                      }}
+                    />
+                  </div>
+                );
+              })
             )}
           </Content>
           <ConfirmModal

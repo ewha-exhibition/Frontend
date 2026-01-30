@@ -11,6 +11,7 @@ function Review() {
   const [items, setItems] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const observerRef = useRef(null);
+  const isRequesting = useRef(false);
 
   const {
     data: reviewData,
@@ -20,6 +21,11 @@ function Review() {
   //console.log(reviewData);
 
   useEffect(() => {
+    if (error) {
+      isRequesting.current = false;
+      return;
+    }
+
     if (!reviewData?.data?.posts) return;
 
     setItems((prev) => {
@@ -33,7 +39,7 @@ function Review() {
     if (pageNum >= totalPages - 1) {
       setHasMore(false);
     }
-  }, [reviewData]);
+  }, [reviewData, error]);
 
   const lastItemRef = useCallback(
     (node) => {
@@ -42,7 +48,8 @@ function Review() {
       if (observerRef.current) observerRef.current.disconnect();
 
       observerRef.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
+        if (entries[0].isIntersecting && !isRequesting.current && hasMore) {
+          isRequesting.current = true;
           setPageNow((prev) => prev + 1);
         }
       });
@@ -55,6 +62,8 @@ function Review() {
   if (!loading && items.length === 0) {
     return <Nothing text={"아직 작성된 후기가 없어요"} />;
   }
+
+  console.log(items);
 
   return (
     <Container>

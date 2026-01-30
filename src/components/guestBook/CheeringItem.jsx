@@ -13,11 +13,12 @@ function CheeringItem({
   mine,
   postId,
   onRequestDelete,
+  type = "cheer",
 }) {
   const navigate = useNavigate();
 
   const goDetail = () => {
-    navigate(`/detail/${id}`, { state: { currentTab: "cheer" } });
+    navigate(`/detail/${id}`, { state: { currentTab: type } });
   };
 
   return (
