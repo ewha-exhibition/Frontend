@@ -7,7 +7,7 @@ const useAxios = () => {
 
   const requestInterceptor = useCallback((config) => {
     const accessToken = sessionStorage.getItem("accessToken");
-    if (accessToken) {
+    if (accessToken && !config.url.includes("/api/auth/refresh")) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
@@ -17,14 +17,19 @@ const useAxios = () => {
     async (error) => {
       const originalRequest = error.config;
 
-      if (error.response?.status === 401 && !originalRequest._retry) {
+      if (
+        (error.response?.status === 401 || error.response?.status === 403) &&
+        !originalRequest._retry &&
+        !originalRequest.url.includes("/api/auth/refresh")
+      ) {
         originalRequest._retry = true;
 
         try {
+          const refreshToken = sessionStorage.getItem("refreshToken");
           const refreshResponse = await axiosInstance.post(
             "/api/auth/refresh",
-            null,
-            { withCredentials: true }
+            { refreshToken },
+            { withCredentials: true },
           );
 
           const newAccessToken = refreshResponse.data.accessToken;
@@ -37,10 +42,8 @@ const useAxios = () => {
 
           return axiosInstance(originalRequest);
         } catch (refreshError) {
-          // refresh 실패 → 로그아웃
-          sessionStorage.removeItem("accessToken");
-          sessionStorage.removeItem("refreshToken");
-
+          console.error("세션이 만료되었습니다. 다시 로그인해주세요.");
+          sessionStorage.clear(); // 안전하게 전체 삭제
           navigate("/mypage", { replace: true });
           return Promise.reject(refreshError);
         }
@@ -48,14 +51,14 @@ const useAxios = () => {
 
       return Promise.reject(error);
     },
-    [navigate]
+    [navigate],
   );
 
   useEffect(() => {
     const req = axiosInstance.interceptors.request.use(requestInterceptor);
     const res = axiosInstance.interceptors.response.use(
       (response) => response,
-      responseInterceptor
+      responseInterceptor,
     );
 
     return () => {
