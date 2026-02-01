@@ -1,10 +1,16 @@
 const theme = {
   colors: {
-    Primary100: "#00664F",
-    Primary50: "#659788",
-    Primary20: "#B3D4CA",
-    SubColor1: "#1A7E33",
-    SubColor2: "#BBEC57",
+    //Primary100: "#16915E",
+    Primary70: "#16915E",
+    Primary60: "#2A926C",
+    Primary50: "#00A76A",
+    Primary30: "#57B190",
+    //Primary20: "#74A08F",
+    Primary10: "#DBF3EC",
+    Primary5: "#EEFBF7",
+
+    SubColor2: "#74A08F",
+    SubColor1: "#DCFDCE",
 
     gray1: "#f7f8fa",
     gray2: "#f2f3f6",
@@ -27,7 +33,9 @@ const theme = {
       headline18: "18px",
       title15: "15px",
       body14: "14px",
+      label16: "16px",
       label14: "14px",
+      label12: "12px",
     },
 
     lineHeight: {
@@ -70,12 +78,23 @@ const theme = {
     },
 
     body1Regular: {
-      fontSize: "14px",
+      fontSize: "12px",
       lineHeight: "150%",
       fontWeight: 400,
       letterSpacing: "-1%",
     },
-
+    body2Regular: {
+      fontSize: "12px",
+      lineHeight: "150%",
+      fontWeight: 400,
+      letterSpacing: "-1%",
+    },
+    label0SemiBold: {
+      fontSize: "16px",
+      lineHeight: "130%",
+      fontWeight: 600,
+      letterSpacing: "0%",
+    },
     label1SemiBold: {
       fontSize: "14px",
       lineHeight: "130%",
