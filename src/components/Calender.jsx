@@ -27,7 +27,6 @@ export default function Calender({ startDate, endDate, onChange }) {
     if (!isSelectingPeriod) {
       setTempStart(dates);
       setTempEnd(null);
-      // 여기서 setIsOpen(false)를 하지 않으므로 날짜를 눌러도 닫히지 않습니다.
       return;
     }
 
