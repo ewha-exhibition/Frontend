@@ -7,9 +7,6 @@ import BookingBar from "../components/detail/BookingBar";
 import ConfirmModal from "../components/detail/ConfirmModal";
 import { Cheer, Question, Review } from "../components/detail/TabContents";
 import { HostMenu } from "../components/detail/HostView";
-//TODO: 호스트의 경우 햄버거 메뉴로 변경
-//TODO: 링크 복사 완료 모달
-//TODO: 회원가입 모달
 
 // Icons
 import locationIcon from "../assets/icons/Location.svg";
@@ -33,15 +30,43 @@ import {
 import useAxios from "../utils/hooks/useAxios";
 
 export default function Detail() {
+  // 1. Hooks & Constants
   const PAGE_SIZE = 10;
   useAxios();
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const textareaRef = useRef(null);
 
-  // 전시 정보 불러오기
+  // 2. State Management (상태 관리)
+  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
   const [exhibition, setExhibition] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [menuState, setMenuState] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [currentTab, setCurrentTab] = useState(
+    location.state?.currentTab || "detail",
+  );
+
+  // 모달 상태
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    type: null,
+    targetId: null,
+  });
+
+  // 댓글 리스트 상태
+  const initialListState = {
+    items: [],
+    page: 0,
+    hasNext: true,
+    loading: false,
+  };
+  const [commentList, setCommentList] = useState({
+    ...initialListState,
+  });
+
+  // 3. Side Effects (데이터 불러오기)
   useEffect(() => {
     if (!id) return;
     async function fetchExhibition() {
@@ -52,60 +77,13 @@ export default function Detail() {
       } catch (e) {
         console.error(e);
       } finally {
-        setIsLoading(false); // 성공하든 실패하든 로딩 종료
+        setIsLoading(false);
       }
     }
     fetchExhibition();
   }, [id]);
 
-  // 모달 창 관리
-  const [modalState, setModalState] = useState({
-    isOpen: false,
-    type: null,
-    targetId: null,
-  });
-
-  // 호스트 메뉴
-  const [menuState, setMenuState] = useState(false);
-
-  //댓글창 높이 조절
-  const textareaRef = useRef(null);
-
-  function openDeleteModal(postId) {
-    setModalState({ isOpen: true, type: currentTab, targetId: postId });
-  }
-  function openLoginModal() {
-    setModalState({ isOpen: true, type: "login", targetId: null });
-  }
-  function closeModal() {
-    setModalState({ isOpen: false, type: null, targetId: null });
-  }
-
-  // 메뉴 열기
-  const openMenu = () => {
-    setMenuState(true);
-  };
-
-  // 메뉴 닫기
-  const closeMenu = () => {
-    setMenuState(false);
-  };
-  // 로그인 상태
-  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
-
-  // 댓글 입력
-  const [inputValue, setInputValue] = useState("");
-  const handleInputValueChange = (e) => {
-    setInputValue(e.target.value);
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto"; // 높이 초기화
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // 내용 높이에 맞춰 설정
-    }
-  };
-  // 탭, 카테고리
-  const [currentTab, setCurrentTab] = useState(
-    location.state?.currentTab || "detail",
-  );
+  // 4. Tab & Category Logic
   const questionCount = exhibition?.questionCount ?? 0;
   const cheerCount = exhibition?.cheerCount ?? 0;
   const reviewCount = exhibition?.reviewCount ?? 0;
@@ -115,6 +93,7 @@ export default function Detail() {
     { key: "cheer", label: "응원", count: exhibition?.cheerCount ?? 0 },
     { key: "review", label: "후기", count: exhibition?.reviewCount ?? 0 },
   ];
+
   const handleTabChange = (tab) => {
     if (tab === currentTab) return;
     setCurrentTab(tab);
@@ -122,17 +101,49 @@ export default function Detail() {
     setInputValue("");
   };
 
-  //댓글 리스트 상태
-  const initialListState = {
-    items: [],
-    page: 0,
-    hasNext: true,
-    loading: false,
+  // 5. Modal Functions (모달 제어)
+  function closeModal() {
+    setModalState({ isOpen: false, type: null, targetId: null });
+  }
+
+  function openDeleteCommentModal(postId, type) {
+    setModalState({
+      isOpen: true,
+      type: type,
+      targetId: postId,
+    });
+  }
+
+  function openLoginModal() {
+    setModalState({
+      isOpen: true,
+      type: "login",
+    });
+  }
+
+  // 6. Event Handlers (입력, 메뉴, 로그인)
+  const handleInputValueChange = (e) => {
+    setInputValue(e.target.value);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
   };
-  // 댓글 리스트, 현재 탭의 리스트만 관리
-  const [commentList, setCommentList] = useState({
-    ...initialListState,
-  });
+
+  const openMenu = () => {
+    setMenuState(true);
+  };
+
+  const closeMenu = () => {
+    setMenuState(false);
+  };
+
+  const handleKakaoLogin = () => {
+    const client_id = import.meta.env.VITE_KAKAO_CLIENT_ID;
+    const redirect_uri = import.meta.env.VITE_KAKAO_REDIRECT_URI;
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code`;
+    window.location.href = KAKAO_AUTH_URL;
+  };
 
   // ♥️ 댓글 목록 불러오기 - 초기화
   async function resetAndFetchFirstPage(tab) {
@@ -201,7 +212,7 @@ export default function Detail() {
       setCommentList((prev) => ({ ...prev, loading: false }));
     }
   }
-  // ♥️ 댓글 작성하기 (수정: 임시 로컬 갱신 -> 서버 재요청)
+  // ♥️ 댓글 작성하기 (수정: 임시 로컬 갱신)
   async function handleSubmitComment() {
     if (!login) {
       openLoginModal();
@@ -225,7 +236,7 @@ export default function Detail() {
       // 2. 입력창 복구
       setInputValue("");
       if (textareaRef.current) {
-        textareaRef.current.style.height = "44px";
+        textareaRef.current.style.height = "auto";
       }
 
       // 3. 목록 새로고침
@@ -240,9 +251,10 @@ export default function Detail() {
         };
       });
     } catch (e) {
-      console.error(e);
+      //console.error(e);
     }
   }
+
   // ♥️ 주최자 대댓글 작성하기
   const handleHostReply = async (targetId, replyContent) => {
     // 1. 로그인 체크
@@ -273,38 +285,37 @@ export default function Detail() {
     }
   };
   // ♥️ 댓글 삭제하기
-  async function handleConfirmDelete() {
-    if (modalState.type === "copy") return;
+  async function handleDeleteComment() {
     const postId = modalState.targetId;
     const type = modalState.type;
-
     if (!postId) return;
 
     try {
       // 1. API 호출
-      await deleteCommentApi({ postId, type: currentTab });
-
+      await deleteCommentApi({ postId, type });
       closeModal();
 
-      // 2. 화면 즉시 갱신 (리스트에서 제거)
-      setCommentList((prev) => ({
-        ...prev,
-        items: prev.items.filter((item) => {
-          const itemId = item.postId;
-          return itemId !== postId;
-        }),
-      }));
-
-      // 3. 카운트 즉시 갱신 (-1)
-      setExhibition((prev) => {
-        const countKey = `${currentTab}Count`;
-        return {
+      if (type === "comment") {
+        // ✅ 답글 삭제 시에는 데이터 구조가 깊으므로 깔끔하게 첫 페이지 다시 불러오기
+        await resetAndFetchFirstPage(currentTab);
+      } else {
+        // ✅ 일반 댓글 삭제 시에는 기존 로컬 필터링 로직 유지
+        setCommentList((prev) => ({
           ...prev,
-          [countKey]: Math.max(0, (prev[countKey] || 0) - 1),
-        };
-      });
+          items: prev.items.filter((item) => item.postId !== postId),
+        }));
+
+        // 카운트 감소
+        setExhibition((prev) => {
+          const countKey = `${currentTab}Count`;
+          return {
+            ...prev,
+            [countKey]: Math.max(0, (prev[countKey] || 0) - 1),
+          };
+        });
+      }
     } catch (e) {
-      console.error(e);
+      console.error("삭제 실패:", e);
     }
   }
   // 탭 변경 시 리셋 로드
@@ -365,7 +376,6 @@ export default function Detail() {
       console.error(e);
     }
   };
-  //======================================UI=============================================
   if (isLoading || !exhibition) {
     return (
       <div style={{ padding: "100px", textAlign: "center" }}>Loading...</div>
@@ -438,8 +448,8 @@ export default function Detail() {
             {exhibition.images?.map((img, idx) => (
               <img
                 className="img"
-                key={idx}
-                src={img}
+                key={img.id}
+                src={img.imageUrl}
                 alt={`상세 정보 이미지-${idx}`}
               />
             ))}
@@ -456,7 +466,7 @@ export default function Detail() {
                   <AutoHeightTextarea
                     ref={textareaRef}
                     rows={1}
-                    placeholder="주최자 분들에게 궁금한 점을 질문하세요!"
+                    placeholder="벗들에게 궁금한 점을 질문하세요!"
                     value={inputValue}
                     onChange={handleInputValueChange}
                   />
@@ -480,11 +490,17 @@ export default function Detail() {
                 // 마지막 요소에 ref 연결 (무한 스크롤)
                 const isLast = index === commentList.items.length - 1;
                 return (
-                  <div key={comment.id} ref={isLast ? lastElementRef : null}>
+                  <div
+                    key={comment.commentId}
+                    ref={isLast ? lastElementRef : null}
+                  >
                     <Question
                       comment={comment}
                       isHost={exhibition.host}
-                      openModal={() => openDeleteModal(comment.postId)}
+                      club={exhibition.clubName}
+                      openModal={(postId, type) =>
+                        openDeleteCommentModal(postId, type || "question")
+                      }
                       onReply={handleHostReply}
                     />
                   </div>
@@ -503,10 +519,12 @@ export default function Detail() {
           <CommentSection>
             {!exhibition.host && (
               <InputBox>
-                <div className="left">
+                <div className="left" style={{ alignItems: "flex-end" }}>
                   <p className="nickname">익명</p>
-                  <Input
-                    placeholder="응원의 한마디를 남겨주세요!"
+                  <AutoHeightTextarea
+                    ref={textareaRef}
+                    rows={1}
+                    placeholder="벗들에게 응원의 한마디를 남겨주세요!"
                     value={inputValue}
                     onChange={handleInputValueChange}
                   />
@@ -515,6 +533,7 @@ export default function Detail() {
                   src={sendIcon}
                   alt="send"
                   onClick={handleSubmitComment}
+                  onReply={handleHostReply}
                 />
               </InputBox>
             )}
@@ -527,11 +546,17 @@ export default function Detail() {
               commentList.items.map((comment, index) => {
                 const isLast = index === commentList.items.length - 1;
                 return (
-                  <div key={comment.id} ref={isLast ? lastElementRef : null}>
+                  <div
+                    key={comment.commentId}
+                    ref={isLast ? lastElementRef : null}
+                  >
                     <Cheer
                       comment={comment}
                       isHost={exhibition.host}
-                      openModal={() => openDeleteModal(comment.postId)}
+                      club={exhibition.clubName}
+                      openModal={(postId, type) =>
+                        openDeleteCommentModal(postId, type || "cheer")
+                      }
                       onReply={handleHostReply}
                     />
                   </div>
@@ -564,8 +589,11 @@ export default function Detail() {
                   <div key={comment.id} ref={isLast ? lastElementRef : null}>
                     <Review
                       comment={comment}
+                      club={exhibition.clubName}
                       isHost={exhibition.host}
-                      openModal={() => openDeleteModal(comment.postId)}
+                      openModal={(postId, type) =>
+                        openDeleteCommentModal(postId, type || "review")
+                      }
                       onReply={handleHostReply}
                     />
                   </div>
@@ -574,7 +602,7 @@ export default function Detail() {
             )}
             {commentList.loading && (
               <p style={{ textAlign: "center" }}>Loading...</p>
-            )}{" "}
+            )}
           </CommentSection>
         )}
       </Content>
@@ -600,7 +628,13 @@ export default function Detail() {
         isOpen={modalState.isOpen}
         type={modalState.type}
         onClose={closeModal}
-        onConfirm={handleConfirmDelete}
+        onConfirm={() => {
+          if (modalState.type === "login") {
+            handleKakaoLogin();
+          } else {
+            handleDeleteComment();
+          }
+        }}
       />
     </Container>
   );
@@ -614,7 +648,7 @@ const Container = styled.div`
   padding-top: 46px;
   display: flex;
   flex-direction: column;
-  padding: 46px 20px 0px 20px;
+  padding: 46px 0;
 `;
 
 const Header = styled.div`
@@ -622,6 +656,7 @@ const Header = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  padding: 0 20px 0 20px;
   gap: 20px;
   .img {
     width: 200px;
@@ -640,7 +675,7 @@ const Summary = styled.div`
   display: flex;
   flex-direction: column;
   padding: 15px;
-  gap: 8px;
+  gap: 10px;
   border-radius: 8px;
   border: 0.5px solid ${({ theme }) => theme.colors.gray5};
   box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.06);
@@ -657,7 +692,7 @@ const Summary = styled.div`
     color: ${({ theme }) => theme.colors.Primary30};
   }
   .p {
-    ${({ theme }) => theme.textStyles.label2Medium};
+    ${({ theme }) => theme.textStyles.label1Medium};
     color: ${({ theme }) => theme.colors.gray10};
   }
 `;
@@ -666,7 +701,7 @@ const Categories = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-top: 24px;
+  margin-top: 23px;
   padding: 0 20px;
   justify-content: space-between;
   border-bottom: 1px solid ${({ theme }) => theme.colors.gray3};
@@ -698,19 +733,22 @@ const Content = styled.div`
 `;
 
 const DetailSection = styled.div`
+  width: 100%;
   padding: 19px 19px 120px 19px;
   display: flex;
   flex-direction: column;
+  align-self: center;
   gap: 8px;
   .p {
     ${({ theme }) => theme.textStyles.body1Regular};
+    font-size: 14px;
     white-space: pre-wrap;
   }
   .img {
     width: 100%;
-    max-width: 335px;
     height: auto;
     border-radius: 4px;
+    align-self: center;
   }
 `;
 
@@ -725,7 +763,8 @@ const CommentSection = styled.div`
   .review {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
+    align-self: center;
     gap: 6px;
   }
 `;
@@ -739,8 +778,7 @@ const InputBox = styled.div`
 
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-
+  align-items: center;
   background: ${({ theme }) => theme.colors.white};
   border: 1px solid ${({ theme }) => theme.colors.gray4};
   border-radius: 6px;
@@ -763,6 +801,7 @@ const SendBtn = styled.img`
   width: 24px;
   height: 24px;
   cursor: pointer;
+  align-self: flex-end;
 `;
 
 const Input = styled.input`
@@ -773,6 +812,7 @@ const Input = styled.input`
   ${({ theme }) => theme.textStyles.body1Regular};
   color: ${({ theme }) => theme.colors.blackMain};
   text-align: left;
+  vertical-align: middle;
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.gray6};
@@ -839,17 +879,4 @@ const AutoHeightTextarea = styled.textarea`
   &::placeholder {
     color: ${({ theme }) => theme.colors.gray6};
   }
-`;
-
-const BookmarkWrapper = styled.div`
-  position: absolute;
-  top: 4px;
-  right: -10px;
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10;
 `;

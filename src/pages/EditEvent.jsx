@@ -71,15 +71,14 @@ export default function EditExhibition() {
           clubName: data.clubName || "",
           content: data.content || "",
           images:
-            data.images?.map((img) => ({ id: img.id, url: img.url })) || [],
+            data.images?.map((img) => ({ id: img.id, url: img.imageUrl })) ||
+            [],
         };
 
         setStepOneData(mappedData);
         setDetailText(mappedData.content);
         setDetailImages(mappedData.images);
         setOriginalData(mappedData);
-        console.log(data);
-        console.log(mappedData);
       } catch (error) {
         alert("데이터를 불러오는데 실패했습니다.");
         navigate(-1);
@@ -108,26 +107,45 @@ export default function EditExhibition() {
       기타: "ETCETERA",
     };
 
-    // 이미지
+    // 이미지 처리 로직
     const processedImages = detailImages.map((img, idx) => {
       const sequence = idx + 1;
 
+      let actualUrl = "";
+      if (typeof img === "string") {
+        actualUrl = img;
+      } else if (img.url && typeof img.url === "object") {
+        actualUrl = img.url.url;
+      } else {
+        actualUrl = img.url;
+      }
+
       if (img.id) {
-        // 기존 이미지: 변경된 값만 추출
+        // A. 기존 이미지 처리
         const originalImg = originalData.images.find((o) => o.id === img.id);
         const imageBody = { id: img.id };
 
-        if (originalImg?.url !== img.url) imageBody.url = img.url;
-        // 기존 이미지의 순서(index + 1)가 원본에서의 순서와 다른지 체크
+        // URL 변경 체크
+        if (originalImg?.url !== actualUrl) {
+          imageBody.url = actualUrl;
+        }
+
+        // 순서 변경 체크
         const originalIdx = originalData.images.findIndex(
           (o) => o.id === img.id,
         );
-        if (originalIdx + 1 !== sequence) imageBody.sequence = sequence;
+        if (originalIdx + 1 !== sequence) {
+          imageBody.sequence = sequence;
+        }
 
         return imageBody;
       } else {
-        // 신규 이미지: id 제외하고 url, sequence만 포함
-        return { url: img.url, sequence: sequence };
+        // B. 신규 이미지 처리 (id 없음)
+        // [중요] 신규는 무조건 url과 sequence가 있어야 함
+        return {
+          url: actualUrl,
+          sequence: sequence,
+        };
       }
     });
 
@@ -173,10 +191,17 @@ export default function EditExhibition() {
       }
     });
 
-    if (
-      JSON.stringify(processedImages) !==
-      JSON.stringify(originalData.images.map((img, idx) => ({ id: img.id })))
-    ) {
+    // (1) 이미지 개수나 구성 ID가 달라짐 (순서 변경 포함)
+    const isStructureChanged =
+      JSON.stringify(originalData.images.map((i) => i.id)) !==
+      JSON.stringify(processedImages.map((i) => i.id || "new"));
+
+    // (2) 내부 내용(URL이나 Sequence)에 변경이 발생하여 필드가 추가됨
+    const hasInternalChange = processedImages.some(
+      (img) => img.url || img.sequence,
+    );
+
+    if (isStructureChanged || hasInternalChange) {
       patchBody.images = processedImages;
     }
 
@@ -241,11 +266,7 @@ export default function EditExhibition() {
       {step == 1 ? (
         <Topbar icon={null} />
       ) : (
-        <Topbar
-          title={"전시 수정하기"}
-          icon={"EnrollEvent"}
-          onClick={handleSubmit}
-        />
+        <Topbar icon={"EnrollEvent"} onClick={handleSubmit} />
       )}
       <PreStep onClick={goBack} />
       <Header>
@@ -281,7 +302,12 @@ export default function EditExhibition() {
             <EnrollStepTwo
               text={detailText}
               setText={setDetailText}
-              pictures={detailImages}
+              pictures={detailImages.map((img) => {
+                const targetUrl = typeof img === "string" ? img : img.url;
+                return typeof targetUrl === "object"
+                  ? targetUrl.url
+                  : targetUrl;
+              })}
               setPictures={setDetailImages}
               stepOneData={stepOneData}
             />

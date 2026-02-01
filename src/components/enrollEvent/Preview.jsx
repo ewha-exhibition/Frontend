@@ -10,7 +10,7 @@ export default function PreviewModeDetail({ detail }) {
     { key: "detail", label: "상세정보" },
     { key: "question", label: "질문 (1)" },
     { key: "cheer", label: "응원 (2)" },
-    { key: "review", label: "후기 (0)" },
+    { key: "review", label: "후기" },
   ];
   return (
     <Container>
@@ -162,6 +162,7 @@ const DetailSection = styled.div`
 
   .p {
     ${({ theme }) => theme.textStyles.body1Regular};
+    color: ${({ theme }) => theme.colors.gray10};
     white-space: pre-wrap;
   }
 
