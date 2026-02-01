@@ -52,6 +52,8 @@ const Backdrop = styled.div`
   background-color: transparent;
   z-index: 110;
   cursor: default;
+  position: absolute;
+  inset: 0;
 `;
 const MenuContainer = styled.div`
   position: absolute;
@@ -59,7 +61,7 @@ const MenuContainer = styled.div`
   right: 20px;
   top: 46px;
   background-color: white;
-  border-radius: 0px 0px 8px 8px;
+  border-radius: 8px;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   z-index: 111;
 `;
