@@ -323,7 +323,6 @@ const Bar = styled.div`
 const Rank = styled.span`
   color: ${({ theme }) => theme.colors.white};
   text-shadow: 0 0 10px #000;
-  font-family: SUIT;
   font-size: 16px;
   font-weight: 700;
   line-height: 100%;
