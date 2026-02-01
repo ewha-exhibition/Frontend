@@ -175,6 +175,7 @@ export default function Home() {
 const Container = styled.div`
   position: relative;
   width: 100%;
+  overflow-x: auto;
   max-width: 540px;
   margin: 0 auto;
   /* padding-top: 46px; */

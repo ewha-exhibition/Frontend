@@ -19,17 +19,15 @@ export default function Calender({ startDate, endDate, onChange }) {
   const datePickerRef = useRef(null);
 
   const toggleCalendar = () => {
-    if (isOpen) datePickerRef.current?.setOpen(false);
-    else datePickerRef.current?.setOpen(true);
-    setIsOpen(!isOpen);
+    setIsOpen((prev) => !prev);
   };
 
   // 날짜 선택 핸들링
   const handleChange = (dates) => {
     if (!isSelectingPeriod) {
-      // 단일 날짜 선택
       setTempStart(dates);
       setTempEnd(null);
+      // 여기서 setIsOpen(false)를 하지 않으므로 날짜를 눌러도 닫히지 않습니다.
       return;
     }
 
@@ -52,9 +50,7 @@ export default function Calender({ startDate, endDate, onChange }) {
     if (onChange) {
       onChange(formatDate(tempStart), tempEnd ? formatDate(tempEnd) : null);
     }
-
-    setIsOpen(false);
-    datePickerRef.current?.setOpen(false);
+    setIsOpen(false); // State를 false로 변경하여 닫음
   };
 
   return (
@@ -63,6 +59,7 @@ export default function Calender({ startDate, endDate, onChange }) {
       <DatePickerWrapper>
         <DatePicker
           ref={datePickerRef}
+          open={isOpen}
           popperProps={{ strategy: "fixed" }}
           popperContainer={({ children }) => (
             <div style={{ position: "relative", zIndex: 100 }}>{children}</div>

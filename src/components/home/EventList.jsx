@@ -1,7 +1,5 @@
 import styled from "styled-components";
-import { useState } from "react";
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
-import { toggleScrap } from "../../utils/apis/toggleScrap";
 
 import Bookmark from "../../assets/icons/Bookmark.svg?react";
 import BookmarkOL from "../../assets/icons/BookmarkOL.svg?react";
@@ -19,7 +17,7 @@ export default function EventList({
   {
     const { fetchData } = useCustomFetch();
 
-    const handleBookmarkClick = () => {
+    const handleScrapClick = () => {
       onScrapClick(id, scraped, fetchData);
     };
 

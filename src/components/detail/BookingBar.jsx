@@ -34,6 +34,10 @@ function parsePeriod(periodStr) {
   } else if (endShort) {
     endMonth = Number(endShort[1]);
     endDay = Number(endShort[2]);
+    // 종료 월이 시작 월보다 작으면 내년으로 처리 (12월 -> 1월)
+    if (endMonth < startMonth) {
+      endYear += 1;
+    }
   } else {
     return null;
   }
@@ -51,7 +55,7 @@ function computeIsOnGoing(periodStr, now = new Date()) {
   if (!parsed) return false;
 
   const t = now.getTime();
-  return parsed.startDate.getTime() <= t && t <= parsed.endDate.getTime();
+  return t <= parsed.endDate.getTime();
 }
 function computeIsFree(price) {
   if (price == null) return false;
