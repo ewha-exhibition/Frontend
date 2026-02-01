@@ -442,17 +442,20 @@ export default function Detail() {
 
       <Content>
         {/* 상세 */}
+
         {currentTab === "detail" && (
           <DetailSection>
             <p className="p">{exhibition.content}</p>
             {exhibition.images?.map((img, idx) => (
               <img
                 className="img"
-                key={idx}
-                src={img}
+                key={img.id}
+                src={img.imageUrl}
                 alt={`상세 정보 이미지-${idx}`}
               />
             ))}
+            {console.log("전체 데이터:", exhibition)}
+            {console.log("이미지 배열:", exhibition.images)}
           </DetailSection>
         )}
 
@@ -519,10 +522,12 @@ export default function Detail() {
           <CommentSection>
             {!exhibition.host && (
               <InputBox>
-                <div className="left">
+                <div className="left" style={{ alignItems: "flex-end" }}>
                   <p className="nickname">익명</p>
-                  <Input
-                    placeholder="응원의 한마디를 남겨주세요!"
+                  <AutoHeightTextarea
+                    ref={textareaRef}
+                    rows={1}
+                    placeholder="벗들에게 응원의 한마디를 남겨주세요!"
                     value={inputValue}
                     onChange={handleInputValueChange}
                   />
@@ -531,6 +536,7 @@ export default function Detail() {
                   src={sendIcon}
                   alt="send"
                   onClick={handleSubmitComment}
+                  onReply={handleHostReply}
                 />
               </InputBox>
             )}
@@ -729,9 +735,11 @@ const Content = styled.div`
 `;
 
 const DetailSection = styled.div`
+  width: 100%;
   padding: 19px 19px 120px 19px;
   display: flex;
   flex-direction: column;
+  align-self: center;
   gap: 8px;
   .p {
     ${({ theme }) => theme.textStyles.body1Regular};
@@ -740,9 +748,9 @@ const DetailSection = styled.div`
   }
   .img {
     width: 100%;
-    max-width: 335px;
     height: auto;
     border-radius: 4px;
+    align-self: center;
   }
 `;
 
@@ -757,7 +765,8 @@ const CommentSection = styled.div`
   .review {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
+    align-self: center;
     gap: 6px;
   }
 `;

@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import LoginModal from "../home/NeedLogin";
 export default function ConfirmModal({ isOpen, type, onClose, onConfirm }) {
   if (!isOpen) return null;
 
@@ -114,10 +113,9 @@ const ModalBox = styled.div`
     color: ${({ theme }) => theme.colors.Primary60};
   }
 
-  /* ✅ 추가:(Alert용) */
   .full {
     width: 100%;
     border-radius: 0 0 14px 14px;
-    color: ${({ theme }) => theme.colors.Primary60}; /* 강조색 */
+    color: ${({ theme }) => theme.colors.Primary60};
   }
 `;
