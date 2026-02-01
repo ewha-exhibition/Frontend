@@ -6,23 +6,7 @@ import PhotoViewer from "../guestBook/PhotoViewer";
 import commentIcon from "../../assets/icons/comment.svg";
 import deleteIcon from "../../assets/icons/DeleteComment.svg";
 
-//역할: 하나의 댓글을 표시하는 컴포넌트
-//comment: 응원 및 질문 객체
-//postId: 댓글 고유 ID, 삭제나 수정 요청 시 필요
-//writer: 작성자 닉네임 (벗1 등)
-//createdAt: 댓글 등록 날짜
-//content: 댓글 내용
-//hasAnswer: 주최자 답변 여부
-//answer: 답변 내용
-//answerCreatedAt: 답변 등록 날짜
-//isWriter: 현재 로그인한 사용자가 해당 댓글의 작성자인지
-
-//Modal 타입: cheer, question, review, answer
-
-//TODO: 아이콘 객체화
-//TODO: [BE] 답변 삭제 기능 API 필요, 답변의 고유 ID 필요!!!
-
-export function Cheer({ comment, isHost, openModal, onReply }) {
+export function Cheer({ comment, isHost, club, openModal, onReply }) {
   const [isReplying, setIsReplying] = useState(false); // 입력창 열림 여부
   const [replyText, setReplyText] = useState(""); // 입력된 텍스트
   const handleSubmit = () => {
@@ -51,24 +35,29 @@ export function Cheer({ comment, isHost, openModal, onReply }) {
             className="delete"
             src={deleteIcon}
             alt="삭제하기"
-            onClick={openModal} // 삭제 API 호출용 ID 전달
+            onClick={() => openModal(comment.postId, "cheer")}
           />
         )}
       </CommentHeader>
 
       <CommentContent>
-        <p className="text">{comment.content}</p>
+        {comment.isDeleted && comment.hasAnswer ? (
+          <p className="text">삭제된 응원이에요.</p>
+        ) : (
+          <p className="text">{comment.content}</p>
+        )}
       </CommentContent>
 
       {/* 답변이 있는 경우 */}
       {comment.hasAnswer && comment.answer ? (
         <Answer
-          type="cheer"
+          type="comment"
           date={comment.answerCreatedAt}
           text={comment.answer}
-          // *답변 삭제 기능 id: comment.answer.commentId, // commentId: 응원/질문에 대한 답변의 고유 ID
-          // *답변 삭제 기능 isHost={isHost} // 주최자가 작성한 답변인지 여부 전달, 답변 삭제 기능 제어용
-          // *답변 삭제 기능 openModal={openModal}
+          postId={comment.answerId} // commentId: 응원/질문에 대한 답변의 고유 ID
+          isHost={isHost} // 주최자가 작성한 답변인지 여부 전달, 답변 삭제 기능 제어용
+          club={club}
+          openModal={openModal}
         />
       ) : isHost ? (
         <ReplySection>
@@ -98,7 +87,7 @@ export function Cheer({ comment, isHost, openModal, onReply }) {
   );
 }
 
-export function Question({ comment, isHost, openModal, onReply }) {
+export function Question({ comment, isHost, club, openModal, onReply }) {
   const [isReplying, setIsReplying] = useState(false); // 입력창 열림 여부
   const [replyText, setReplyText] = useState(""); // 입력된 텍스트
   const handleSubmit = () => {
@@ -107,7 +96,7 @@ export function Question({ comment, isHost, openModal, onReply }) {
       return;
     }
     // 부모에게 전달 (댓글 ID, 내용)
-    onReply(comment.id || comment.postId, replyText);
+    onReply(comment.postId, replyText);
 
     // 초기화 및 닫기
     setReplyText("");
@@ -128,25 +117,30 @@ export function Question({ comment, isHost, openModal, onReply }) {
             className="delete"
             src={deleteIcon}
             alt="삭제하기"
-            onClick={openModal}
+            onClick={() => openModal(comment.postId, "question")}
           />
         )}
       </CommentHeader>
 
       <CommentContent>
         <Tag type="question">질문</Tag>
-        <p className="text">{comment.content}</p>
+        {comment.isDeleted && comment.hasAnswer ? (
+          <p className="text">삭제된 질문이에요.</p>
+        ) : (
+          <p className="text">{comment.content}</p>
+        )}
       </CommentContent>
 
       {/* 답변 로직 */}
       {comment.hasAnswer && comment.answer ? (
         <Answer
-          type="question"
+          type="comment"
           date={comment.answerCreatedAt}
           text={comment.answer}
-          // *답변 삭제 기능 id: comment.answer.commentId, // commentId: 응원/질문에 대한 답변의 고유 ID
-          // *답변 삭제 기능 isHost={isHost} // 주최자가 작성한 답변인지 여부 전달, 답변 삭제 기능 제어용
-          // *답변 삭제 기능 openModal={openModal}
+          postId={comment.answerId} // commentId: 응원/질문에 대한 답변의 고유 ID
+          isHost={isHost} // 주최자가 작성한 답변인지 여부 전달, 답변 삭제 기능 제어용
+          club={club}
+          openModal={openModal}
         />
       ) : isHost ? (
         <ReplySection>
@@ -177,24 +171,24 @@ export function Question({ comment, isHost, openModal, onReply }) {
 }
 
 // 답글 컴포넌트
-function Answer({ type, date, text, id, isHost, openModal }) {
+function Answer({ type, date, text, postId, club, isHost, openModal }) {
   return (
     <ReplyWrapper>
       <Arrow />
       <ReplyBox>
         <CommentHeader>
           <div className="info">
-            <p className="id">주최자</p>
+            <p className="id">{club}</p>
             <p className="date">{date}</p>
           </div>
-          {/* {isHost && (
+          {isHost && (
             <img
               className="delete"
               src={deleteIcon}
-              alt="삭제하기"  
-              onClick={() => openModal("answer", id)} // 삭제 API 호출용 ID 전달
+              alt="삭제하기"
+              onClick={() => openModal(postId, "comment")}
             />
-          )} */}
+          )}
         </CommentHeader>
         <CommentContent>
           {type === "question" && <Tag type="answer">답변</Tag>}
@@ -205,13 +199,15 @@ function Answer({ type, date, text, id, isHost, openModal }) {
   );
 }
 
-export function Review({ comment, isHost, openModal, onReply }) {
-  //사진 보기
+export function Review({ comment, isHost, club, openModal, onReply }) {
+  // 사진 보기 상태 관리
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
 
-  const [isReplying, setIsReplying] = useState(false); // 입력창 열림 여부
-  const [replyText, setReplyText] = useState(""); // 입력된 텍스트
+  // 대댓글(답변) 입력 상태 관리
+  const [isReplying, setIsReplying] = useState(false);
+  const [replyText, setReplyText] = useState("");
+
   const handleSubmit = () => {
     if (!replyText.trim()) {
       alert("답변 내용을 입력해주세요.");
@@ -224,6 +220,7 @@ export function Review({ comment, isHost, openModal, onReply }) {
     setReplyText("");
     setIsReplying(false);
   };
+
   return (
     <CommentBox>
       <CommentHeader>
@@ -232,11 +229,13 @@ export function Review({ comment, isHost, openModal, onReply }) {
           <p className="date">{comment.createdAt}</p>
         </div>
 
+        {/* 리뷰 작성자가 본인 글 삭제 (기존 로직 유지) */}
         {comment.isWriter && (
           <img
             className="delete"
             src={deleteIcon}
-            onClick={openModal}
+            // 리뷰 삭제 모달 호출 (타입: review)
+            onClick={() => openModal(postId, "review")}
             alt="삭제하기"
           />
         )}
@@ -246,6 +245,7 @@ export function Review({ comment, isHost, openModal, onReply }) {
         <p className="text">{comment.content}</p>
       </CommentContent>
 
+      {/* 사진 영역 */}
       {comment.images && comment.images.length > 0 && (
         <PhotoArea
           pics={comment.images}
@@ -263,15 +263,17 @@ export function Review({ comment, isHost, openModal, onReply }) {
           onClose={() => setOpen(false)}
         />
       )}
-      {/* 답변 로직 */}
+
+      {/* 답변(대댓글) 로직 수정 부분 */}
       {comment.hasAnswer && comment.answer ? (
         <Answer
-          type="question"
+          type="review"
           date={comment.answerCreatedAt}
           text={comment.answer}
-          // *답변 삭제 기능 id: comment.answer.commentId, // commentId: 응원/질문에 대한 답변의 고유 ID
-          // *답변 삭제 기능 isHost={isHost} // 주최자가 작성한 답변인지 여부 전달, 답변 삭제 기능 제어용
-          // *답변 삭제 기능 openModal={openModal}
+          postId={comment.answerId}
+          isHost={isHost} // 주최자 여부
+          club={club} // 동아리 이름
+          openModal={openModal} // 삭제 모달 함수
         />
       ) : isHost ? (
         <ReplySection>
@@ -350,6 +352,7 @@ const CommentContent = styled.div`
     ${({ theme }) => theme.textStyles.body1Regular};
     word-break: break-word;
     white-space: pre-wrap;
+    align-self: center;
   }
 `;
 const ReplyWrapper = styled.div`

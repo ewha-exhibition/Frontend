@@ -1,40 +1,59 @@
 import styled from "styled-components";
-
 export default function ConfirmModal({ isOpen, type, onClose, onConfirm }) {
   if (!isOpen) return null;
 
   const messageMap = {
     cheer: "해당 응원을 삭제할까요?",
     question: "해당 질문을 삭제할까요?",
+    comment: "해당 답글을 삭제할까요?",
     review: "해당 후기를 삭제할까요?",
     reply: "해당 답글을 삭제할까요?",
-    copy: "링크가 복사되었습니다.",
+    copy: "URL이 복사되었어요.",
+    login: "로그인이 필요한 기능이에요.",
   };
 
   const message = messageMap[type];
 
   return (
-    <Overlay>
-      <ModalBox>
-        <div className="message">{message}</div>
-        <div className="buttons">
-          {type === "copy" ? (
-            <button className="full" onClick={onClose}>
-              확인
-            </button>
-          ) : (
-            <>
+    <>
+      {type === "login" ? (
+        <Overlay>
+          <ModalBox>
+            <div className="message">{message}</div>
+            <div className="buttons">
               <button className="left" onClick={onClose}>
-                아니요
+                닫기
               </button>
               <button className="right" onClick={onConfirm}>
-                삭제
+                로그인
               </button>
-            </>
-          )}
-        </div>
-      </ModalBox>
-    </Overlay>
+            </div>
+          </ModalBox>
+        </Overlay>
+      ) : (
+        <Overlay>
+          <ModalBox>
+            <div className="message">{message}</div>
+            <div className="buttons">
+              {type === "copy" ? (
+                <button className="full" onClick={onClose}>
+                  확인
+                </button>
+              ) : (
+                <>
+                  <button className="left" onClick={onClose}>
+                    아니요
+                  </button>
+                  <button className="right" onClick={onConfirm}>
+                    삭제
+                  </button>
+                </>
+              )}
+            </div>
+          </ModalBox>
+        </Overlay>
+      )}
+    </>
   );
 }
 
@@ -62,7 +81,7 @@ const ModalBox = styled.div`
     align-items: center;
     justify-content: center;
     padding: 19px 16px;
-    ${({ theme }) => theme.textStyles.label1SemiBold};
+    ${({ theme }) => theme.textStyles.label0SemiBold};
     color: light-dark(black, white);
     flex: 1;
   }
@@ -94,10 +113,9 @@ const ModalBox = styled.div`
     color: ${({ theme }) => theme.colors.Primary60};
   }
 
-  /* ✅ 추가:(Alert용) */
   .full {
     width: 100%;
     border-radius: 0 0 14px 14px;
-    color: ${({ theme }) => theme.colors.Primary60}; /* 강조색 */
+    color: ${({ theme }) => theme.colors.Primary60};
   }
 `;

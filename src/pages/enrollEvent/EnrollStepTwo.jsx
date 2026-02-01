@@ -34,17 +34,15 @@ export default function EnrollStepTwo({
     const files = Array.from(fileList);
 
     const uploadPromises = files.map((file) =>
-      uploadToS3(file, "/exhibition/images")
+      uploadToS3(file, "/exhibition/images"),
     );
 
     try {
       const uploadedUrls = await Promise.all(uploadPromises);
-      // null(실패) 제외하고 유효한 URL만 필터링
       const validUrls = uploadedUrls.filter((url) => url !== null);
 
       if (validUrls.length > 0) {
-        const newPictures = validUrls.map((url) => ({ url: url }));
-        setPictures((prev) => [...prev, ...newPictures]);
+        setPictures((prev) => [...prev, ...validUrls]);
       }
     } catch (error) {
       console.error("업로드 중 오류:", error);
@@ -93,7 +91,7 @@ export default function EnrollStepTwo({
               {pictures.map((pic, index) => (
                 <AttachedPicture
                   key={index}
-                  picture={pic.preview || pic.url}
+                  picture={pic}
                   onDelete={() => handleDelete(index)}
                   onMoveUp={() => handleMoveUp(index)}
                   onMoveDown={() => handleMoveDown(index)}

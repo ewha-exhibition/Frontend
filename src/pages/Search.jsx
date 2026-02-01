@@ -6,10 +6,12 @@ import SearchIcon from "../assets/icons/Search.svg?react";
 import BackIcon from "../assets/icons/ChevronLeft.svg?react";
 import Nothing from "../assets/icons/Nothing.svg?react";
 import useSearchExhibitions from "../utils/hooks/useSearchExhibitions";
-
+import { toggleScrap } from "../utils/apis/toggleScrap";
 export default function Search() {
   const location = useLocation();
   const initialKeyword = location.state?.keyword || "";
+  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const [keywordInput, setKeywordInput] = useState(initialKeyword);
   const [keyword, setKeyword] = useState(initialKeyword);
@@ -33,6 +35,15 @@ export default function Search() {
   const navigate = useNavigate();
   const goBack = () => {
     navigate(-1);
+  };
+
+  const handleScrapClick = (id, scraped, fetchData) => {
+    if (!login) {
+      setShowLoginModal(true);
+      return;
+    }
+    toggleScrap(fetchData, id, scraped);
+    window.location.reload();
   };
   return (
     <Container>
@@ -65,12 +76,15 @@ export default function Search() {
         {resultList.map((item) => (
           <EventList
             key={item.exhibitionId}
+            id={item.exhibitionId}
             title={item.exhibitionName}
             date={item.duration}
             place={item.place}
             poster={item.posterUrl}
             onGoing={item.open}
             scraped={item.scrap}
+            onClick={() => navigate(`/detail/${item.exhibitionId}`)}
+            onScrapClick={handleScrapClick}
           />
         ))}
       </ResultList>
