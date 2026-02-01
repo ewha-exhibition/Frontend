@@ -22,7 +22,8 @@ function MyPage() {
     error,
     loading,
   } = useCustomFetch(`/scraps/viewed?pageNum=0&limit=10`);
-  console.log(myWatchedData?.data.exhibitions);
+  console.log(myWatchedData);
+  //console.log(error)
 
   const navigate = useNavigate();
 

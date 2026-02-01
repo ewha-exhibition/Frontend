@@ -70,7 +70,7 @@ function Cheering() {
               title={data.title}
               id={data.postId}
               review={data.body}
-              pic={data.imageUrls}
+              exhibitionId={data.exhibitionId}
             />
           </div>
         );

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
 import useLogin from "../../utils/hooks/useLogin";
@@ -12,17 +12,56 @@ import Nothing from "../../components/Nothing";
 
 function MyQuestions() {
   const login = useLogin();
+  const { fetchData } = useCustomFetch();
+
+  const [pageNow, setPageNow] = useState(0);
+  const [items, setItems] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const observerRef = useRef(null);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [targetPostId, setTargetPostId] = useState(null);
+
   const {
     data: myQData,
     error,
     loading,
   } = useCustomFetch(`/questions?pageNum=0&limit=10`);
-  console.log(myQData?.data);
+  //console.log(myQData?.data);
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [targetPostId, setTargetPostId] = useState(null);
+  useEffect(() => {
+    if (!myQData?.data?.previews) return;
 
-  const { fetchData } = useCustomFetch();
+    setItems((prev) => {
+      const newItems = myQData.data.previews.filter(
+        (data) => !prev.some((p) => p.postId === data.postId),
+      );
+      return [...prev, ...newItems];
+    });
+    const { pageNum, totalPages } = myQData.data.pageInfo;
+
+    if (pageNum >= totalPages - 1) {
+      setHasMore(false);
+    }
+  }, [myQData]);
+
+  const lastItemRef = useCallback(
+    (node) => {
+      if (loading || !hasMore) return;
+
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          setPageNow((prev) => prev + 1);
+        }
+      });
+
+      if (node) observerRef.current.observe(node);
+    },
+    [loading, hasMore],
+  );
+
   const handleDeleteConfirm = async () => {
     try {
       await fetchData(`/questions/${targetPostId}`, "DELETE");
@@ -46,22 +85,29 @@ function MyQuestions() {
             {myQData?.data?.previews?.length === 0 ? (
               <Nothing text={"아직 작성한 질문이 없어요"} />
             ) : (
-              myQData?.data?.previews.map((data) => (
-                <CheeringItem
-                  key={data.postId}
-                  postId={data.postId}
-                  poster={data.posterUrl}
-                  title={data.exhibitionName}
-                  id={data.exhibitionId}
-                  review={data.content}
-                  pic={data.imageUrls}
-                  mine={true}
-                  onRequestDelete={(postId) => {
-                    setTargetPostId(postId);
-                    setIsOpen(true);
-                  }}
-                />
-              ))
+              myQData?.data?.previews.map((data, index) => {
+                const isLast = index === items.length - 1;
+                return (
+                  <div ref={isLast ? lastItemRef : null} key={data.postId}>
+                    <CheeringItem
+                      key={data.postId}
+                      postId={data.postId}
+                      poster={data.posterUrl}
+                      title={data.exhibitionName}
+                      id={data.exhibitionId}
+                      review={data.content}
+                      pic={data.imageUrls}
+                      mine={true}
+                      onRequestDelete={(postId) => {
+                        setTargetPostId(postId);
+                        setIsOpen(true);
+                      }}
+                      type={"question"}
+                    />
+                    ;
+                  </div>
+                );
+              })
             )}
           </Content>
           <ConfirmModal

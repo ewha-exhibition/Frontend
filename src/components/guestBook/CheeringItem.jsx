@@ -7,17 +7,17 @@ import Trash from "../../assets/icons/Trash.svg?react";
 function CheeringItem({
   poster,
   title,
-  id,
   review,
-  pic,
+  exhibitionId,
   mine,
   postId,
   onRequestDelete,
+  type = "cheer",
 }) {
   const navigate = useNavigate();
 
   const goDetail = () => {
-    navigate(`/detail/${id}`, { state: { currentTab: "cheer" } });
+    navigate(`/detail/${exhibitionId}`, { state: { currentTab: type } });
   };
 
   return (
