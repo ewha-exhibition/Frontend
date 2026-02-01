@@ -84,7 +84,7 @@ function TextBox({ onChange }) {
         />
         <IconArea onClick={handleOpenFile}>
           <p className="label">사진추가</p>
-          <Camera width={24} height={24} />
+          <StyledCamera width={24} height={24} />
         </IconArea>
         <input
           type="file"
@@ -196,4 +196,8 @@ const DeleteBtn = styled.button`
   border-radius: 50%;
   background: ${({ theme }) => theme.colors.gray9};
   cursor: pointer;
+`;
+
+const StyledCamera = styled(Camera)`
+  color: ${({ theme }) => theme.colors.gray8};
 `;
