@@ -442,7 +442,6 @@ export default function Detail() {
 
       <Content>
         {/* 상세 */}
-
         {currentTab === "detail" && (
           <DetailSection>
             <p className="p">{exhibition.content}</p>
@@ -454,8 +453,6 @@ export default function Detail() {
                 alt={`상세 정보 이미지-${idx}`}
               />
             ))}
-            {console.log("전체 데이터:", exhibition)}
-            {console.log("이미지 배열:", exhibition.images)}
           </DetailSection>
         )}
 
@@ -592,9 +589,10 @@ export default function Detail() {
                   <div key={comment.id} ref={isLast ? lastElementRef : null}>
                     <Review
                       comment={comment}
+                      club={exhibition.clubName}
                       isHost={exhibition.host}
-                      openModal={() =>
-                        openDeleteCommentModal(comment.postId, "review")
+                      openModal={(postId, type) =>
+                        openDeleteCommentModal(postId, type || "review")
                       }
                       onReply={handleHostReply}
                     />
@@ -604,7 +602,7 @@ export default function Detail() {
             )}
             {commentList.loading && (
               <p style={{ textAlign: "center" }}>Loading...</p>
-            )}{" "}
+            )}
           </CommentSection>
         )}
       </Content>

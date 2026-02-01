@@ -199,13 +199,15 @@ function Answer({ type, date, text, postId, club, isHost, openModal }) {
   );
 }
 
-export function Review({ comment, isHost, openModal, onReply }) {
-  //사진 보기
+export function Review({ comment, isHost, club, openModal, onReply }) {
+  // 사진 보기 상태 관리
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
 
-  const [isReplying, setIsReplying] = useState(false); // 입력창 열림 여부
-  const [replyText, setReplyText] = useState(""); // 입력된 텍스트
+  // 대댓글(답변) 입력 상태 관리
+  const [isReplying, setIsReplying] = useState(false);
+  const [replyText, setReplyText] = useState("");
+
   const handleSubmit = () => {
     if (!replyText.trim()) {
       alert("답변 내용을 입력해주세요.");
@@ -218,6 +220,7 @@ export function Review({ comment, isHost, openModal, onReply }) {
     setReplyText("");
     setIsReplying(false);
   };
+
   return (
     <CommentBox>
       <CommentHeader>
@@ -226,11 +229,13 @@ export function Review({ comment, isHost, openModal, onReply }) {
           <p className="date">{comment.createdAt}</p>
         </div>
 
+        {/* 리뷰 작성자가 본인 글 삭제 (기존 로직 유지) */}
         {comment.isWriter && (
           <img
             className="delete"
             src={deleteIcon}
-            onClick={openModal}
+            // 리뷰 삭제 모달 호출 (타입: review)
+            onClick={() => openModal(postId, "review")}
             alt="삭제하기"
           />
         )}
@@ -240,6 +245,7 @@ export function Review({ comment, isHost, openModal, onReply }) {
         <p className="text">{comment.content}</p>
       </CommentContent>
 
+      {/* 사진 영역 */}
       {comment.images && comment.images.length > 0 && (
         <PhotoArea
           pics={comment.images}
@@ -257,12 +263,17 @@ export function Review({ comment, isHost, openModal, onReply }) {
           onClose={() => setOpen(false)}
         />
       )}
-      {/* 답변 로직 */}
+
+      {/* 답변(대댓글) 로직 수정 부분 */}
       {comment.hasAnswer && comment.answer ? (
         <Answer
-          type="question"
+          type="review"
           date={comment.answerCreatedAt}
           text={comment.answer}
+          postId={comment.answerId}
+          isHost={isHost} // 주최자 여부
+          club={club} // 동아리 이름
+          openModal={openModal} // 삭제 모달 함수
         />
       ) : isHost ? (
         <ReplySection>
