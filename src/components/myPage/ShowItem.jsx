@@ -45,11 +45,14 @@ function ShowItem({
   const toEdit = () => {
     navigate(`/enrollEvent/${exhibitionId}/edit`);
   };
+  const toDetail = () => {
+    navigate(`/detail/${exhibitionId}`);
+  };
 
   return (
     <Container>
       <ContentArea>
-        <ImgWrapper>
+        <ImgWrapper onClick={toDetail}>
           <img src={poster} alt="포스터 이미지" />
           {onGoing == "CLOSE" && (
             <Overlay>
@@ -59,7 +62,7 @@ function ShowItem({
         </ImgWrapper>
 
         <Right>
-          <TextArea>
+          <TextArea onClick={toDetail}>
             <p className="title">{title}</p>
             <p className="place">
               {formatStartDate}~{formatEndDate}
