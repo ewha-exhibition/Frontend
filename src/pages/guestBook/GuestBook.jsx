@@ -62,6 +62,7 @@ export default GuestBook;
 
 const Container = styled.div`
   width: 100%;
+  max-width: 540px;
   min-height: 100vh;
 `;
 
@@ -106,8 +107,6 @@ const Content = styled.div`
 `;
 const FloatingButton = styled.button`
   position: fixed;
-  right: 20px;
-  bottom: 70px;
   z-index: 1000;
 
   width: 125px;
@@ -128,4 +127,14 @@ const FloatingButton = styled.button`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(calc(270px - 100% - 20px));
+
+  @media (max-width: 540px) {
+    left: auto;
+    right: 20px;
+    transform: none;
+  }
 `;
