@@ -1,4 +1,6 @@
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+
 import ShowBtn from "./ShowBtn";
 
 function ShowItem({
@@ -14,10 +16,11 @@ function ShowItem({
   link,
   onCopySuccess,
 }) {
+  const navigate = useNavigate();
+
   function formatDate(dateString) {
     return dateString.replace(/-/g, ".");
   }
-
   const formatStartDate = formatDate(startDate);
   const formatEndDate = formatDate(endDate);
 
@@ -37,6 +40,10 @@ function ShowItem({
     } catch (e) {
       console.error("URL 복사 실패", e);
     }
+  };
+
+  const toEdit = () => {
+    navigate(`/enrollEvent/${exhibitionId}/edit`);
   };
 
   return (
@@ -68,7 +75,7 @@ function ShowItem({
       </ContentArea>
 
       <BtnArea>
-        <ShowBtn name={"수정"} icon={"Edit"} />
+        <ShowBtn name={"수정"} icon={"Edit"} onClick={toEdit} />
         <ShowBtn name={"URL 복사"} icon={"Link"} onClick={copyUrl} />
       </BtnArea>
     </Container>

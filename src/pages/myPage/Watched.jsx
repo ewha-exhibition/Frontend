@@ -10,7 +10,6 @@ import KakaoBtn from "../../components/myPage/KakaoBtn";
 import Nothing from "../../components/Nothing";
 
 function Watched() {
-  const { fetchData } = useCustomFetch();
   const login = useLogin();
 
   const [pageNow, setPageNow] = useState(0);
