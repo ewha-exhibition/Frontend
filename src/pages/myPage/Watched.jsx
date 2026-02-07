@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
 import useLogin from "../../utils/hooks/useLogin";
@@ -9,35 +10,86 @@ import KakaoBtn from "../../components/myPage/KakaoBtn";
 import Nothing from "../../components/Nothing";
 
 function Watched() {
+  const { fetchData } = useCustomFetch();
   const login = useLogin();
+
+  const [pageNow, setPageNow] = useState(0);
+  const [items, setItems] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+
+  const observerRef = useRef(null);
+  const isRequesting = useRef(false);
+
   const {
     data: myWatchedData,
     error,
     loading,
-  } = useCustomFetch(`/scraps/viewed?pageNum=0&limit=10`);
+  } = useCustomFetch(`/scraps/viewed?pageNum=${pageNow}&limit=10`);
+  console.log(items);
 
-  console.log(myWatchedData?.data.exhibitions);
+  useEffect(() => {
+    if (error) {
+      isRequesting.current = false;
+      return;
+    }
+    if (!myWatchedData?.data?.exhibitions) return;
+
+    setItems((prev) => {
+      const newItems = myWatchedData.data.exhibitions.filter(
+        (data) => !prev.some((p) => p.exhibitionId === data.exhibitionId),
+      );
+      return [...prev, ...newItems];
+    });
+    const { pageNum, totalPages } = myWatchedData.data.pageInfo;
+
+    if (pageNum >= totalPages - 1) {
+      setHasMore(false);
+    }
+  }, [myWatchedData, error]);
+
+  const lastItemRef = useCallback(
+    (node) => {
+      if (loading || !hasMore) return;
+
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          isRequesting.current = true;
+          setPageNow((prev) => prev + 1);
+        }
+      });
+
+      if (node) observerRef.current.observe(node);
+    },
+    [loading, hasMore],
+  );
 
   return (
     <Container>
       <Topbar title={"관람 내역"} icon={null} />
       {login ? (
         <Content>
-          {myWatchedData?.data.exhibitions?.length === 0 ? (
+          {!loading && items.length === 0 ? (
             <Nothing text={"아직 관람한 공연이 없어요"} />
           ) : (
-            myWatchedData?.data.exhibitions.map((data) => (
-              <WatchedHis
-                key={data.exhibitionId}
-                exhibitionId={data.exhibitionId}
-                title={data.exhibitionName}
-                startDate={data.startDate}
-                endDate={data.endDate}
-                place={data.place}
-                poster={data.posterUrl}
-                haveReview={data.reviewed}
-              />
-            ))
+            items.map((data, index) => {
+              const isLast = index === items.length - 1;
+              return (
+                <div ref={isLast ? lastItemRef : null} key={data.postId}>
+                  <WatchedHis
+                    key={data.exhibitionId}
+                    exhibitionId={data.exhibitionId}
+                    title={data.exhibitionName}
+                    startDate={data.startDate}
+                    endDate={data.endDate}
+                    place={data.place}
+                    poster={data.posterUrl}
+                    haveReview={data.reviewed}
+                  />
+                </div>
+              );
+            })
           )}
         </Content>
       ) : (

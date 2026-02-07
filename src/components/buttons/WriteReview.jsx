@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -8,7 +7,7 @@ function WriteReview({ haveReview, exhibitionId }) {
     navigate(`/createReview/${exhibitionId}`);
   };
   const toDetail = () => {
-    navigate(`/detail/${exhibitionId}`);
+    navigate(`/detail/${exhibitionId}`, { state: { currentTab: "review" } });
   };
 
   return (

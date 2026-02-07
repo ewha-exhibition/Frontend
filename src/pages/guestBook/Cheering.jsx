@@ -10,6 +10,7 @@ function Cheering() {
   const [pageNow, setPageNow] = useState(0);
   const [items, setItems] = useState([]);
   const [hasMore, setHasMore] = useState(true);
+  
   const observerRef = useRef(null);
 
   const {
