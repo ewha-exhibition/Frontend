@@ -1,13 +1,28 @@
 import styled from "styled-components";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
+import useLogin from "../../utils/hooks/useLogin";
 import MenuTrigger from "../../components/menu/MenuTrigger";
 import TabBar from "../../components/home/TabBar";
 import Review from "./Review";
 import Cheering from "./Cheering";
 
+import Plus from "../../assets/icons/Plus.svg?react";
+
 function GuestBook() {
+  const login = useLogin();
+  const navigate = useNavigate();
+
   const [now, setNow] = useState("review");
+
+  const handleFabClick = () => {
+    if (login) {
+      navigate("/mypage/watched");
+    } else {
+      navigate("/mypage");
+    }
+  };
 
   return (
     <Container>
@@ -34,6 +49,10 @@ function GuestBook() {
         {now === "review" && <Review />}
         {now === "cheering" && <Cheering />}
       </Content>
+      <FloatingButton onClick={handleFabClick}>
+        <Plus width={13} height={13} />
+        <p>후기 작성하기</p>
+      </FloatingButton>
       <TabBar />
     </Container>
   );
@@ -84,4 +103,29 @@ const TabItem = styled.div`
 `;
 const Content = styled.div`
   width: 100%;
+`;
+const FloatingButton = styled.button`
+  position: fixed;
+  right: 20px;
+  bottom: 70px;
+  z-index: 1000;
+
+  width: 125px;
+  height: 48px;
+  border-radius: 100px;
+  padding: 8px 12px;
+  border: none;
+
+  background-color: ${({ theme }) => theme.colors.Primary50};
+  box-shadow: 1px 2px 5px 0 rgba(0, 0, 0, 0.1);
+
+  color: ${({ theme }) => theme.colors.white};
+  font-size: ${({ theme }) => theme.font.fontSize.label14};
+  font-weight: ${({ theme }) => theme.font.fontWeight.semiBold};
+
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 `;
