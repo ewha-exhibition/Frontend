@@ -35,7 +35,7 @@ export default function EventList({
           <BookmarkWrapper
             onClick={(e) => {
               e.stopPropagation();
-              handleScrapClick();
+              handleBookmarkClick();
             }}
           >
             {scraped ? (
