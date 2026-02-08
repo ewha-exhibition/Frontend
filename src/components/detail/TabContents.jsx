@@ -134,7 +134,7 @@ export function Question({ comment, isHost, club, openModal, onReply }) {
       {/* 답변 로직 */}
       {comment.hasAnswer && comment.answer ? (
         <Answer
-          type="comment"
+          type="question"
           date={comment.answerCreatedAt}
           text={comment.answer}
           postId={comment.answerId} // commentId: 응원/질문에 대한 답변의 고유 ID
