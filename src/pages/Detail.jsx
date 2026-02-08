@@ -16,7 +16,7 @@ import ClockIcon from "../assets/icons/Clock.svg?react";
 import sendIcon from "../assets/icons/Send.svg";
 import CalenderIcon from "../assets/icons/Calender.svg?react";
 import Nothing from "../assets/icons/Nothing.svg?react";
-
+import LoadingUi from "../components/LoadingUi";
 // API
 import {
   getExhibitionApi,
@@ -368,23 +368,32 @@ export default function Detail() {
     closeMenu();
     navigate(`/enrollEvent/${id}/edit`);
   };
-  const handleDelete = async () => {
+
+  const handleDelete = () => {
+    closeMenu(); // 호스트 메뉴 닫기
+    setModalState({
+      isOpen: true,
+      type: "deleteExhibition",
+      targetId: id, // 현재 전시글 ID
+    });
+  };
+
+  // 실제 삭제를 수행할 함수
+  const executeExhibitionDelete = async () => {
     try {
       await deleteExhibitionApi(id);
-      navigate(-1);
+      navigate(-1); // 삭제 후 이전 페이지로 이동
     } catch (e) {
-      console.error(e);
+      console.error("전시 삭제 실패:", e);
     }
   };
   if (isLoading || !exhibition) {
-    return (
-      <div style={{ padding: "100px", textAlign: "center" }}>Loading...</div>
-    );
+    return <LoadingUi />;
   }
 
   return (
     <Container>
-      {!exhibition.host ? (
+      {!exhibition?.host ? (
         <TopBar title={null} icon={"Link"} onClick={handleShare} />
       ) : (
         <TopBar title={null} icon={"Menu"} onClick={openMenu} />
@@ -507,10 +516,6 @@ export default function Detail() {
                 );
               })
             )}
-            {/* 로딩 표시 */}
-            {commentList.loading && (
-              <p style={{ textAlign: "center" }}>Loading...</p>
-            )}
           </CommentSection>
         )}
 
@@ -563,9 +568,6 @@ export default function Detail() {
                 );
               })
             )}
-            {commentList.loading && (
-              <p style={{ textAlign: "center" }}>Loading...</p>
-            )}
           </CommentSection>
         )}
 
@@ -600,9 +602,6 @@ export default function Detail() {
                 );
               })
             )}
-            {commentList.loading && (
-              <p style={{ textAlign: "center" }}>Loading...</p>
-            )}
           </CommentSection>
         )}
       </Content>
@@ -631,7 +630,10 @@ export default function Detail() {
         onConfirm={() => {
           if (modalState.type === "login") {
             handleKakaoLogin();
+          } else if (modalState.type === "deleteExhibition") {
+            executeExhibitionDelete();
           } else {
+            // 기존 댓글 삭제 로직 (question, cheer, review, comment 등)
             handleDeleteComment();
           }
         }}
@@ -741,6 +743,7 @@ const DetailSection = styled.div`
   gap: 8px;
   .p {
     ${({ theme }) => theme.textStyles.body1Regular};
+    color: ${({ theme }) => theme.colors.gray10};
     font-size: 14px;
     white-space: pre-wrap;
   }
@@ -802,21 +805,6 @@ const SendBtn = styled.img`
   height: 24px;
   cursor: pointer;
   align-self: flex-end;
-`;
-
-const Input = styled.input`
-  flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  ${({ theme }) => theme.textStyles.body1Regular};
-  color: ${({ theme }) => theme.colors.blackMain};
-  text-align: left;
-  vertical-align: middle;
-
-  &::placeholder {
-    color: ${({ theme }) => theme.colors.gray6};
-  }
 `;
 
 const DropShape = styled.div`

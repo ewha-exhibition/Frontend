@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import MenuTrigger from "../components/menu/MenuTrigger.jsx";
 import TabBar from "../components/home/TabBar.jsx";
 import EventList from "../components/home/EventList.jsx";
-import NeeedLogin from "../components/home/NeedLogin.jsx";
+import NeedLogin from "../components/home/NeedLogin.jsx";
 
 import SearchIcon from "../assets/icons/Search.svg?react";
 import BookmarkIcon from "../assets/icons/Bookmark.svg?react";
@@ -19,14 +19,14 @@ import useLatestExhibitions from "../utils/hooks/useLatestExhibitions";
 import { toggleScrap } from "../utils/apis/toggleScrap";
 
 //top10 컴포넌트
-function TopTenItem({ rank, exhibitionId, title, poster, scrap, onClick }) {
+function TopTenItem({ rank, title, poster, scrap, onClick }) {
   return (
     <Card>
       <Poster poster={poster}>
         <Overlay onClick={onClick} />
         <Bar>
           <Rank>{rank}</Rank>
-          {scrap ? <WhiteBookmark /> : <WhiteBookmarkOL />}
+          {/* {scrap ? <WhiteBookmark /> : <WhiteBookmarkOL />} */}
         </Bar>
       </Poster>
       <Title>{title}</Title>
@@ -69,22 +69,31 @@ export default function Home() {
   const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  const handleScrapClick = (id, scraped, fetchData) => {
+  const handleScrapClick = (id, scraped) => {
     if (!login) {
       setShowLoginModal(true);
       return;
     }
-    toggleScrap(fetchData, id, scraped);
-    window.location.reload();
+
+    // 만약 toggleScrap이 특정 fetch 함수를 기다린다면 null이나 dummy를 넣거나
+    // toggleScrap 내부 구조에 맞춰야 합니다.
+    toggleScrap(null, id, scraped)
+      .then(() => {
+        // 성공 시 새로고침하여 상태 반영
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.error("스크랩 실패:", err);
+      });
   };
 
   return (
     <Container>
       {showLoginModal && (
-        <NeeedLogin onClose={() => setShowLoginModal(false)}>
+        <NeedLogin onClose={() => setShowLoginModal(false)}>
           <p>카카오톡으로 간편 로그인하고</p>
           <p>모든 기능을 이용해보세요!</p>
-        </NeeedLogin>
+        </NeedLogin>
       )}
 
       <Header>
@@ -159,7 +168,9 @@ export default function Home() {
                 onGoing={item.open}
                 scraped={item.scrap}
                 onClick={() => navigate(`/detail/${item.exhibitionId}`)}
-                onScrapClick={handleScrapClick}
+                onScrapClick={() =>
+                  handleScrapClick(item.exhibitionId, item.scrap)
+                }
               />
             ))}
           </EventListWrapper>
@@ -319,7 +330,6 @@ const Bar = styled.div`
   z-index: 1;
 `;
 
-// 순위
 const Rank = styled.span`
   color: ${({ theme }) => theme.colors.white};
   text-shadow: 0 0 10px #000;
@@ -328,7 +338,6 @@ const Rank = styled.span`
   line-height: 100%;
 `;
 
-//REVIEW: Title - 39px height
 const Title = styled.p`
   width: 100%;
   height: 39px;
