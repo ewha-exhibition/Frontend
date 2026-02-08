@@ -24,8 +24,8 @@ export const HostMenu = ({
           <EditIconStyled width={22} height={22} />
         </MenuItem>
 
-        <MenuItem isDelete onClick={() => handleDelete()}>
-          <Label>삭제</Label>
+        <MenuItem onClick={() => handleDelete()}>
+          <Label isDelete>삭제</Label>
           <DeleteIconStyled width={22} height={22} />
         </MenuItem>
       </MenuContainer>
@@ -39,7 +39,7 @@ const EditIconStyled = styled(EditIcon)`
 `;
 const DeleteIconStyled = styled(DeleteIcon)`
   path {
-    stroke: ${({ theme }) => theme.colors.gray9};
+    stroke: #ff0000;
   }
   stroke-width: 1.1;
 `;
@@ -82,5 +82,6 @@ const Label = styled.span`
   font-size: 16px;
   font-weight: 500;
   ${({ theme }) => theme.textStyles.titleSemibold};
-  color: ${({ theme }) => theme.colors.gray9};
+  color: ${({ isDelete, theme }) =>
+    isDelete ? theme.colors.red || "#FF0000" : theme.colors.gray9};
 `;

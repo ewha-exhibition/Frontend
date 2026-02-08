@@ -241,6 +241,8 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
             value={data.price || ""}
             type="number"
             onChange={(v) => update("price", v)}
+            unit="원"
+            textAlign="right"
           />
         )}
       </Section>
@@ -260,7 +262,11 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
         </CheckBoxArea>
 
         {!noTicket && (
-          <InputBox value={data.link} onChange={(v) => update("link", v)} />
+          <InputBox
+            value={data.link}
+            onChange={(v) => update("link", v)}
+            textAlign="right"
+          />
         )}
       </Section>
 
