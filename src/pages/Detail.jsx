@@ -743,6 +743,7 @@ const DetailSection = styled.div`
     ${({ theme }) => theme.textStyles.body1Regular};
     font-size: 14px;
     white-space: pre-wrap;
+    color: ${({ theme }) => theme.colors.gray10};
   }
   .img {
     width: 100%;
