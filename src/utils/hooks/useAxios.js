@@ -53,7 +53,6 @@ const useAxios = () => {
           // 재발급 실패 시 (리프레시 토큰 만료 등) 세션 클리어 후 로그인 페이지로 유도
           console.error("세션이 만료되었습니다. 다시 로그인해주세요.");
           sessionStorage.clear();
-          navigate("/mypage", { replace: true });
           return Promise.reject(refreshError);
         }
       }
