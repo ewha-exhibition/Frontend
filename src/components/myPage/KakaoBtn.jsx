@@ -22,6 +22,7 @@ function KakaoBtn() {
 export default KakaoBtn;
 
 const Btn = styled.div`
+  cursor: pointer;
   width: 100%;
   height: 49px;
   border-radius: 5px;

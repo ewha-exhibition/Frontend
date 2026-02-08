@@ -14,6 +14,7 @@ import Nothing from "../components/Nothing";
 
 function Scrap() {
   const login = useLogin();
+
   const {
     data: scrapData,
     error,
