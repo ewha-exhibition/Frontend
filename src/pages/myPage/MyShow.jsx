@@ -16,7 +16,9 @@ function MyShow() {
   const [pageNow, setPageNow] = useState(0);
   const [items, setItems] = useState([]);
   const [hasMore, setHasMore] = useState(true);
+
   const observerRef = useRef(null);
+  const isRequesting = useRef(false);
 
   const [isOpen, setIsOpen] = useState(false);
   const [modalText, setModalText] = useState("");
@@ -29,6 +31,10 @@ function MyShow() {
   console.log(myShowData?.data);
 
   useEffect(() => {
+    if (error) {
+      isRequesting.current = false;
+      return;
+    }
     if (!myShowData?.data?.exhibitions) return;
 
     setItems((prev) => {
@@ -42,7 +48,7 @@ function MyShow() {
     if (pageNum >= totalPages - 1) {
       setHasMore(false);
     }
-  }, [myShowData]);
+  }, [myShowData, error]);
 
   const lastItemRef = useCallback(
     (node) => {
@@ -52,6 +58,7 @@ function MyShow() {
 
       observerRef.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
+          isRequesting.current = true;
           setPageNow((prev) => prev + 1);
         }
       });

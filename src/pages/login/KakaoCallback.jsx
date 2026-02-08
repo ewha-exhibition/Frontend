@@ -2,6 +2,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { axiosInstance } from "../../utils/apis/axiosInstance";
 
+import LoadingUi from "../../components/LoadingUi";
+
 function KakaoCallback() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -33,7 +35,7 @@ function KakaoCallback() {
           { code, redirectUri },
           {
             withCredentials: true,
-          }
+          },
         );
         console.log("res:", response);
         const memberId = response?.data.data.memberId;
@@ -73,7 +75,7 @@ function KakaoCallback() {
 
   return (
     <>
-      <p>로그인 중입니다</p>
+      <LoadingUi />
     </>
   );
 }

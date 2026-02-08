@@ -1,4 +1,6 @@
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+
 import ShowBtn from "./ShowBtn";
 
 function ShowItem({
@@ -14,10 +16,11 @@ function ShowItem({
   link,
   onCopySuccess,
 }) {
+  const navigate = useNavigate();
+
   function formatDate(dateString) {
     return dateString.replace(/-/g, ".");
   }
-
   const formatStartDate = formatDate(startDate);
   const formatEndDate = formatDate(endDate);
 
@@ -39,10 +42,17 @@ function ShowItem({
     }
   };
 
+  const toEdit = () => {
+    navigate(`/enrollEvent/${exhibitionId}/edit`);
+  };
+  const toDetail = () => {
+    navigate(`/detail/${exhibitionId}`);
+  };
+
   return (
     <Container>
       <ContentArea>
-        <ImgWrapper>
+        <ImgWrapper onClick={toDetail}>
           <img src={poster} alt="포스터 이미지" />
           {onGoing == "CLOSE" && (
             <Overlay>
@@ -52,7 +62,7 @@ function ShowItem({
         </ImgWrapper>
 
         <Right>
-          <TextArea>
+          <TextArea onClick={toDetail}>
             <p className="title">{title}</p>
             <p className="place">
               {formatStartDate}~{formatEndDate}
@@ -68,7 +78,7 @@ function ShowItem({
       </ContentArea>
 
       <BtnArea>
-        <ShowBtn name={"수정"} icon={"Edit"} />
+        <ShowBtn name={"수정"} icon={"Edit"} onClick={toEdit} />
         <ShowBtn name={"URL 복사"} icon={"Link"} onClick={copyUrl} />
       </BtnArea>
     </Container>

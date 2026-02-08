@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+
 import WriteReview from "../buttons/WriteReview";
 
 function WatchedHis({
@@ -11,6 +13,8 @@ function WatchedHis({
   poster,
   haveReview,
 }) {
+  const navigate = useNavigate();
+
   function formatDate(dateString) {
     return dateString.replace(/-/g, ".");
   }
@@ -26,9 +30,16 @@ function WatchedHis({
 
   const onGoing = checkOnGoing(endDate);
 
+  const toDetail = () => {
+    navigate(`/detail/${exhibitionId}`);
+  };
+  const handleBtnClick = (e) => {
+    e.stopPropagation();
+  };
+
   return (
     <Component>
-      <Container>
+      <Container onClick={toDetail}>
         <ImgWrapper>
           <img src={poster} alt={title} />
           {!onGoing && (
@@ -44,7 +55,7 @@ function WatchedHis({
             {formatStartDate}~{formatEndDate}
           </p>
         </TextArea>
-        <BtnArea>
+        <BtnArea onClick={handleBtnClick}>
           <WriteReview haveReview={haveReview} exhibitionId={exhibitionId} />
         </BtnArea>
       </Container>
@@ -103,6 +114,7 @@ const BtnArea = styled.div`
   position: absolute;
   right: 0px;
   bottom: 0px;
+  z-index: 100;
 `;
 const ImgWrapper = styled.div`
   position: relative;
