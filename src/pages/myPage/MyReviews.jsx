@@ -17,7 +17,9 @@ function MyReviews() {
   const [pageNow, setPageNow] = useState(0);
   const [items, setItems] = useState([]);
   const [hasMore, setHasMore] = useState(true);
+
   const observerRef = useRef(null);
+  const isRequesting = useRef(false);
 
   const [isOpen, setIsOpen] = useState(false);
   const [targetPostId, setTargetPostId] = useState(null);
@@ -28,9 +30,13 @@ function MyReviews() {
     error,
     loading,
   } = useCustomFetch(`/reviews?page=${pageNow}&limit=10`);
-  console.log("myReviewData:", myReviewData);
+  //console.log("myReviewData:", myReviewData);
 
   useEffect(() => {
+    if (error) {
+      isRequesting.current = false;
+      return;
+    }
     if (!myReviewData?.data?.items) return;
 
     setItems((prev) => {
@@ -44,7 +50,7 @@ function MyReviews() {
     if (pageNum >= totalPages - 1) {
       setHasMore(false);
     }
-  }, [myReviewData]);
+  }, [myReviewData, error]);
 
   const lastItemRef = useCallback(
     (node) => {
@@ -54,6 +60,7 @@ function MyReviews() {
 
       observerRef.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
+          isRequesting.current = true;
           setPageNow((prev) => prev + 1);
         }
       });

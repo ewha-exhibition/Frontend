@@ -610,9 +610,9 @@ export default function Detail() {
       <BookingBar
         exhibitionId={exhibition.exhibitionId}
         isScraped={exhibition.scrap}
-        period={exhibition?.period}
-        price={exhibition?.price}
-        scrapCount={exhibition?.scrapCount}
+        period={exhibition.period}
+        price={exhibition.price}
+        scrapCount={exhibition.scrapCount}
         link={exhibition?.link}
       />
       <HostMenu

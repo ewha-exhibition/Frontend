@@ -17,7 +17,9 @@ function MyQuestions() {
   const [pageNow, setPageNow] = useState(0);
   const [items, setItems] = useState([]);
   const [hasMore, setHasMore] = useState(true);
+
   const observerRef = useRef(null);
+  const isRequesting = useRef(false);
 
   const [isOpen, setIsOpen] = useState(false);
   const [targetPostId, setTargetPostId] = useState(null);
@@ -26,10 +28,15 @@ function MyQuestions() {
     data: myQData,
     error,
     loading,
-  } = useCustomFetch(`/questions?pageNum=0&limit=10`);
-  //console.log(myQData?.data);
+  } = useCustomFetch(`/questions?pageNum=${pageNow}&limit=10`);
+  //console.log(items);
 
   useEffect(() => {
+    if (error) {
+      isRequesting.current = false;
+      return;
+    }
+
     if (!myQData?.data?.previews) return;
 
     setItems((prev) => {
@@ -43,7 +50,7 @@ function MyQuestions() {
     if (pageNum >= totalPages - 1) {
       setHasMore(false);
     }
-  }, [myQData]);
+  }, [myQData, error]);
 
   const lastItemRef = useCallback(
     (node) => {
@@ -53,6 +60,7 @@ function MyQuestions() {
 
       observerRef.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
+          isRequesting.current = true;
           setPageNow((prev) => prev + 1);
         }
       });
@@ -82,10 +90,10 @@ function MyQuestions() {
       {login ? (
         <>
           <Content>
-            {myQData?.data?.previews?.length === 0 ? (
+            {items?.length === 0 ? (
               <Nothing text={"아직 작성한 질문이 없어요"} />
             ) : (
-              myQData?.data?.previews.map((data, index) => {
+              items.map((data, index) => {
                 const isLast = index === items.length - 1;
                 return (
                   <div ref={isLast ? lastItemRef : null} key={data.postId}>
@@ -94,7 +102,7 @@ function MyQuestions() {
                       postId={data.postId}
                       poster={data.posterUrl}
                       title={data.exhibitionName}
-                      id={data.exhibitionId}
+                      exhibitionId={data.exhibitionId}
                       review={data.content}
                       pic={data.imageUrls}
                       mine={true}
@@ -104,7 +112,6 @@ function MyQuestions() {
                       }}
                       type={"question"}
                     />
-                    ;
                   </div>
                 );
               })

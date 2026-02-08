@@ -17,8 +17,10 @@ function MyExpectations() {
   const [pageNow, setPageNow] = useState(0);
   const [items, setItems] = useState([]);
   const [hasMore, setHasMore] = useState(true);
+
   const observerRef = useRef(null);
-  
+  const isRequesting = useRef(false);
+
   const [isOpen, setIsOpen] = useState(false);
   const [targetPostId, setTargetPostId] = useState(null);
 
@@ -26,9 +28,14 @@ function MyExpectations() {
     data: myExData,
     error,
     loading,
-  } = useCustomFetch(`/cheers?pageNum=0&limit=10`);
+  } = useCustomFetch(`/cheers?pageNum=${pageNow}&limit=10`);
 
   useEffect(() => {
+    if (error) {
+      isRequesting.current = false;
+      return;
+    }
+
     if (!myExData?.data?.previews) return;
 
     setItems((prev) => {
@@ -42,7 +49,7 @@ function MyExpectations() {
     if (pageNum >= totalPages - 1) {
       setHasMore(false);
     }
-  }, [myExData]);
+  }, [myExData, error]);
 
   const lastItemRef = useCallback(
     (node) => {
@@ -52,6 +59,7 @@ function MyExpectations() {
 
       observerRef.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
+          isRequesting.current = true;
           setPageNow((prev) => prev + 1);
         }
       });
@@ -94,7 +102,7 @@ function MyExpectations() {
                       postId={data.postId}
                       poster={data.posterUrl}
                       title={data.exhibitionName}
-                      id={data.exhibitionId}
+                      exhibitionId={data.exhibitionId}
                       review={data.content}
                       pic={data.imageUrls}
                       mine={true}

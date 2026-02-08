@@ -175,6 +175,7 @@ export default function Home() {
 const Container = styled.div`
   position: relative;
   width: 100%;
+  overflow-x: auto;
   max-width: 540px;
   margin: 0 auto;
   /* padding-top: 46px; */
@@ -322,7 +323,6 @@ const Bar = styled.div`
 const Rank = styled.span`
   color: ${({ theme }) => theme.colors.white};
   text-shadow: 0 0 10px #000;
-  font-family: SUIT;
   font-size: 16px;
   font-weight: 700;
   line-height: 100%;

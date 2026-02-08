@@ -13,8 +13,8 @@ export default defineConfig({
       includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.svg"],
       manifest: {
         name: "KnockKnock",
-        short_name: "Knock",
-        description: "이화 전시 플랫폼",
+        short_name: "녹녹",
+        description: "이화 공연/전시 플랫폼",
         theme_color: "#16915E",
         background_color: "#ffffff",
         display: "standalone",
