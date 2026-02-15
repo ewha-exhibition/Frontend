@@ -5,18 +5,17 @@ import useCustomFetch from "../../utils/hooks/useCustomFetch";
 function HaveSeen({ viewed, exhibitionId, onViewedChange }) {
   const [seen, setSeen] = useState(viewed);
   const { fetchData } = useCustomFetch();
-  //console.log(exhibitionId);
+
 
   const handleToggleSeen = async () => {
     const newSeen = !seen;
+    const method = newSeen ? "POST" : "DELETE";
 
     try {
-      const response = await fetchData(
-        `/scraps/${exhibitionId}/viewed?viewed=${newSeen}`,
-        "PATCH"
-      );
-      if (response?.status === 200) {
+      const response = await fetchData(`views/${exhibitionId}`, method);
+      if (response?.status === 200 || response?.status === 204) {
         setSeen(newSeen);
+
         if (onViewedChange) {
           onViewedChange({ newSeen, exhibitionId });
         }
