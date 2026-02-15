@@ -21,7 +21,7 @@ export default function MenuTrigger({
       aria-expanded={open}
       onClick={toggleMenu}
     >
-      <Icon width={size} height={size} color="white" />
+      <Icon width={size} height={size} />
     </IconButton>
   );
 }

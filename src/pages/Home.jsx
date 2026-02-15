@@ -69,6 +69,7 @@ export default function Home() {
 
   const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
   const [showLoginModal, setShowLoginModal] = useState(false);
+
   const handleScrapClick = async (id, scraped) => {
     if (!login) {
       setShowLoginModal(true);

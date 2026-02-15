@@ -439,7 +439,7 @@ export default function Detail() {
           </div>
           {exhibition.dateException && (
             <div className="div">
-              <MenuIcon width={18} height={18} color="#57B190" alt="예외사항" />
+              <StyledMenuIcon alt="예외사항" />
               <p className="p">{exhibition.dateException}</p>
             </div>
           )}
@@ -888,5 +888,13 @@ const AutoHeightTextarea = styled.textarea`
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.gray6};
+  }
+`;
+
+const StyledMenuIcon = styled(MenuIcon)`
+  width: 18px;
+  height: 18px;
+  path {
+    stroke: #57b190;
   }
 `;

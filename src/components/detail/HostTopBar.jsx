@@ -14,7 +14,7 @@ function HostTopBar({ title, onClick }) {
     <Container>
       <ChevronLeft height={14} width={24} onClick={goBack} />
       <h3>{title}</h3>
-      <Menu height={18} width={24} color="white" onClick={onClick} />
+      <Menu height={18} width={24} onClick={onClick} />
     </Container>
   );
 }
