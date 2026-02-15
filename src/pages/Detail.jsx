@@ -15,8 +15,9 @@ import userIcon from "../assets/icons/User.svg";
 import ClockIcon from "../assets/icons/Clock.svg?react";
 import sendIcon from "../assets/icons/Send.svg";
 import CalenderIcon from "../assets/icons/Calender.svg?react";
+import MenuIcon from "../assets/icons/Menu.svg?react";
 import Nothing from "../assets/icons/Nothing.svg?react";
-
+import LoadingUi from "../components/LoadingUi";
 // API
 import {
   getExhibitionApi,
@@ -271,7 +272,7 @@ export default function Detail() {
 
     try {
       // 3. API 호출
-      // ★ 예외 규칙 적용: exhibitionId 자리에 '부모 댓글 ID(targetId)'를 전달
+      // 예외 규칙 적용: exhibitionId 자리에 '부모 댓글 ID(targetId)'를 전달
       await createCommentApi({
         exhibitionId: targetId,
         type: "comment", // 타입 고정
@@ -329,7 +330,11 @@ export default function Detail() {
 
   // ♥️ 후기 작성 페이지 이동
   const handleMoveToReview = () => {
-    navigate(`/createReview/${id}`); // 경로 예시
+    if (!login) {
+      openLoginModal();
+      return;
+    }
+    navigate(`/createReview/${id}`);
   };
 
   // ♥️ 무한 스크롤 감지
@@ -368,23 +373,32 @@ export default function Detail() {
     closeMenu();
     navigate(`/enrollEvent/${id}/edit`);
   };
-  const handleDelete = async () => {
+
+  const handleDelete = () => {
+    closeMenu(); // 호스트 메뉴 닫기
+    setModalState({
+      isOpen: true,
+      type: "deleteExhibition",
+      targetId: id, // 현재 전시글 ID
+    });
+  };
+
+  // 실제 삭제를 수행할 함수
+  const executeExhibitionDelete = async () => {
     try {
       await deleteExhibitionApi(id);
-      navigate(-1);
+      navigate(-1); // 삭제 후 이전 페이지로 이동
     } catch (e) {
-      console.error(e);
+      console.error("전시 삭제 실패:", e);
     }
   };
   if (isLoading || !exhibition) {
-    return (
-      <div style={{ padding: "100px", textAlign: "center" }}>Loading...</div>
-    );
+    return <LoadingUi />;
   }
 
   return (
     <Container>
-      {!exhibition.host ? (
+      {!exhibition?.host ? (
         <TopBar title={null} icon={"Link"} onClick={handleShare} />
       ) : (
         <TopBar title={null} icon={"Menu"} onClick={openMenu} />
@@ -423,6 +437,12 @@ export default function Detail() {
             <ClockIcon width={18} height={18} color="#57B190" alt="시간" />
             <p className="p">{exhibition.duration}</p>
           </div>
+          {exhibition.dateException && (
+            <div className="div">
+              <MenuIcon width={18} height={18} color="#57B190" alt="예외사항" />
+              <p className="p">{exhibition.dateException}</p>
+            </div>
+          )}
         </Summary>
       </Header>
 
@@ -466,7 +486,12 @@ export default function Detail() {
                   <AutoHeightTextarea
                     ref={textareaRef}
                     rows={1}
-                    placeholder="벗들에게 궁금한 점을 질문하세요!"
+                    placeholder={
+                      login
+                        ? "벗들에게 궁금한 점을 질문하세요!"
+                        : "카카오톡으로 간편 로그인하고 모든 기능을 이용해보세요!"
+                    }
+                    readOnly={!login}
                     value={inputValue}
                     onChange={handleInputValueChange}
                   />
@@ -507,10 +532,6 @@ export default function Detail() {
                 );
               })
             )}
-            {/* 로딩 표시 */}
-            {commentList.loading && (
-              <p style={{ textAlign: "center" }}>Loading...</p>
-            )}
           </CommentSection>
         )}
 
@@ -524,7 +545,12 @@ export default function Detail() {
                   <AutoHeightTextarea
                     ref={textareaRef}
                     rows={1}
-                    placeholder="벗들에게 응원의 한마디를 남겨주세요!"
+                    placeholder={
+                      login
+                        ? "벗들에게 응원의 한마디를 남겨주세요!"
+                        : "카카오톡으로 간편 로그인하고 모든 기능을 이용해보세요!"
+                    }
+                    readOnly={!login}
                     value={inputValue}
                     onChange={handleInputValueChange}
                   />
@@ -563,9 +589,6 @@ export default function Detail() {
                 );
               })
             )}
-            {commentList.loading && (
-              <p style={{ textAlign: "center" }}>Loading...</p>
-            )}
           </CommentSection>
         )}
 
@@ -600,9 +623,6 @@ export default function Detail() {
                 );
               })
             )}
-            {commentList.loading && (
-              <p style={{ textAlign: "center" }}>Loading...</p>
-            )}
           </CommentSection>
         )}
       </Content>
@@ -631,7 +651,10 @@ export default function Detail() {
         onConfirm={() => {
           if (modalState.type === "login") {
             handleKakaoLogin();
+          } else if (modalState.type === "deleteExhibition") {
+            executeExhibitionDelete();
           } else {
+            // 기존 댓글 삭제 로직 (question, cheer, review, comment 등)
             handleDeleteComment();
           }
         }}
@@ -741,8 +764,10 @@ const DetailSection = styled.div`
   gap: 8px;
   .p {
     ${({ theme }) => theme.textStyles.body1Regular};
+    color: ${({ theme }) => theme.colors.gray10};
     font-size: 14px;
     white-space: pre-wrap;
+    color: ${({ theme }) => theme.colors.gray10};
   }
   .img {
     width: 100%;
@@ -802,21 +827,6 @@ const SendBtn = styled.img`
   height: 24px;
   cursor: pointer;
   align-self: flex-end;
-`;
-
-const Input = styled.input`
-  flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  ${({ theme }) => theme.textStyles.body1Regular};
-  color: ${({ theme }) => theme.colors.blackMain};
-  text-align: left;
-  vertical-align: middle;
-
-  &::placeholder {
-    color: ${({ theme }) => theme.colors.gray6};
-  }
 `;
 
 const DropShape = styled.div`

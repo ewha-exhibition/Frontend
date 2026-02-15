@@ -28,12 +28,12 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
 
   //전시 수정 (추가)
   useEffect(() => {
-    // 가격
-    setIsFree(data.price === "무료");
-    // 링크
-    setNoTicket(!data.link || data.link === "");
-  }, [data.price, data.link]);
-
+    if (data.link) {
+      setNoTicket(false);
+    } else if (data.link === "") {
+      setNoTicket(true);
+    }
+  }, []);
   //입력값 검사
   useEffect(() => {
     const safeStr = (val) => String(val || "").trim();
@@ -81,7 +81,13 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
       update("posterPreviewUrl", "");
     }
   };
-
+  // 2체크박스 변경 핸들러 수정
+  const handleNoTicketChange = (checked) => {
+    setNoTicket(checked);
+    if (checked) {
+      update("link", "");
+    }
+  };
   return (
     <Container>
       <ExplainTxt>
@@ -241,6 +247,8 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
             value={data.price || ""}
             type="number"
             onChange={(v) => update("price", v)}
+            unit="원"
+            textAlign="right"
           />
         )}
       </Section>
@@ -258,9 +266,12 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
           />
           <span>예매 필요 없음 (자유 입장) </span>
         </CheckBoxArea>
-
         {!noTicket && (
-          <InputBox value={data.link} onChange={(v) => update("link", v)} />
+          <InputBox
+            value={data.link || ""}
+            onChange={(v) => update("link", v)}
+            textAlign="right"
+          />
         )}
       </Section>
 
