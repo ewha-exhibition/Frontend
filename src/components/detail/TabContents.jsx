@@ -134,7 +134,7 @@ export function Question({ comment, isHost, club, openModal, onReply }) {
       {/* 답변 로직 */}
       {comment.hasAnswer && comment.answer ? (
         <Answer
-          type="comment"
+          type="question"
           date={comment.answerCreatedAt}
           text={comment.answer}
           postId={comment.answerId} // commentId: 응원/질문에 대한 답변의 고유 ID
@@ -235,7 +235,7 @@ export function Review({ comment, isHost, club, openModal, onReply }) {
             className="delete"
             src={deleteIcon}
             // 리뷰 삭제 모달 호출 (타입: review)
-            onClick={() => openModal(postId, "review")}
+            onClick={() => openModal(comment.postId, "review")}
             alt="삭제하기"
           />
         )}

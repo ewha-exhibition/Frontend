@@ -17,7 +17,7 @@ import useSearchExhibitions from "../utils/hooks/useSearchExhibitions";
 import useRankingExhibitions from "../utils/hooks/useRankingExhibitions";
 import useLatestExhibitions from "../utils/hooks/useLatestExhibitions";
 import { toggleScrap } from "../utils/apis/toggleScrap";
-
+import useAxios from "../utils/hooks/useAxios"; //
 //top10 컴포넌트
 function TopTenItem({ rank, title, poster, scrap, onClick }) {
   return (
@@ -37,7 +37,8 @@ function TopTenItem({ rank, title, poster, scrap, onClick }) {
 export default function Home() {
   //top10
   const { list: top10List, loading: top10Loading } = useRankingExhibitions();
-
+  //스크랩 오류
+  const fetchData = useAxios();
   //검색
   const navigate = useNavigate(); // 검색 화면 이동
   const [keywordInput, setKeywordInput] = useState("");
@@ -69,24 +70,25 @@ export default function Home() {
   const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  const handleScrapClick = (id, scraped) => {
+  const handleScrapClick = async (id, scraped) => {
     if (!login) {
       setShowLoginModal(true);
       return;
     }
 
-    // 만약 toggleScrap이 특정 fetch 함수를 기다린다면 null이나 dummy를 넣거나
-    // toggleScrap 내부 구조에 맞춰야 합니다.
-    toggleScrap(null, id, scraped)
-      .then(() => {
-        // 성공 시 새로고침하여 상태 반영
-        window.location.reload();
-      })
-      .catch((err) => {
-        console.error("스크랩 실패:", err);
-      });
-  };
+    try {
+      // fetchData(여기서는 axiosInstance)를 전달
+      const success = await toggleScrap(fetchData, id, scraped);
 
+      if (success) {
+        window.location.reload();
+      } else {
+        console.error("스크랩 실패");
+      }
+    } catch (err) {
+      console.error("에러 발생:", err);
+    }
+  };
   return (
     <Container>
       {showLoginModal && (

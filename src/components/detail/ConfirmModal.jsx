@@ -10,7 +10,7 @@ export default function ConfirmModal({ isOpen, type, onClose, onConfirm }) {
     reply: "해당 답글을 삭제할까요?",
     copy: "URL이 복사되었어요.",
     login: "로그인이 필요한 기능이에요.",
-    deleteExhibition: "전시글을 삭제할까요?",
+    deleteExhibition: "해당 전시를 삭제할까요?",
   };
 
   const message = messageMap[type];
