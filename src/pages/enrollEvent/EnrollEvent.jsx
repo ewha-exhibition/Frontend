@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import Topbar from "../../components/Topbar";
 import usePostExhibition from "../../utils/hooks/usePostExhibition";
+import NeedLogin from "../../components/home/NeedLogin";
 import EnrollStepOne from "./EnrollStepOne";
 import EnrollStepTwo from "./EnrollStepTwo";
 
@@ -165,6 +166,12 @@ export default function EnrollEvent() {
 
   return (
     <Container>
+      {!login && (
+        <NeedLogin onClose={() => navigate("/")}>
+          <p>카카오톡으로 간편 로그인하고</p>
+          <p>모든 기능을 이용해보세요!</p>
+        </NeedLogin>
+      )}
       {step == 1 ? (
         <Topbar title={""} icon={null} />
       ) : (
