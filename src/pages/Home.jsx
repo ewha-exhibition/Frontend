@@ -69,7 +69,6 @@ export default function Home() {
 
   const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
   const [showLoginModal, setShowLoginModal] = useState(false);
-
   const handleScrapClick = async (id, scraped) => {
     if (!login) {
       setShowLoginModal(true);
@@ -77,13 +76,11 @@ export default function Home() {
     }
 
     try {
-      // fetchData(여기서는 axiosInstance)를 전달
       const success = await toggleScrap(fetchData, id, scraped);
-
       if (success) {
         window.location.reload();
       } else {
-        console.error("스크랩 실패");
+        alert("스크랩 처리에 실패했습니다.");
       }
     } catch (err) {
       console.error("에러 발생:", err);
@@ -170,9 +167,12 @@ export default function Home() {
                 onGoing={item.open}
                 scraped={item.scrap}
                 onClick={() => navigate(`/detail/${item.exhibitionId}`)}
-                onScrapClick={() =>
-                  handleScrapClick(item.exhibitionId, item.scrap)
-                }
+                onScrapClick={(e) => {
+                  if (e && e.stopPropagation) {
+                    e.stopPropagation();
+                  }
+                  handleScrapClick(item.exhibitionId, item.scrap);
+                }}
               />
             ))}
           </EventListWrapper>
