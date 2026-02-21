@@ -21,7 +21,7 @@ function MyPage() {
     data: myWatchedData,
     error,
     loading,
-  } = useCustomFetch(`/scraps/viewed?pageNum=0&limit=10`);
+  } = useCustomFetch(`/views?pageNum=0&limit=10`);
   //console.log(myWatchedData);
   //console.log(error)
 
