@@ -144,8 +144,6 @@ export default function EnrollEvent() {
       images: formattedImages,
     };
 
-    console.log("🚀 전송 데이터:", body);
-
     try {
       const res = await createExhibition(body);
 

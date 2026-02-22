@@ -87,6 +87,7 @@ export default function Home() {
       console.error("에러 발생:", err);
     }
   };
+
   return (
     <Container>
       {showLoginModal && (
@@ -168,12 +169,9 @@ export default function Home() {
                 onGoing={item.open}
                 scraped={item.scrap}
                 onClick={() => navigate(`/detail/${item.exhibitionId}`)}
-                onScrapClick={(e) => {
-                  if (e && e.stopPropagation) {
-                    e.stopPropagation();
-                  }
-                  handleScrapClick(item.exhibitionId, item.scrap);
-                }}
+                onScrapClick={() =>
+                  handleScrapClick(item.exhibitionId, item.scrap)
+                }
               />
             ))}
           </EventListWrapper>

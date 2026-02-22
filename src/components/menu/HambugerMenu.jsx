@@ -1,11 +1,18 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import { useNavigate } from "react-router";
 import styled, { keyframes } from "styled-components";
 import theme from "../../style/Theme.jsx";
 import MenuBanner from "../../assets/icons/MenuBanner.png";
 import DeepGreenLogo from "../../assets/icons/logo_darkgreen.png";
 
 export default function HamburgerMenu({ open, onClose }) {
+  const navigate = useNavigate();
+
+  const handleBannerClick = () => {
+    onClose?.(); // 메뉴 닫기
+    navigate("/add-to-home"); // spa 이동
+  };
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (e) => e.key === "Escape" && onClose?.();
@@ -29,7 +36,7 @@ export default function HamburgerMenu({ open, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <Header>
-          <Logo src={DeepGreenLogo} alt="녹색 로고"/>
+          <Logo src={DeepGreenLogo} alt="녹색 로고" />
         </Header>
 
         <MenuContainer>
@@ -45,13 +52,9 @@ export default function HamburgerMenu({ open, onClose }) {
             </MenuItem>
           </MenuList>
 
-          <BannerLink
-            href="https://..." // TO DO: 여기에 공유 페이지 링크 넣기
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <BannerImg src={MenuBanner} alt="이벤트 배너" />
-          </BannerLink>
+          <BannerButton type="button" onClick={handleBannerClick}>
+            <BannerImg src={MenuBanner} alt="홈 화면에 추가 가이드 배너" />
+          </BannerButton>
         </MenuContainer>
       </Sheet>
     </Backdrop>,
@@ -127,4 +130,11 @@ const BannerImg = styled.img`
   height: auto;
   object-fit: cover;
   display: block;
+`;
+
+const BannerButton = styled.button`
+  all: unset;
+  display: block;
+  width: 100%;
+  cursor: pointer;
 `;
