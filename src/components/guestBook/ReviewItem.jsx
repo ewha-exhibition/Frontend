@@ -17,6 +17,7 @@ function ReivewItem({
   postId,
   mine,
   onRequestDelete,
+  deleted,
 }) {
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
@@ -47,7 +48,9 @@ function ReivewItem({
               }}
             />
           )}
-          <StyledChevron width={15} height={15} onClick={goDetail} />
+          {!deleted && (
+            <StyledChevron width={15} height={15} onClick={goDetail} />
+          )}
         </IconArea>
       </Upper>
 

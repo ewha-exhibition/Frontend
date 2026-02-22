@@ -106,6 +106,7 @@ function MyQuestions() {
                       review={data.content}
                       pic={data.imageUrls}
                       mine={true}
+                      deleted={data.deleted}
                       onRequestDelete={(postId) => {
                         setTargetPostId(postId);
                         setIsOpen(true);

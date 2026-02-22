@@ -13,6 +13,7 @@ function CheeringItem({
   postId,
   onRequestDelete,
   type = "cheer",
+  deleted,
 }) {
   const navigate = useNavigate();
 
@@ -39,7 +40,9 @@ function CheeringItem({
               }}
             />
           )}
-          <StyledChevron width={15} height={15} onClick={goDetail} />
+          {!deleted && (
+            <StyledChevron width={15} height={15} onClick={goDetail} />
+          )}
         </IconArea>
       </Upper>
 
