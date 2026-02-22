@@ -18,6 +18,7 @@ import MyShow from "./pages/myPage/MyShow.jsx";
 import MyQuestions from "./pages/myPage/MyQuestions.jsx";
 
 import Search from "./pages/Search.jsx";
+import AddToHomeGuide from "./pages/AddToHomeGuide";
 
 import KakaoCallback from "./pages/login/KakaoCallback.jsx";
 
@@ -51,6 +52,8 @@ export default function App() {
           <Route path="/mypage/myShows" element={<MyShow />} />
 
           <Route path="/search/" element={<Search />} />
+
+          <Route path="/add-to-home" element={<AddToHomeGuide />} />
         </Routes>
       </AppLayout>
     </MenuProvider>
