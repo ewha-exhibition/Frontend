@@ -119,6 +119,7 @@ const StyledChevron = styled(ChevronRight)`
   height: 16px;
   width: 10px;
   color: ${({ theme }) => theme.colors.gray6};
+  cursor: pointer;
 `;
 const Container = styled.div`
   width: 100%;
