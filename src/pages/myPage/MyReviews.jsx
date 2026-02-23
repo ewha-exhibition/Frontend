@@ -9,6 +9,7 @@ import ReivewItem from "../../components/guestBook/ReviewItem";
 import ConfirmModal from "../../components/detail/ConfirmModal";
 import KakaoBtn from "../../components/myPage/KakaoBtn";
 import Nothing from "../../components/Nothing";
+import AddReviewBtn from "../../components/guestBook/AddReviewBtn";
 
 function MyReviews() {
   const { fetchData } = useCustomFetch();
@@ -92,7 +93,7 @@ function MyReviews() {
         <>
           <Content>
             {!loading && items.length === 0 ? (
-              <Nothing text={"아직 작성한 리뷰가 없어요"} />
+              <Nothing text={"아직 작성한 후기가 없어요"} />
             ) : (
               items.map((data, index) => {
                 const isLast = index === items.length - 1;
@@ -126,6 +127,7 @@ function MyReviews() {
             onClose={() => setIsOpen(false)}
             onConfirm={handleDeleteConfirm}
           />
+          <AddReviewBtn />
         </>
       ) : (
         <LoginContainer>

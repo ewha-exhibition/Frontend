@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
 
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
 import { uploadImageToS3 } from "../../utils/apis/uploadImageToS3";
@@ -100,7 +99,7 @@ function CreateReview() {
           link={`/guestBook`}
         />
       )}
-      <Topbar title={"후기 작성"} icon={null}/>
+      <Topbar title={"후기 작성"} icon={null} />
       <Content>
         <p className="guide">관람 후 느낀 점을 벗들과 나눠주세요!</p>
         <TextBox onChange={handleTextBoxChange} />
@@ -126,6 +125,7 @@ const Container = styled.div`
   height: 100%;
 `;
 const Content = styled.div`
+  margin-top: 50px;
   padding: 20px 20px 0px 20px;
   display: flex;
   flex-direction: column;

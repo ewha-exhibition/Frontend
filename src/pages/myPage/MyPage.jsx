@@ -31,7 +31,7 @@ function MyPage() {
     { name: "관람 내역", path: "/mypage/watched" },
     { name: "작성한 후기", path: "/mypage/myReviews" },
     { name: "작성한 질문", path: "/mypage/questions" },
-    { name: "작성한 기대평", path: "/mypage/expectations" },
+    { name: "작성한 응원", path: "/mypage/expectations" },
   ];
   const secondTabs = [
     { name: "공연/전시 등록하기", path: "/enrollEvent" },
