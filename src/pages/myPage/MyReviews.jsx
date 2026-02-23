@@ -30,7 +30,7 @@ function MyReviews() {
     error,
     loading,
   } = useCustomFetch(`/reviews?page=${pageNow}&limit=10`);
-  //console.log("myReviewData:", myReviewData);
+  console.log(items);
 
   useEffect(() => {
     if (error) {
@@ -72,12 +72,13 @@ function MyReviews() {
 
   const handleDeleteConfirm = async () => {
     try {
-      await fetchData(`/reviews/${targetPostId}`, "DELETE");
+      const res = await fetchData(`/reviews/${targetPostId}`, "DELETE");
 
-      window.location.reload();
-
-      setIsOpen(false);
-      setTargetPostId(null);
+      if (res && res.status === 200) {
+        setIsOpen(false);
+        setTargetPostId(null);
+        window.location.reload();
+      }
     } catch (err) {
       console.error("삭제 실패", err);
     }
@@ -105,7 +106,7 @@ function MyReviews() {
                       review={data.content}
                       imageUrls={data.imageUrls}
                       mine={data.mine}
-                      deleted={data.deleted}
+                      deleted={data.isDeleted}
                       onRequestDelete={(postId) => {
                         setTargetPostId(postId);
                         setIsOpen(true);

@@ -71,12 +71,14 @@ function MyExpectations() {
 
   const handleDeleteConfirm = async () => {
     try {
-      await fetchData(`/cheers/${targetPostId}`, "DELETE");
+      const res = await fetchData(`/cheers/${targetPostId}`, "DELETE");
 
-      window.location.reload();
-
-      setIsOpen(false);
-      setTargetPostId(null);
+      if (res && res.status === 200) {
+        console.log("삭제 성공:", res);
+        setIsOpen(false);
+        setTargetPostId(null);
+        window.location.reload();
+      }
     } catch (err) {
       console.error("삭제 실패", err);
     }
@@ -106,6 +108,7 @@ function MyExpectations() {
                       review={data.content}
                       pic={data.imageUrls}
                       mine={true}
+                      deleted={data.deleted}
                       onRequestDelete={(postId) => {
                         setTargetPostId(postId);
                         setIsOpen(true);

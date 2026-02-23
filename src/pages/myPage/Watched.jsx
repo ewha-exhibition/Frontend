@@ -77,7 +77,7 @@ function Watched() {
               return (
                 <div ref={isLast ? lastItemRef : null} key={data.postId}>
                   <WatchedHis
-                    key={data.index}
+                    key={data.index} 
                     exhibitionId={data.exhibitionId}
                     title={data.exhibitionName}
                     startDate={data.startDate}
