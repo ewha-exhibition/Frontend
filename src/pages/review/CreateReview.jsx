@@ -11,7 +11,6 @@ import TextBox from "../../components/review/TextBox";
 import ConfirmModal from "../../components/myPage/CheckModal";
 
 function CreateReview() {
-  const fetch = useCustomFetch();
   const { fetchData } = useCustomFetch();
 
   const { exhibitionId } = useParams();
