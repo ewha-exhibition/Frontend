@@ -45,6 +45,9 @@ const Container = styled.div`
   */
 
   h3 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     color: ${({ theme }) => theme.colors.gray10};
     font-size: ${({ theme }) => theme.font.fontSize.headline20};
     font-weight: ${({ theme }) => theme.font.fontWeight.bold};
