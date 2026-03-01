@@ -22,7 +22,7 @@ function MyPage() {
     error,
     loading,
   } = useCustomFetch(`/views?pageNum=0&limit=10`);
-  //console.log(myWatchedData);
+  //.log(myWatchedData);
   //console.log(error)
 
   const navigate = useNavigate();

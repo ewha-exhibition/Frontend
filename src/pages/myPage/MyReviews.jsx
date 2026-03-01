@@ -30,8 +30,8 @@ function MyReviews() {
     data: myReviewData,
     error,
     loading,
-  } = useCustomFetch(`/reviews?page=${pageNow}&limit=10`);
-  console.log(items);
+  } = useCustomFetch(`/reviews?pageNum=${pageNow}&limit=10`);
+  console.log(myReviewData);
 
   useEffect(() => {
     if (error) {
@@ -85,6 +85,8 @@ function MyReviews() {
     }
   };
 
+  console.log(items);
+
   return (
     <Container>
       <Topbar title={"작성한 후기"} icon={null} />
@@ -107,7 +109,7 @@ function MyReviews() {
                       review={data.content}
                       imageUrls={data.imageUrls}
                       mine={data.mine}
-                      deleted={data.isDeleted}
+                      deleted={data.deleted}
                       onRequestDelete={(postId) => {
                         setTargetPostId(postId);
                         setIsOpen(true);
