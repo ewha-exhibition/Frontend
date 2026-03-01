@@ -88,12 +88,12 @@ function MyExpectations() {
 
   return (
     <Container>
-      <Topbar title={"작성한 기대평"} icon={null} />
+      <Topbar title={"작성한 응원"} icon={null} />
       {login ? (
         <>
           <Content>
             {!loading && items.length === 0 ? (
-              <Nothing text={"아직 작성한 기대평이 없어요"} />
+              <Nothing text={"아직 작성한 응원이 없어요"} />
             ) : (
               items.map((data, index) => {
                 const isLast = index === items.length - 1;
@@ -121,7 +121,7 @@ function MyExpectations() {
           </Content>
           <ConfirmModal
             isOpen={isOpen}
-            target="question"
+            type="cheer"
             onClose={() => setIsOpen(false)}
             onConfirm={handleDeleteConfirm}
           />
