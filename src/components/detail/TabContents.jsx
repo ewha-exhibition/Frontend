@@ -248,7 +248,8 @@ export function Review({ comment, isHost, club, openModal, onReply }) {
       {/* 사진 영역 */}
       {comment.images && comment.images.length > 0 && (
         <PhotoArea
-          pics={comment.images}
+          imageUrls={comment.images}
+          urlLength={comment.images.length}
           onOpen={(i) => {
             setIndex(i);
             setOpen(true);
@@ -257,7 +258,8 @@ export function Review({ comment, isHost, club, openModal, onReply }) {
       )}
       {open && (
         <PhotoViewer
-          pics={comment.images}
+          imageUrls={comment.images}
+          urlLength={comment.images.length}
           index={index}
           setIndex={setIndex}
           onClose={() => setOpen(false)}

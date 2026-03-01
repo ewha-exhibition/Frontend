@@ -66,6 +66,11 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // 이전 미리보기 blob URL 해제
+    if (data.posterPreviewUrl?.startsWith("blob:")) {
+      URL.revokeObjectURL(data.posterPreviewUrl);
+    }
+
     // 미리보기
     const previewUrl = URL.createObjectURL(file);
     update("posterPreviewUrl", previewUrl);

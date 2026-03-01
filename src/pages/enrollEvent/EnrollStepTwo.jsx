@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 import AttachedPicture from "../../components/AttachedPicture";
 import Preview from "../../components/enrollEvent/Preview";
@@ -12,10 +12,11 @@ export default function EnrollStepTwo({
   setText,
   pictures,
   setPictures,
-  stepOneData, //부모 전달
+  stepOneData,
+  previewMode,
+  setPreviewMode,
 }) {
   const { uploadToS3 } = useS3Upload();
-  const [previewMode, setPreviewMode] = useState(false);
 
   const textRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -33,22 +34,25 @@ export default function EnrollStepTwo({
     if (!fileList || fileList.length === 0) return;
     const files = Array.from(fileList);
 
-    const uploadPromises = files.map((file) =>
-      uploadToS3(file, "/exhibition/images"),
-    );
+    // 로컬 미리보기 즉시 표시
+    const localUrls = files.map((file) => URL.createObjectURL(file));
+    setPictures((prev) => [...prev, ...localUrls]);
 
-    try {
-      const uploadedUrls = await Promise.all(uploadPromises);
-      const validUrls = uploadedUrls.filter((url) => url !== null);
-
-      if (validUrls.length > 0) {
-        setPictures((prev) => [...prev, ...validUrls]);
+    // S3 업로드 후 로컬 URL 교체
+    files.forEach(async (file, i) => {
+      const s3Url = await uploadToS3(file, "/exhibition/images");
+      if (s3Url) {
+        setPictures((prev) =>
+          prev.map((url) => (url === localUrls[i] ? s3Url : url)),
+        );
+        URL.revokeObjectURL(localUrls[i]);
+      } else {
+        URL.revokeObjectURL(localUrls[i]);
+        setPictures((prev) => prev.filter((url) => url !== localUrls[i]));
       }
-    } catch (error) {
-      console.error("업로드 중 오류:", error);
-    } finally {
-      if (e.target) e.target.value = "";
-    }
+    });
+
+    if (e.target) e.target.value = "";
   };
 
   //이미지 삭제
@@ -135,9 +139,14 @@ export default function EnrollStepTwo({
             place: stepOneData.place,
             clubName: stepOneData.clubName,
 
-            price: stepOneData.price === 0 ? "무료" : `${stepOneData.price}원`,
+            price:
+              stepOneData.price === "무료"
+                ? "무료"
+                : `${stepOneData.price}원`,
+            dateException: stepOneData.dateException,
 
             period:
+              !stepOneData.endDate ||
               stepOneData.startDate === stepOneData.endDate
                 ? stepOneData.startDate
                 : `${stepOneData.startDate} - ${stepOneData.endDate}`,
@@ -147,7 +156,7 @@ export default function EnrollStepTwo({
               : `${stepOneData.startTime}`,
 
             content: text,
-            images: pictures.map((pic) => pic.url),
+            images: pictures,
           }}
           onBack={() => setPreviewMode(false)}
         />

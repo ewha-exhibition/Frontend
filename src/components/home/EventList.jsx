@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import Bookmark from "../../assets/icons/Bookmark.svg?react";
 import BookmarkOL from "../../assets/icons/BookmarkOL.svg?react";
+import { formatPeriod } from "../../utils/formatPeriod";
 export default function EventList({
   id,
   title,
@@ -20,12 +20,12 @@ export default function EventList({
         <TextArea onClick={onClick}>
           <div className="titleBox">{title}</div>
           <p>{place}</p>
-          <p>{date}</p>
+          <p>{formatPeriod(date)}</p>
         </TextArea>
         <BookmarkWrapper
           onClick={(e) => {
-            e.stopPropagation(); // 1. 상세 페이지 이동(카드 클릭) 방지
-            onScrapClick(); // 2. 부모의 스크랩 함수만 깔끔하게 실행
+            e.stopPropagation(); // 1. 상세 페이지 이동 방지
+            onScrapClick(); // 2. 부모의 스크랩 함수 실행
           }}
         >
           {scraped ? (

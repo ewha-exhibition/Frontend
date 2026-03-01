@@ -15,6 +15,7 @@ export default function EditExhibition() {
   const [step, setStep] = useState(1);
   const [isNextActive, setIsNextActive] = useState(false);
   const [originalData, setOriginalData] = useState(null); //원본 데이터 저장
+  const [previewMode, setPreviewMode] = useState(false);
 
   const [stepOneData, setStepOneData] = useState({
     category: "공연",
@@ -53,7 +54,7 @@ export default function EditExhibition() {
         const categoryMapRev = {
           PERFORMANCE: "공연",
           EXHIBITION: "전시",
-          ETCETERA: "기타",
+          ETC: "기타",
         };
         const mappedData = {
           category: categoryMapRev[data.category],
@@ -104,7 +105,7 @@ export default function EditExhibition() {
     const categoryMap = {
       공연: "PERFORMANCE",
       전시: "EXHIBITION",
-      기타: "ETCETERA",
+      기타: "ETC",
     };
 
     // 이미지 처리 로직
@@ -256,9 +257,30 @@ export default function EditExhibition() {
     window.scrollTo(0, 0);
   };
 
+  // detailImages 내 객체/string을 URL 문자열로 정규화
+  const toUrl = (img) => {
+    if (typeof img === "string") return img;
+    const url = img.url;
+    return typeof url === "object" ? url.url : url;
+  };
+
+  // EnrollStepTwo가 string 배열 기준으로 호출하더라도
+  // detailImages(객체 배열)의 id 정보를 보존하며 업데이트
+  const handleSetPictures = (updater) => {
+    setDetailImages((prev) => {
+      const prevStrings = prev.map(toUrl);
+      const nextStrings =
+        typeof updater === "function" ? updater(prevStrings) : updater;
+      return nextStrings.map((url) => prev.find((img) => toUrl(img) === url) || url);
+    });
+  };
+
   const goBack = () => {
     if (step === 1) navigate(-1);
-    if (step === 2) setStep(1);
+    if (step === 2) {
+      setPreviewMode(false);
+      setStep(1);
+    }
   };
 
   return (
@@ -302,14 +324,11 @@ export default function EditExhibition() {
             <EnrollStepTwo
               text={detailText}
               setText={setDetailText}
-              pictures={detailImages.map((img) => {
-                const targetUrl = typeof img === "string" ? img : img.url;
-                return typeof targetUrl === "object"
-                  ? targetUrl.url
-                  : targetUrl;
-              })}
-              setPictures={setDetailImages}
+              pictures={detailImages.map(toUrl)}
+              setPictures={handleSetPictures}
               stepOneData={stepOneData}
+              previewMode={previewMode}
+              setPreviewMode={setPreviewMode}
             />
           )}
         </Content>
