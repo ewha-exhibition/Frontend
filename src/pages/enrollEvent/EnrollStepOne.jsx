@@ -11,7 +11,7 @@ import useS3Upload from "../../utils/hooks/useS3Upload";
 import CameraIcon from "../../assets/icons/Camera.svg?react";
 import ClockIcon from "../../assets/icons/Clock.svg?react";
 
-function EnrollStepOne({ data, setData, setIsNextActive }) {
+function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
   const fileInputRef = useRef(null);
   const { uploadToS3 } = useS3Upload();
   const [isFree, setIsFree] = useState(false);
@@ -29,12 +29,13 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
   //전시 수정 (추가)
 
   useEffect(() => {
+    if (!isEdit) return;
     // 가격
     setIsFree(data.price === "무료");
 
     // 링크
     setNoTicket(!data.link || data.link === "");
-  }, [data.price, data.link]);
+  }, [isEdit, data.price, data.link]);
   //입력값 검사
   useEffect(() => {
     const safeStr = (val) => String(val || "").trim();
@@ -87,7 +88,7 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
       update("posterPreviewUrl", "");
     }
   };
-  // 2체크박스 변경 핸들러 수정
+  // 체크박스 변경 핸들러 수정
   const handleNoTicketChange = (checked) => {
     setNoTicket(checked);
     if (checked) {
