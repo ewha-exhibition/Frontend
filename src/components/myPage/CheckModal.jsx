@@ -42,6 +42,7 @@ const Overlay = styled.div`
 const Modal = styled.div`
   margin: 0 50px;
   width: 100%;
+  max-width: 255px;
   background-color: ${({ theme }) => theme.colors.white};
   border-radius: 12px;
   overflow: hidden;

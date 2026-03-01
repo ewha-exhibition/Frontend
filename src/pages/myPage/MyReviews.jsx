@@ -9,6 +9,7 @@ import ReivewItem from "../../components/guestBook/ReviewItem";
 import ConfirmModal from "../../components/detail/ConfirmModal";
 import KakaoBtn from "../../components/myPage/KakaoBtn";
 import Nothing from "../../components/Nothing";
+import AddReviewBtn from "../../components/guestBook/AddReviewBtn";
 
 function MyReviews() {
   const { fetchData } = useCustomFetch();
@@ -30,7 +31,7 @@ function MyReviews() {
     error,
     loading,
   } = useCustomFetch(`/reviews?page=${pageNow}&limit=10`);
-  //console.log("myReviewData:", myReviewData);
+  console.log(items);
 
   useEffect(() => {
     if (error) {
@@ -72,12 +73,13 @@ function MyReviews() {
 
   const handleDeleteConfirm = async () => {
     try {
-      await fetchData(`/reviews/${targetPostId}`, "DELETE");
+      const res = await fetchData(`/reviews/${targetPostId}`, "DELETE");
 
-      window.location.reload();
-
-      setIsOpen(false);
-      setTargetPostId(null);
+      if (res && res.status === 200) {
+        setIsOpen(false);
+        setTargetPostId(null);
+        window.location.reload();
+      }
     } catch (err) {
       console.error("삭제 실패", err);
     }
@@ -91,7 +93,7 @@ function MyReviews() {
         <>
           <Content>
             {!loading && items.length === 0 ? (
-              <Nothing text={"아직 작성한 리뷰가 없어요"} />
+              <Nothing text={"아직 작성한 후기가 없어요"} />
             ) : (
               items.map((data, index) => {
                 const isLast = index === items.length - 1;
@@ -105,7 +107,7 @@ function MyReviews() {
                       review={data.content}
                       imageUrls={data.imageUrls}
                       mine={data.mine}
-                      deleted={data.deleted}
+                      deleted={data.isDeleted}
                       onRequestDelete={(postId) => {
                         setTargetPostId(postId);
                         setIsOpen(true);
@@ -125,6 +127,7 @@ function MyReviews() {
             onClose={() => setIsOpen(false)}
             onConfirm={handleDeleteConfirm}
           />
+          <AddReviewBtn />
         </>
       ) : (
         <LoginContainer>

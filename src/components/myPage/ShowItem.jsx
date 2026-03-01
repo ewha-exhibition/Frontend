@@ -35,7 +35,9 @@ function ShowItem({
 
   const copyUrl = async () => {
     try {
-      await navigator.clipboard.writeText(link);
+      await navigator.clipboard.writeText(
+        `https://www.greenknock.xyz/detail/${exhibitionId}`,
+      );
       onCopySuccess?.("url");
     } catch (e) {
       console.error("URL 복사 실패", e);

@@ -29,7 +29,7 @@ function MyQuestions() {
     error,
     loading,
   } = useCustomFetch(`/questions?pageNum=${pageNow}&limit=10`);
-  //console.log(items);
+  console.log(items);
 
   useEffect(() => {
     if (error) {
@@ -72,12 +72,14 @@ function MyQuestions() {
 
   const handleDeleteConfirm = async () => {
     try {
-      await fetchData(`/questions/${targetPostId}`, "DELETE");
+      const res = await fetchData(`/questions/${targetPostId}`, "DELETE");
 
-      window.location.reload();
-
-      setIsOpen(false);
-      setTargetPostId(null);
+      if (res && res.status === 200) {
+        console.log("삭제 성공:", res);
+        setIsOpen(false);
+        setTargetPostId(null);
+        window.location.reload();
+      }
     } catch (err) {
       console.error("삭제 실패", err);
     }
@@ -106,7 +108,7 @@ function MyQuestions() {
                       review={data.content}
                       pic={data.imageUrls}
                       mine={true}
-                      deleted={data.deleted}
+                      deleted={data.isDeleted}
                       onRequestDelete={(postId) => {
                         setTargetPostId(postId);
                         setIsOpen(true);
