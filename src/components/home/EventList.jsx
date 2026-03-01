@@ -1,9 +1,8 @@
 import styled from "styled-components";
-import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import Bookmark from "../../assets/icons/Bookmark.svg?react";
 import BookmarkOL from "../../assets/icons/BookmarkOL.svg?react";
-
+import { formatPeriod } from "../../utils/formatPeriod";
 export default function EventList({
   id,
   title,
@@ -14,39 +13,31 @@ export default function EventList({
   onClick,
   onScrapClick,
 }) {
-  {
-    const { fetchData } = useCustomFetch();
-
-    const handleScrapClick = () => {
-      onScrapClick(id, scraped, fetchData);
-    };
-
-    return (
-      <Component>
-        <Container>
-          <img src={poster} alt={title} onClick={onClick} />
-          <TextArea onClick={onClick}>
-            <div className="titleBox">{title}</div>
-            <p>{place}</p>
-            <p>{date}</p>
-          </TextArea>
-          <BookmarkWrapper
-            onClick={(e) => {
-              e.stopPropagation();
-              handleScrapClick();
-            }}
-          >
-            {scraped ? (
-              <GreenBookmark width={24} height={24} />
-            ) : (
-              <GreenBookmarkOL width={24} height={24} />
-            )}
-          </BookmarkWrapper>
-        </Container>
-        <Br />
-      </Component>
-    );
-  }
+  return (
+    <Component>
+      <Container>
+        <img src={poster} alt={title} onClick={onClick} />
+        <TextArea onClick={onClick}>
+          <div className="titleBox">{title}</div>
+          <p>{place}</p>
+          <p>{formatPeriod(date)}</p>
+        </TextArea>
+        <BookmarkWrapper
+          onClick={(e) => {
+            e.stopPropagation(); // 1. 상세 페이지 이동 방지
+            onScrapClick(); // 2. 부모의 스크랩 함수 실행
+          }}
+        >
+          {scraped ? (
+            <GreenBookmark width={24} height={24} />
+          ) : (
+            <GreenBookmarkOL width={24} height={24} />
+          )}
+        </BookmarkWrapper>
+      </Container>
+      <Br />
+    </Component>
+  );
 }
 
 const GreenBookmark = styled(Bookmark)`

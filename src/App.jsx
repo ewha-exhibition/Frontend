@@ -21,6 +21,7 @@ import Search from "./pages/Search.jsx";
 import AddToHomeGuide from "./pages/AddToHomeGuide";
 
 import KakaoCallback from "./pages/login/KakaoCallback.jsx";
+import ErrorUi from "./components/ErrorUi.jsx";
 
 export default function App() {
   return (
@@ -54,6 +55,8 @@ export default function App() {
           <Route path="/search/" element={<Search />} />
 
           <Route path="/add-to-home" element={<AddToHomeGuide />} />
+
+          <Route path="*" element={<ErrorUi message="존재하지 않는 페이지예요" />} />
         </Routes>
       </AppLayout>
     </MenuProvider>
