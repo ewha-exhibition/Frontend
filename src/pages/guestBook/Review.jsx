@@ -64,8 +64,6 @@ function Review() {
     return <Nothing text={"아직 작성된 후기가 없어요"} />;
   }
 
-  console.log(items);
-
   return (
     <Container>
       {items.map((data, index) => {
@@ -80,6 +78,7 @@ function Review() {
               review={data.body}
               imageUrls={data.imageUrls}
               exhibitionId={data.exhibitionId}
+              deleted={data.deleted}
             />
           </div>
         );

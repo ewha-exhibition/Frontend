@@ -72,6 +72,7 @@ function Cheering() {
               id={data.postId}
               review={data.body}
               exhibitionId={data.exhibitionId}
+              deleted={data.deleted}
             />
           </div>
         );

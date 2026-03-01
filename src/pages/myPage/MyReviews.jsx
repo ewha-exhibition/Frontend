@@ -105,6 +105,7 @@ function MyReviews() {
                       review={data.content}
                       imageUrls={data.imageUrls}
                       mine={data.mine}
+                      deleted={data.deleted}
                       onRequestDelete={(postId) => {
                         setTargetPostId(postId);
                         setIsOpen(true);
