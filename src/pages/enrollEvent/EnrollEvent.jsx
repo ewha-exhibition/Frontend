@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import Topbar from "../../components/Topbar";
 import usePostExhibition from "../../utils/hooks/usePostExhibition";
+import NeedLogin from "../../components/home/NeedLogin";
 import EnrollStepOne from "./EnrollStepOne";
 import EnrollStepTwo from "./EnrollStepTwo";
 
@@ -17,6 +18,8 @@ export default function EnrollEvent() {
 
   const [step, setStep] = useState(1);
   const [isNextActive, setIsNextActive] = useState(false);
+  const [previewMode, setPreviewMode] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { createExhibition } = usePostExhibition();
 
@@ -70,11 +73,26 @@ export default function EnrollEvent() {
 
   const goBack = () => {
     if (step === 1) navigate(-1);
+    if (step === 2 && previewMode) {
+      setPreviewMode(false);
+      return;
+    }
     if (step === 2) setStep(1);
   };
 
   // 등록하기
   const handleSubmit = async () => {
+    if (isSubmitting) return;
+
+    // 0. 이미지 업로드 진행 중 체크 (blob URL이 남아있으면 아직 S3 업로드 중)
+    const hasPendingUploads = detailImages.some((url) =>
+      url.startsWith("blob:"),
+    );
+    if (hasPendingUploads) {
+      alert("이미지 업로드 중입니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
+
     // 1. 동아리 이름 검증 (빈 값이면 아예 요청 안 보냄)
     if (!stepOneData.clubName.trim()) {
       alert("동아리 이름을 입력해주세요.");
@@ -109,11 +127,10 @@ export default function EnrollEvent() {
     const categoryMap = {
       공연: "PERFORMANCE",
       전시: "EXHIBITION",
-      기타: "",
+      기타: "ETC",
     };
-    // 매핑된 값이 없으면 원래 값("공연") 전송
     const finalCategory =
-      categoryMap[stepOneData.category] || stepOneData.category;
+      categoryMap[stepOneData.category] ?? stepOneData.category;
 
     // 6. 이미지 데이터 처리
     const formattedImages = detailImages.map((url, index) => ({
@@ -143,8 +160,7 @@ export default function EnrollEvent() {
       images: formattedImages,
     };
 
-    console.log("🚀 전송 데이터:", body);
-
+    setIsSubmitting(true);
     try {
       const res = await createExhibition(body);
 
@@ -160,15 +176,28 @@ export default function EnrollEvent() {
       }
     } catch (error) {
       console.error("네트워크 에러:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <Container>
+      {!login && (
+        <NeedLogin onClose={() => navigate("/")}>
+          <p>카카오톡으로 간편 로그인하고</p>
+          <p>모든 기능을 이용해보세요!</p>
+        </NeedLogin>
+      )}
       {step == 1 ? (
         <Topbar title={""} icon={null} />
       ) : (
-        <Topbar title={""} icon={"EnrollEvent"} onClick={handleSubmit} />
+        <Topbar
+          title={""}
+          icon={"EnrollEvent"}
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+        />
       )}
       <PreStep onClick={goBack} />
       <Header>
@@ -207,7 +236,9 @@ export default function EnrollEvent() {
             pictures={detailImages}
             setPictures={setDetailImages}
             onSubmit={handleSubmit}
-            stepOneData={stepOneData} // 미리보기
+            stepOneData={stepOneData}
+            previewMode={previewMode}
+            setPreviewMode={setPreviewMode}
           />
         )}
       </Content>

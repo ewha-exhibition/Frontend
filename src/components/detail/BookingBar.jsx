@@ -3,6 +3,8 @@ import styled from "styled-components";
 import BookmarkFillIcon from "../../assets/icons/Bookmark.svg";
 import BookmarkIcon from "../../assets/icons/BookmarkOL.svg";
 import useAxios from "../../utils/hooks/useAxios";
+import useLogin from "../../utils/hooks/useLogin";
+import NeedLogin from "../home/NeedLogin";
 
 function parsePeriod(periodStr) {
   if (!periodStr || typeof periodStr !== "string") return null;
@@ -82,9 +84,11 @@ export default function BookingBar({
 }) {
   // 1. useAxios 훅 실행해서 instance 가져오기
   const axiosInstance = useAxios();
+  const isLogin = useLogin();
 
   const [isScraped, setIsScraped] = useState(initialIsScraped);
   const [count, setCount] = useState(initialCount ?? 0);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const isOnGoing = computeIsOnGoing(period);
   const isFree = computeIsFree(price);
@@ -97,6 +101,12 @@ export default function BookingBar({
   const handleScrap = async () => {
     // ID가 없으면 실행 중단
     if (!exhibitionId) return;
+
+    // 비로그인 상태면 로그인 모달 표시
+    if (!isLogin) {
+      setShowLoginModal(true);
+      return;
+    }
 
     // 롤백을 위한 이전 상태 저장
     const prevScraped = isScraped;
@@ -129,6 +139,13 @@ export default function BookingBar({
   };
 
   return (
+    <>
+    {showLoginModal && (
+      <NeedLogin onClose={() => setShowLoginModal(false)}>
+        <p>카카오톡으로 간편 로그인하고</p>
+        <p>모든 기능을 이용해보세요!</p>
+      </NeedLogin>
+    )}
     <Container>
       <ScrapButton type="button" onClick={handleScrap}>
         <img src={isScraped ? BookmarkFillIcon : BookmarkIcon} alt="스크랩" />
@@ -149,6 +166,7 @@ export default function BookingBar({
         </BookingButton>
       )}
     </Container>
+    </>
   );
 }
 

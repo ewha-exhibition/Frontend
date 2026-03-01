@@ -7,6 +7,7 @@ import useCustomFetch from "../../utils/hooks/useCustomFetch";
 import Topbar from "../../components/Topbar";
 import BottomBtn from "../../components/buttons/BottomBtn";
 import ConfirmModal from "../../components/myPage/CheckModal";
+import CodeModal from "../../components/myPage/CodeModal";
 
 function EnterCode() {
   const navigate = useNavigate();
@@ -14,8 +15,13 @@ function EnterCode() {
 
   const [code, setCode] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [doneModalOpen, setDoneModalOpen] = useState(false);
 
   const isActivated = code.length === 8;
+
+  const toMyShow = () => {
+    navigate("/mypage/myShows");
+  };
 
   const handleSubmit = async () => {
     if (!isActivated) return;
@@ -23,7 +29,7 @@ function EnterCode() {
     try {
       const { data, error } = await fetchData(
         `/hosts/join?code=${code}`,
-        "POST"
+        "POST",
       );
 
       if (error) {
@@ -32,8 +38,7 @@ function EnterCode() {
         return;
       }
       console.log("응답 데이터:", data);
-      alert("초대코드 등록이 완료되었습니다!");
-      navigate("/mypage/enterCode");
+      setDoneModalOpen(true);
     } catch (err) {
       console.error("예상치 못한 에러:", err);
       alert("오류가 발생했습니다.");
@@ -47,6 +52,17 @@ function EnterCode() {
           message={"올바른 초대 코드가 아니에요 \n다시 한 번 확인해 주세요"}
           onClose={() => setIsOpen(false)}
         />
+      )}
+      {doneModalOpen && (
+        <CodeModal
+          onClose={() => setDoneModalOpen(false)}
+          //exhibitionId={selectedId}
+          buttonText={"내 공연/전시 바로가기"}
+          buttonClick={toMyShow}
+        >
+          <p>이제 마이페이지{">"}내 공연/전시에서</p>
+          <p>등록된 글을 확인할 수 있어요!</p>
+        </CodeModal>
       )}
 
       <Topbar title={"초대코드 입력하기"} icon={null} />

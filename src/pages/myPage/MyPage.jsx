@@ -21,7 +21,7 @@ function MyPage() {
     data: myWatchedData,
     error,
     loading,
-  } = useCustomFetch(`/scraps/viewed?pageNum=0&limit=10`);
+  } = useCustomFetch(`/views?pageNum=0&limit=10`);
   //console.log(myWatchedData);
   //console.log(error)
 
@@ -31,7 +31,7 @@ function MyPage() {
     { name: "관람 내역", path: "/mypage/watched" },
     { name: "작성한 후기", path: "/mypage/myReviews" },
     { name: "작성한 질문", path: "/mypage/questions" },
-    { name: "작성한 기대평", path: "/mypage/expectations" },
+    { name: "작성한 응원", path: "/mypage/expectations" },
   ];
   const secondTabs = [
     { name: "공연/전시 등록하기", path: "/enrollEvent" },
@@ -119,6 +119,7 @@ const StyledChevron = styled(ChevronRight)`
   height: 16px;
   width: 10px;
   color: ${({ theme }) => theme.colors.gray6};
+  cursor: pointer;
 `;
 const Container = styled.div`
   width: 100%;

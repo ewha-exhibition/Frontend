@@ -1,9 +1,11 @@
 import styled from "styled-components";
+import { formatPeriod } from "../../utils/formatPeriod";
 import locationIcon from "../../assets/icons/Location.svg";
 import ticketIcon from "../../assets/icons/Ticket.svg";
 import userIcon from "../../assets/icons/User.svg";
 import CalenderIcon from "../../assets/icons/Calender.svg?react";
 import ClockIcon from "../../assets/icons/Clock.svg?react";
+import MenuIcon from "../../assets/icons/Menu.svg?react";
 
 export default function PreviewModeDetail({ detail }) {
   const categories = [
@@ -36,13 +38,19 @@ export default function PreviewModeDetail({ detail }) {
 
           <div className="div">
             <CalenderIcon width={18} height={18} color="#57B190" alt="날짜" />
-            <p className="p">{detail.period}</p>
+            <p className="p">{formatPeriod(detail.period)}</p>
           </div>
 
           <div className="div">
             <ClockIcon width={18} height={18} color="#57B190" alt="시간" />
             <p className="p">{detail.duration}</p>
           </div>
+          {detail.dateException && (
+            <div className="div">
+              <StyledMenuIcon alt="예외사항" />
+              <p className="p">{detail.dateException}</p>
+            </div>
+          )}
         </Summary>
       </Header>
 
@@ -101,23 +109,33 @@ const Summary = styled.div`
   display: flex;
   flex-direction: column;
   padding: 15px;
-  gap: 8px;
+  gap: 10px;
   border-radius: 8px;
   border: 0.5px solid ${({ theme }) => theme.colors.gray5};
+  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.06);
   background-color: ${({ theme }) => theme.colors.white};
 
   .div {
     display: flex;
+    flex-direction: row;
     gap: 10px;
-    align-items: center;
   }
   .svgIcon {
     width: 18px;
     height: 18px;
+    color: ${({ theme }) => theme.colors.Primary30};
   }
   .p {
-    ${({ theme }) => theme.textStyles.label2Medium};
+    ${({ theme }) => theme.textStyles.label1Medium};
     color: ${({ theme }) => theme.colors.gray10};
+  }
+`;
+
+const StyledMenuIcon = styled(MenuIcon)`
+  width: 18px;
+  height: 18px;
+  path {
+    stroke: #57b190;
   }
 `;
 const Categories = styled.div`
@@ -155,9 +173,11 @@ const Content = styled.div`
   background: ${({ theme }) => theme.colors.gray1};
 `;
 const DetailSection = styled.div`
-  padding: 19px;
+  width: 100%;
+  padding: 19px 19px 120px 19px;
   display: flex;
   flex-direction: column;
+  align-self: center;
   gap: 8px;
 
   .p {
@@ -168,7 +188,8 @@ const DetailSection = styled.div`
 
   .img {
     width: 100%;
-    max-width: 335px;
+    height: auto;
     border-radius: 4px;
+    align-self: center;
   }
 `;

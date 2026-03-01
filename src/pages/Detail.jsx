@@ -7,6 +7,7 @@ import BookingBar from "../components/detail/BookingBar";
 import ConfirmModal from "../components/detail/ConfirmModal";
 import { Cheer, Question, Review } from "../components/detail/TabContents";
 import { HostMenu } from "../components/detail/HostView";
+import NeedLogin from "../components/home/NeedLogin";
 
 // Icons
 import locationIcon from "../assets/icons/Location.svg";
@@ -15,8 +16,9 @@ import userIcon from "../assets/icons/User.svg";
 import ClockIcon from "../assets/icons/Clock.svg?react";
 import sendIcon from "../assets/icons/Send.svg";
 import CalenderIcon from "../assets/icons/Calender.svg?react";
+import MenuIcon from "../assets/icons/Menu.svg?react";
 import Nothing from "../assets/icons/Nothing.svg?react";
-
+import LoadingUi from "../components/LoadingUi";
 // API
 import {
   getExhibitionApi,
@@ -28,6 +30,7 @@ import {
   deleteCommentApi,
 } from "../utils/apis/comment";
 import useAxios from "../utils/hooks/useAxios";
+import { formatPeriod } from "../utils/formatPeriod";
 
 export default function Detail() {
   // 1. Hooks & Constants
@@ -40,6 +43,7 @@ export default function Detail() {
 
   // 2. State Management (상태 관리)
   const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [exhibition, setExhibition] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [menuState, setMenuState] = useState(false);
@@ -271,7 +275,7 @@ export default function Detail() {
 
     try {
       // 3. API 호출
-      // ★ 예외 규칙 적용: exhibitionId 자리에 '부모 댓글 ID(targetId)'를 전달
+      // 예외 규칙 적용: exhibitionId 자리에 '부모 댓글 ID(targetId)'를 전달
       await createCommentApi({
         exhibitionId: targetId,
         type: "comment", // 타입 고정
@@ -329,7 +333,11 @@ export default function Detail() {
 
   // ♥️ 후기 작성 페이지 이동
   const handleMoveToReview = () => {
-    navigate(`/createReview/${id}`); // 경로 예시
+    if (!login) {
+      setShowLoginModal(true);
+      return;
+    }
+    navigate(`/createReview/${id}`);
   };
 
   // ♥️ 무한 스크롤 감지
@@ -368,275 +376,299 @@ export default function Detail() {
     closeMenu();
     navigate(`/enrollEvent/${id}/edit`);
   };
-  const handleDelete = async () => {
+
+  const handleDelete = () => {
+    closeMenu(); // 호스트 메뉴 닫기
+    setModalState({
+      isOpen: true,
+      type: "deleteExhibition",
+      targetId: id, // 현재 전시글 ID
+    });
+  };
+
+  // 실제 삭제를 수행할 함수
+  const executeExhibitionDelete = async () => {
     try {
       await deleteExhibitionApi(id);
-      navigate(-1);
+      navigate(-1); // 삭제 후 이전 페이지로 이동
     } catch (e) {
-      console.error(e);
+      console.error("전시 삭제 실패:", e);
     }
   };
   if (isLoading || !exhibition) {
-    return (
-      <div style={{ padding: "100px", textAlign: "center" }}>Loading...</div>
-    );
+    return <LoadingUi />;
   }
 
   return (
-    <Container>
-      {!exhibition.host ? (
-        <TopBar title={null} icon={"Link"} onClick={handleShare} />
-      ) : (
-        <TopBar title={null} icon={"Menu"} onClick={openMenu} />
+    <>
+      {showLoginModal && (
+        <NeedLogin onClose={() => setShowLoginModal(false)}>
+          <p>카카오톡으로 간편 로그인하고</p>
+          <p>모든 기능을 이용해보세요!</p>
+        </NeedLogin>
       )}
-      {/* 공연 정보 */}
-      <Header>
-        <img
-          className="img"
-          src={exhibition.posterUrl}
-          alt={exhibition.exhibitionName}
-        />
-        <h1 className="h1">{exhibition.exhibitionName}</h1>
-
-        <Summary>
-          <div className="div">
-            <img className="svgIcon" src={locationIcon} alt="장소" />
-            <p className="p">{exhibition.place}</p>
-          </div>
-
-          <div className="div">
-            <img className="svgIcon" src={ticketIcon} alt="가격" />
-            <p className="p">{exhibition.price}</p>
-          </div>
-
-          <div className="div">
-            <img className="svgIcon" src={userIcon} alt="주최" />
-            <p className="p">{exhibition.clubName}</p>
-          </div>
-
-          <div className="div">
-            <CalenderIcon width={18} height={18} color="#57B190" alt="날짜" />
-            <p className="p">{exhibition.period}</p>
-          </div>
-
-          <div className="div">
-            <ClockIcon width={18} height={18} color="#57B190" alt="시간" />
-            <p className="p">{exhibition.duration}</p>
-          </div>
-        </Summary>
-      </Header>
-
-      {/* 카테고리 탭 */}
-      <Categories>
-        {categories.map(({ key, label, count }) => (
-          <Category
-            key={key}
-            isSelected={currentTab === key}
-            onClick={() => handleTabChange(key)}
-          >
-            <p>{label}</p>
-            {count !== null && count > 0 && <span>&nbsp;({count})</span>}
-          </Category>
-        ))}
-      </Categories>
-
-      <Content>
-        {/* 상세 */}
-        {currentTab === "detail" && (
-          <DetailSection>
-            <p className="p">{exhibition.content}</p>
-            {exhibition.images?.map((img, idx) => (
-              <img
-                className="img"
-                key={img.id}
-                src={img.imageUrl}
-                alt={`상세 정보 이미지-${idx}`}
-              />
-            ))}
-          </DetailSection>
+      <Container>
+        {!exhibition?.host ? (
+          <TopBar title={null} icon={"Link"} onClick={handleShare} />
+        ) : (
+          <TopBar title={null} icon={"Menu"} onClick={openMenu} />
         )}
+        {/* 공연 정보 */}
+        <Header>
+          <img
+            className="img"
+            src={exhibition.posterUrl}
+            alt={exhibition.exhibitionName}
+          />
+          <h1 className="h1">{exhibition.exhibitionName}</h1>
 
-        {/* 질문 */}
-        {currentTab === "question" && (
-          <CommentSection>
-            {!exhibition.host && (
-              <InputBox>
-                <div className="left" style={{ alignItems: "flex-end" }}>
-                  <p className="nickname">익명</p>
-                  <AutoHeightTextarea
-                    ref={textareaRef}
-                    rows={1}
-                    placeholder="벗들에게 궁금한 점을 질문하세요!"
-                    value={inputValue}
-                    onChange={handleInputValueChange}
-                  />
-                </div>
-                <SendBtn
-                  src={sendIcon}
-                  alt="send"
-                  onClick={handleSubmitComment}
-                  onReply={handleHostReply}
-                />
-              </InputBox>
-            )}
-
-            {/* 리스트 출력 */}
-            {commentList.items.length === 0 && !commentList.loading ? (
-              <CenteredDiv>
-                <Nothing />
-              </CenteredDiv>
-            ) : (
-              commentList.items.map((comment, index) => {
-                // 마지막 요소에 ref 연결 (무한 스크롤)
-                const isLast = index === commentList.items.length - 1;
-                return (
-                  <div
-                    key={comment.commentId}
-                    ref={isLast ? lastElementRef : null}
-                  >
-                    <Question
-                      comment={comment}
-                      isHost={exhibition.host}
-                      club={exhibition.clubName}
-                      openModal={(postId, type) =>
-                        openDeleteCommentModal(postId, type || "question")
-                      }
-                      onReply={handleHostReply}
-                    />
-                  </div>
-                );
-              })
-            )}
-            {/* 로딩 표시 */}
-            {commentList.loading && (
-              <p style={{ textAlign: "center" }}>Loading...</p>
-            )}
-          </CommentSection>
-        )}
-
-        {/* 응원 */}
-        {currentTab === "cheer" && (
-          <CommentSection>
-            {!exhibition.host && (
-              <InputBox>
-                <div className="left" style={{ alignItems: "flex-end" }}>
-                  <p className="nickname">익명</p>
-                  <AutoHeightTextarea
-                    ref={textareaRef}
-                    rows={1}
-                    placeholder="벗들에게 응원의 한마디를 남겨주세요!"
-                    value={inputValue}
-                    onChange={handleInputValueChange}
-                  />
-                </div>
-                <SendBtn
-                  src={sendIcon}
-                  alt="send"
-                  onClick={handleSubmitComment}
-                  onReply={handleHostReply}
-                />
-              </InputBox>
-            )}
-
-            {commentList.items.length === 0 && !commentList.loading ? (
-              <CenteredDiv>
-                <Nothing />
-              </CenteredDiv>
-            ) : (
-              commentList.items.map((comment, index) => {
-                const isLast = index === commentList.items.length - 1;
-                return (
-                  <div
-                    key={comment.commentId}
-                    ref={isLast ? lastElementRef : null}
-                  >
-                    <Cheer
-                      comment={comment}
-                      isHost={exhibition.host}
-                      club={exhibition.clubName}
-                      openModal={(postId, type) =>
-                        openDeleteCommentModal(postId, type || "cheer")
-                      }
-                      onReply={handleHostReply}
-                    />
-                  </div>
-                );
-              })
-            )}
-            {commentList.loading && (
-              <p style={{ textAlign: "center" }}>Loading...</p>
-            )}
-          </CommentSection>
-        )}
-
-        {/* 후기 */}
-        {currentTab === "review" && (
-          <CommentSection>
-            <div className="review">
-              <DropShape>관람 후 느낀 점을 나눠주세요!</DropShape>
-              <WriteReviewButton onClick={handleMoveToReview}>
-                후기 작성하기
-              </WriteReviewButton>
+          <Summary>
+            <div className="div">
+              <img className="svgIcon" src={locationIcon} alt="장소" />
+              <p className="p">{exhibition.place}</p>
             </div>
-            {commentList.items.length === 0 && !commentList.loading ? (
-              <CenteredDiv>
-                <Nothing />
-              </CenteredDiv>
-            ) : (
-              commentList.items.map((comment, index) => {
-                const isLast = index === commentList.items.length - 1;
-                return (
-                  <div key={comment.id} ref={isLast ? lastElementRef : null}>
-                    <Review
-                      comment={comment}
-                      club={exhibition.clubName}
-                      isHost={exhibition.host}
-                      openModal={(postId, type) =>
-                        openDeleteCommentModal(postId, type || "review")
-                      }
-                      onReply={handleHostReply}
+
+            <div className="div">
+              <img className="svgIcon" src={ticketIcon} alt="가격" />
+              <p className="p">{exhibition.price}</p>
+            </div>
+
+            <div className="div">
+              <img className="svgIcon" src={userIcon} alt="주최" />
+              <p className="p">{exhibition.clubName}</p>
+            </div>
+
+            <div className="div">
+              <CalenderIcon width={18} height={18} color="#57B190" alt="날짜" />
+              <p className="p">{formatPeriod(exhibition.period)}</p>
+            </div>
+
+            <div className="div">
+              <ClockIcon width={18} height={18} color="#57B190" alt="시간" />
+              <p className="p">{exhibition.duration}</p>
+            </div>
+            {exhibition.dateException && (
+              <div className="div">
+                <StyledMenuIcon alt="예외사항" />
+                <p className="p">{exhibition.dateException}</p>
+              </div>
+            )}
+          </Summary>
+        </Header>
+
+        {/* 카테고리 탭 */}
+        <Categories>
+          {categories.map(({ key, label, count }) => (
+            <Category
+              key={key}
+              isSelected={currentTab === key}
+              onClick={() => handleTabChange(key)}
+            >
+              <p>{label}</p>
+              {count !== null && count > 0 && <span>&nbsp;({count})</span>}
+            </Category>
+          ))}
+        </Categories>
+
+        <Content>
+          {/* 상세 */}
+          {currentTab === "detail" && (
+            <DetailSection>
+              <p className="p">{exhibition.content}</p>
+              {exhibition.images?.map((img, idx) => (
+                <img
+                  className="img"
+                  key={img.id}
+                  src={img.imageUrl}
+                  alt={`상세 정보 이미지-${idx}`}
+                />
+              ))}
+            </DetailSection>
+          )}
+
+          {/* 질문 */}
+          {currentTab === "question" && (
+            <CommentSection>
+              {!exhibition.host && (
+                <InputBox>
+                  <div className="left" style={{ alignItems: "flex-end" }}>
+                    <p className="nickname">익명</p>
+                    <AutoHeightTextarea
+                      ref={textareaRef}
+                      rows={1}
+                      placeholder="벗들에게 궁금한 점을 질문하세요!"
+                      readOnly={!login}
+                      value={inputValue}
+                      onChange={handleInputValueChange}
+                      onClick={() => {
+                        if (!login) setShowLoginModal(true);
+                      }}
                     />
                   </div>
-                );
-              })
-            )}
-            {commentList.loading && (
-              <p style={{ textAlign: "center" }}>Loading...</p>
-            )}
-          </CommentSection>
-        )}
-      </Content>
+                  <SendBtn
+                    src={sendIcon}
+                    alt="send"
+                    onClick={handleSubmitComment}
+                    onReply={handleHostReply}
+                  />
+                </InputBox>
+              )}
 
-      <BookingBar
-        exhibitionId={exhibition.exhibitionId}
-        isScraped={exhibition.scrap}
-        period={exhibition.period}
-        price={exhibition.price}
-        scrapCount={exhibition.scrapCount}
-        link={exhibition?.link}
-      />
-      <HostMenu
-        isOpen={menuState}
-        closeHostMenu={closeMenu}
-        handleShare={handleShare}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-      />
+              {/* 리스트 출력 */}
+              {commentList.items.length === 0 && !commentList.loading ? (
+                <CenteredDiv>
+                  <Nothing />
+                </CenteredDiv>
+              ) : (
+                commentList.items.map((comment, index) => {
+                  // 마지막 요소에 ref 연결 (무한 스크롤)
+                  const isLast = index === commentList.items.length - 1;
+                  return (
+                    <div
+                      key={comment.commentId}
+                      ref={isLast ? lastElementRef : null}
+                    >
+                      <Question
+                        comment={comment}
+                        isHost={exhibition.host}
+                        club={exhibition.clubName}
+                        openModal={(postId, type) =>
+                          openDeleteCommentModal(postId, type || "question")
+                        }
+                        onReply={handleHostReply}
+                      />
+                    </div>
+                  );
+                })
+              )}
+            </CommentSection>
+          )}
 
-      {/* 삭제 확인 모달 */}
-      <ConfirmModal
-        isOpen={modalState.isOpen}
-        type={modalState.type}
-        onClose={closeModal}
-        onConfirm={() => {
-          if (modalState.type === "login") {
-            handleKakaoLogin();
-          } else {
-            handleDeleteComment();
-          }
-        }}
-      />
-    </Container>
+          {/* 응원 */}
+          {currentTab === "cheer" && (
+            <CommentSection>
+              {!exhibition.host && (
+                <InputBox>
+                  <div className="left" style={{ alignItems: "flex-end" }}>
+                    <p className="nickname">익명</p>
+                    <AutoHeightTextarea
+                      ref={textareaRef}
+                      rows={1}
+                      placeholder="벗들에게 응원의 한마디를 남겨주세요!"
+                      readOnly={!login}
+                      value={inputValue}
+                      onChange={handleInputValueChange}
+                      onClick={() => {
+                        if (!login) setShowLoginModal(true);
+                      }}
+                    />
+                  </div>
+                  <SendBtn
+                    src={sendIcon}
+                    alt="send"
+                    onClick={handleSubmitComment}
+                    onReply={handleHostReply}
+                  />
+                </InputBox>
+              )}
+
+              {commentList.items.length === 0 && !commentList.loading ? (
+                <CenteredDiv>
+                  <Nothing />
+                </CenteredDiv>
+              ) : (
+                commentList.items.map((comment, index) => {
+                  const isLast = index === commentList.items.length - 1;
+                  return (
+                    <div
+                      key={comment.commentId}
+                      ref={isLast ? lastElementRef : null}
+                    >
+                      <Cheer
+                        comment={comment}
+                        isHost={exhibition.host}
+                        club={exhibition.clubName}
+                        openModal={(postId, type) =>
+                          openDeleteCommentModal(postId, type || "cheer")
+                        }
+                        onReply={handleHostReply}
+                      />
+                    </div>
+                  );
+                })
+              )}
+            </CommentSection>
+          )}
+
+          {/* 후기 */}
+          {currentTab === "review" && (
+            <CommentSection>
+              <div className="review">
+                <DropShape>관람 후 느낀 점을 나눠주세요!</DropShape>
+                <WriteReviewButton onClick={handleMoveToReview}>
+                  후기 작성하기
+                </WriteReviewButton>
+              </div>
+              {commentList.items.length === 0 && !commentList.loading ? (
+                <CenteredDiv>
+                  <Nothing />
+                </CenteredDiv>
+              ) : (
+                commentList.items.map((comment, index) => {
+                  const isLast = index === commentList.items.length - 1;
+                  return (
+                    <div key={comment.id} ref={isLast ? lastElementRef : null}>
+                      <Review
+                        comment={comment}
+                        club={exhibition.clubName}
+                        isHost={exhibition.host}
+                        openModal={(postId, type) =>
+                          openDeleteCommentModal(postId, type || "review")
+                        }
+                        onReply={handleHostReply}
+                      />
+                    </div>
+                  );
+                })
+              )}
+            </CommentSection>
+          )}
+        </Content>
+
+        <BookingBar
+          exhibitionId={exhibition.exhibitionId}
+          isScraped={exhibition.scrap}
+          period={exhibition.period}
+          price={exhibition.price}
+          scrapCount={exhibition.scrapCount}
+          link={exhibition?.link}
+        />
+        <HostMenu
+          isOpen={menuState}
+          closeHostMenu={closeMenu}
+          handleShare={handleShare}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+        />
+
+        {/* 삭제 확인 모달 */}
+        <ConfirmModal
+          isOpen={modalState.isOpen}
+          type={modalState.type}
+          onClose={closeModal}
+          onConfirm={() => {
+            if (modalState.type === "login") {
+              handleKakaoLogin();
+            } else if (modalState.type === "deleteExhibition") {
+              executeExhibitionDelete();
+            } else {
+              // 기존 댓글 삭제 로직 (question, cheer, review, comment 등)
+              handleDeleteComment();
+            }
+          }}
+        />
+      </Container>
+    </>
   );
 }
 
@@ -741,8 +773,10 @@ const DetailSection = styled.div`
   gap: 8px;
   .p {
     ${({ theme }) => theme.textStyles.body1Regular};
+    color: ${({ theme }) => theme.colors.gray10};
     font-size: 14px;
     white-space: pre-wrap;
+    color: ${({ theme }) => theme.colors.gray10};
   }
   .img {
     width: 100%;
@@ -804,21 +838,6 @@ const SendBtn = styled.img`
   align-self: flex-end;
 `;
 
-const Input = styled.input`
-  flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  ${({ theme }) => theme.textStyles.body1Regular};
-  color: ${({ theme }) => theme.colors.blackMain};
-  text-align: left;
-  vertical-align: middle;
-
-  &::placeholder {
-    color: ${({ theme }) => theme.colors.gray6};
-  }
-`;
-
 const DropShape = styled.div`
   width: 165px;
   height: 23px;
@@ -878,5 +897,13 @@ const AutoHeightTextarea = styled.textarea`
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.gray6};
+  }
+`;
+
+const StyledMenuIcon = styled(MenuIcon)`
+  width: 18px;
+  height: 18px;
+  path {
+    stroke: #57b190;
   }
 `;

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "../assets/icons/ChevronLeft.svg?react";
 import Link from "../assets/icons/Link.svg?react";
 import DotsMenu from "../assets/icons/DotsMenu.svg?react";
-function Topbar({ title, icon, onClick }) {
+function Topbar({ title, icon, onClick, disabled }) {
   const navigate = useNavigate();
   const goBack = () => {
     if (icon === "EnrollEvent") return;
@@ -19,7 +19,9 @@ function Topbar({ title, icon, onClick }) {
       {icon === "Link" && <Link height={18} width={24} onClick={onClick} />}
       {icon === "Menu" && <DotsMenu height={24} onClick={onClick} />}
       {icon === "EnrollEvent" && (
-        <TextButton onClick={onClick}>등록하기</TextButton>
+        <TextButton onClick={disabled ? undefined : onClick} $disabled={disabled}>
+          등록하기
+        </TextButton>
       )}
     </Container>
   );
@@ -45,6 +47,9 @@ const Container = styled.div`
   */
 
   h3 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     color: ${({ theme }) => theme.colors.gray10};
     font-size: ${({ theme }) => theme.font.fontSize.headline20};
     font-weight: ${({ theme }) => theme.font.fontWeight.bold};
@@ -53,9 +58,11 @@ const Container = styled.div`
 `;
 
 const TextButton = styled.div`
-  color: ${({ theme }) => theme.colors.Primary50};
+  color: ${({ theme, $disabled }) =>
+    $disabled ? theme.colors.gray4 : theme.colors.Primary50};
   ${({ theme }) => theme.textStyles.titleMedium};
   padding: 13px 15px;
+  cursor: ${({ $disabled }) => ($disabled ? "default" : "pointer")};
 `;
 const Spacer = styled.div`
   width: 24px;

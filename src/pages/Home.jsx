@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import MenuTrigger from "../components/menu/MenuTrigger.jsx";
 import TabBar from "../components/home/TabBar.jsx";
 import EventList from "../components/home/EventList.jsx";
-import NeeedLogin from "../components/home/NeedLogin.jsx";
+import NeedLogin from "../components/home/NeedLogin.jsx";
 
 import SearchIcon from "../assets/icons/Search.svg?react";
 import BookmarkIcon from "../assets/icons/Bookmark.svg?react";
@@ -13,20 +13,19 @@ import BookmarkOLIcon from "../assets/icons/BookmarkOL.svg?react";
 import Logo from "../assets/icons/Logo.svg?react";
 
 //API
-import useSearchExhibitions from "../utils/hooks/useSearchExhibitions";
 import useRankingExhibitions from "../utils/hooks/useRankingExhibitions";
 import useLatestExhibitions from "../utils/hooks/useLatestExhibitions";
 import { toggleScrap } from "../utils/apis/toggleScrap";
-
+import { axiosInstance } from "../utils/apis/axiosInstance";
 //top10 컴포넌트
-function TopTenItem({ rank, exhibitionId, title, poster, scrap, onClick }) {
+function TopTenItem({ rank, title, poster, scrap, onClick }) {
   return (
     <Card>
       <Poster poster={poster}>
         <Overlay onClick={onClick} />
         <Bar>
           <Rank>{rank}</Rank>
-          {scrap ? <WhiteBookmark /> : <WhiteBookmarkOL />}
+          {/* {scrap ? <WhiteBookmark /> : <WhiteBookmarkOL />} */}
         </Bar>
       </Poster>
       <Title>{title}</Title>
@@ -37,54 +36,68 @@ function TopTenItem({ rank, exhibitionId, title, poster, scrap, onClick }) {
 export default function Home() {
   //top10
   const { list: top10List, loading: top10Loading } = useRankingExhibitions();
-
   //검색
-  const navigate = useNavigate(); // 검색 화면 이동
+  const navigate = useNavigate();
   const [keywordInput, setKeywordInput] = useState("");
-  const [keyword, setKeyword] = useState(null);
   const handleSearch = () => {
     if (keywordInput.trim().length === 0) return;
-
-    setKeyword(keywordInput.trim());
-    setTimeout(() => {
-      navigate("/search", {
-        state: {
-          keyword: keywordInput.trim(), // 검색어 전달
-        },
-      });
-    }, 200);
+    navigate("/search", { state: { keyword: keywordInput.trim() } });
   };
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") handleSearch();
   };
-  const { exhibitions, loading: searchLoading } = useSearchExhibitions(keyword);
 
   //카테고리 별 최신 공연
   const [category, setCategory] = useState("");
-  const { exhibitions: latestList, loading: latestLoading } =
-    useLatestExhibitions(category, 0, 10);
-  //console.log(latestList);
+  const { exhibitions: fetchedList } = useLatestExhibitions(category, 0, 10);
+  // 낙관적 업데이트 오버라이드: { [exhibitionId]: scrap boolean }
+  // 카테고리가 바뀌어 fetchedList가 교체되어도 overrides는 유지되므로 업데이트 소실 없음
+  const [scrapOverrides, setScrapOverrides] = useState({});
+  const latestList = fetchedList.map((item) =>
+    item.exhibitionId in scrapOverrides
+      ? { ...item, scrap: scrapOverrides[item.exhibitionId] }
+      : item
+  );
 
-  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  const handleScrapClick = (id, scraped, fetchData) => {
-    if (!login) {
+  const handleScrapClick = async (id, scraped) => {
+    if (!sessionStorage.getItem("accessToken")) {
       setShowLoginModal(true);
       return;
     }
-    toggleScrap(fetchData, id, scraped);
-    window.location.reload();
+
+    // 낙관적 업데이트: override에 반영
+    setScrapOverrides((prev) => ({ ...prev, [id]: !scraped }));
+
+    try {
+      const success = await toggleScrap(axiosInstance, id, scraped);
+      if (!success) {
+        // 실패 시 override 롤백
+        setScrapOverrides((prev) => ({ ...prev, [id]: scraped }));
+        alert("스크랩 처리에 실패했습니다.");
+      } else {
+        // 성공 시 override 제거 (이후 fetch에서 서버 상태 반영)
+        setScrapOverrides((prev) => {
+          const next = { ...prev };
+          delete next[id];
+          return next;
+        });
+      }
+    } catch (err) {
+      console.error("에러 발생:", err);
+      setScrapOverrides((prev) => ({ ...prev, [id]: scraped }));
+    }
   };
 
   return (
     <Container>
       {showLoginModal && (
-        <NeeedLogin onClose={() => setShowLoginModal(false)}>
+        <NeedLogin onClose={() => setShowLoginModal(false)}>
           <p>카카오톡으로 간편 로그인하고</p>
           <p>모든 기능을 이용해보세요!</p>
-        </NeeedLogin>
+        </NeedLogin>
       )}
 
       <Header>
@@ -159,7 +172,9 @@ export default function Home() {
                 onGoing={item.open}
                 scraped={item.scrap}
                 onClick={() => navigate(`/detail/${item.exhibitionId}`)}
-                onScrapClick={handleScrapClick}
+                onScrapClick={() =>
+                  handleScrapClick(item.exhibitionId, item.scrap)
+                }
               />
             ))}
           </EventListWrapper>
@@ -175,17 +190,10 @@ export default function Home() {
 const Container = styled.div`
   position: relative;
   width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden;
   max-width: 540px;
   margin: 0 auto;
-  /* padding-top: 46px; */
-  background: linear-gradient(
-    to bottom,
-    #00664f 0%,
-    #00664f 250px,
-    #ffffff 250px,
-    #ffffff 100%
-  );
+  background-color: #00664f;
 `;
 
 const Header = styled.div`
@@ -319,7 +327,6 @@ const Bar = styled.div`
   z-index: 1;
 `;
 
-// 순위
 const Rank = styled.span`
   color: ${({ theme }) => theme.colors.white};
   text-shadow: 0 0 10px #000;
@@ -328,7 +335,6 @@ const Rank = styled.span`
   line-height: 100%;
 `;
 
-//REVIEW: Title - 39px height
 const Title = styled.p`
   width: 100%;
   height: 39px;

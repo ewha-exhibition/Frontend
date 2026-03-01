@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { useMenu } from "./MenuProvider.jsx";
 import MenuSvg from "../../assets/icons/Menu.svg?react"; // 기본(흰색)
 import HamburgerSvg from "../../assets/icons/HamburgerMenu.svg?react"; // 검정색
+import { useMenu } from "./MenuProvider.jsx";
 
 export default function MenuTrigger({
   size = 24,

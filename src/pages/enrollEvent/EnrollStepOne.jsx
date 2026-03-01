@@ -27,13 +27,14 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
   };
 
   //전시 수정 (추가)
+
   useEffect(() => {
     // 가격
     setIsFree(data.price === "무료");
+
     // 링크
     setNoTicket(!data.link || data.link === "");
   }, [data.price, data.link]);
-
   //입력값 검사
   useEffect(() => {
     const safeStr = (val) => String(val || "").trim();
@@ -65,6 +66,11 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // 이전 미리보기 blob URL 해제
+    if (data.posterPreviewUrl?.startsWith("blob:")) {
+      URL.revokeObjectURL(data.posterPreviewUrl);
+    }
+
     // 미리보기
     const previewUrl = URL.createObjectURL(file);
     update("posterPreviewUrl", previewUrl);
@@ -81,7 +87,13 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
       update("posterPreviewUrl", "");
     }
   };
-
+  // 2체크박스 변경 핸들러 수정
+  const handleNoTicketChange = (checked) => {
+    setNoTicket(checked);
+    if (checked) {
+      update("link", "");
+    }
+  };
   return (
     <Container>
       <ExplainTxt>
@@ -241,6 +253,8 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
             value={data.price || ""}
             type="number"
             onChange={(v) => update("price", v)}
+            unit="원"
+            textAlign="right"
           />
         )}
       </Section>
@@ -248,19 +262,26 @@ function EnrollStepOne({ data, setData, setIsNextActive }) {
       {/* 예매 링크 */}
       <Section>
         <Label>예매 링크 *</Label>
+
         <CheckBoxArea>
           <CustomCheckbox
             checked={noTicket}
             onChange={(checked) => {
               setNoTicket(checked);
+
               update("link", checked ? "" : data.link);
             }}
           />
+
           <span>예매 필요 없음 (자유 입장) </span>
         </CheckBoxArea>
 
         {!noTicket && (
-          <InputBox value={data.link} onChange={(v) => update("link", v)} />
+          <InputBox
+            value={data.link}
+            onChange={(v) => update("link", v)}
+            textAlign="right"
+          />
         )}
       </Section>
 

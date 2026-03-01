@@ -23,7 +23,7 @@ function Watched() {
     data: myWatchedData,
     error,
     loading,
-  } = useCustomFetch(`/scraps/viewed?pageNum=${pageNow}&limit=10`);
+  } = useCustomFetch(`/views?pageNum=${pageNow}&limit=10`);
   console.log(items);
 
   useEffect(() => {
@@ -77,7 +77,7 @@ function Watched() {
               return (
                 <div ref={isLast ? lastItemRef : null} key={data.postId}>
                   <WatchedHis
-                    key={data.exhibitionId}
+                    key={data.index} 
                     exhibitionId={data.exhibitionId}
                     title={data.exhibitionName}
                     startDate={data.startDate}
