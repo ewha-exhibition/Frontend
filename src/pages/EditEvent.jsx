@@ -308,6 +308,7 @@ export default function EditExhibition() {
             <>
               <EnrollStepOne
                 key={`edit-${id}`}
+                isEdit={true}
                 data={stepOneData}
                 setData={setStepOneData}
                 setIsNextActive={setIsNextActive}
