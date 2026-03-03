@@ -143,8 +143,10 @@ const Content = styled.div`
   }
 `;
 const UploadBtn = styled.div`
-  width: 100%;
+  width: calc(100% - 40px);
   height: 50px;
+  margin: 0 20px;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -152,7 +154,14 @@ const UploadBtn = styled.div`
   position: absolute;
   bottom: 20px;
 
-  color: ${({ theme }) => theme.colors.blackMain};
+  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
+
+  border-radius: 6px;
+  background-color: ${({ disabled, theme }) =>
+    disabled ? theme.colors.gray4 : theme.colors.Primary50};
+  color: ${({ disabled, theme }) =>
+    disabled ? theme.colors.gray7 : theme.colors.white};
+
   font-size: ${({ theme }) => theme.font.fontSize.title16};
   font-weight: ${({ theme }) => theme.font.fontWeight.semiBold};
 `;
