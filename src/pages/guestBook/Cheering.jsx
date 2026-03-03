@@ -18,7 +18,7 @@ function Cheering() {
     error,
     loading,
   } = useCustomFetch(`/guestbooks/cheers?pageNum=${pageNow}&limit=10`);
-  //console.log(cheeringData?.data);
+  console.log(items);
 
   useEffect(() => {
     if (!cheeringData?.data?.posts) return;

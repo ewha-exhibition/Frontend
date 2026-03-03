@@ -19,7 +19,7 @@ function Review() {
     error,
     loading,
   } = useCustomFetch(`/guestbooks/reviews?pageNum=${pageNow}&limit=10`);
-  //console.log(reviewData);
+  console.log(items);
 
   useEffect(() => {
     if (error) {
