@@ -1,18 +1,39 @@
+import { useState, useEffect } from "react";
+import { flushSync } from "react-dom";
 import styled from "styled-components";
 
 import Bookmark from "../../assets/icons/Bookmark.svg?react";
 import BookmarkOL from "../../assets/icons/BookmarkOL.svg?react";
 import { formatPeriod } from "../../utils/formatPeriod";
+
 export default function EventList({
   id,
   title,
   date,
   place,
   poster,
-  scraped,
+  scraped: initialScraped,
   onClick,
   onScrapClick,
 }) {
+  const [scraped, setScraped] = useState(initialScraped);
+
+  // 서버 데이터가 바뀌면(카테고리 변경 등) 서버 상태로 동기화
+  useEffect(() => {
+    setScraped(initialScraped);
+  }, [initialScraped]);
+
+  const handleBookmarkClick = async (e) => {
+    e.stopPropagation();
+    const prev = scraped;
+    flushSync(() => setScraped(!prev)); // 배칭 없이 즉시 렌더링
+    try {
+      await onScrapClick(prev); // 부모의 API 요청 (실패 시 throw)
+    } catch {
+      setScraped(prev); // 실패 시 롤백
+    }
+  };
+
   return (
     <Component>
       <Container>
@@ -22,12 +43,7 @@ export default function EventList({
           <p>{place}</p>
           <p>{formatPeriod(date)}</p>
         </TextArea>
-        <BookmarkWrapper
-          onClick={(e) => {
-            e.stopPropagation(); // 1. 상세 페이지 이동 방지
-            onScrapClick(); // 2. 부모의 스크랩 함수 실행
-          }}
-        >
+        <BookmarkWrapper onClick={handleBookmarkClick}>
           {scraped ? (
             <GreenBookmark width={24} height={24} />
           ) : (

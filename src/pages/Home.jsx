@@ -51,43 +51,20 @@ export default function Home() {
   //카테고리 별 최신 공연
   const [category, setCategory] = useState("");
   const { exhibitions: fetchedList } = useLatestExhibitions(category, 0, 10);
-  // 낙관적 업데이트 오버라이드: { [exhibitionId]: scrap boolean }
-  // 카테고리가 바뀌어 fetchedList가 교체되어도 overrides는 유지되므로 업데이트 소실 없음
-  const [scrapOverrides, setScrapOverrides] = useState({});
-  const latestList = fetchedList.map((item) =>
-    item.exhibitionId in scrapOverrides
-      ? { ...item, scrap: scrapOverrides[item.exhibitionId] }
-      : item
-  );
 
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  const handleScrapClick = async (id, scraped) => {
+  // currentScraped: EventList가 클릭 직전에 넘겨주는 현재 상태값
+  const handleScrapClick = async (id, currentScraped) => {
     if (!sessionStorage.getItem("accessToken")) {
       setShowLoginModal(true);
-      return;
+      throw new Error("login required");
     }
 
-    // 낙관적 업데이트: override에 반영
-    setScrapOverrides((prev) => ({ ...prev, [id]: !scraped }));
-
-    try {
-      const success = await toggleScrap(axiosInstance, id, scraped);
-      if (!success) {
-        // 실패 시 override 롤백
-        setScrapOverrides((prev) => ({ ...prev, [id]: scraped }));
-        alert("스크랩 처리에 실패했습니다.");
-      } else {
-        // 성공 시 override 제거 (이후 fetch에서 서버 상태 반영)
-        setScrapOverrides((prev) => {
-          const next = { ...prev };
-          delete next[id];
-          return next;
-        });
-      }
-    } catch (err) {
-      console.error("에러 발생:", err);
-      setScrapOverrides((prev) => ({ ...prev, [id]: scraped }));
+    const success = await toggleScrap(axiosInstance, id, currentScraped);
+    if (!success) {
+      alert("스크랩 처리에 실패했습니다.");
+      throw new Error("scrap failed");
     }
   };
 
@@ -161,7 +138,7 @@ export default function Home() {
           </CategoryWrapper>
 
           <EventListWrapper>
-            {latestList.map((item) => (
+            {fetchedList.map((item) => (
               <EventList
                 key={item.exhibitionId}
                 id={item.exhibitionId}
@@ -172,8 +149,8 @@ export default function Home() {
                 onGoing={item.open}
                 scraped={item.scrap}
                 onClick={() => navigate(`/detail/${item.exhibitionId}`)}
-                onScrapClick={() =>
-                  handleScrapClick(item.exhibitionId, item.scrap)
+                onScrapClick={(currentScraped) =>
+                  handleScrapClick(item.exhibitionId, currentScraped)
                 }
               />
             ))}

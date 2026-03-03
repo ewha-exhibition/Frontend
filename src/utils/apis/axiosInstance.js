@@ -10,6 +10,15 @@ const axiosInstance = axios.create({
 });
 
 // Request interceptor: 액세스 토큰 헤더 첨부 (앱 시작 시 1회만 등록)
+axiosInstance.interceptors.request.use((config) => {
+  const accessToken = sessionStorage.getItem("accessToken");
+  if (accessToken && !config.url.includes("/api/auth/refresh")) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+  return config;
+});
+
+// Response interceptor: 401/403 시 토큰 재발급 (앱 시작 시 1회만 등록)
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
