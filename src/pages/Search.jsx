@@ -60,7 +60,7 @@ export default function Search() {
         </NeedLogin>
       )}
       <SearchBarWrapper>
-        <BackIcon height={14} width={24} onClick={goBack} />
+        <StyledBackIcon height={14} width={24} onClick={goBack} />
         <SearchBar>
           <input
             type="text"
@@ -152,4 +152,9 @@ const ResultList = styled.div`
   flex-direction: column;
   padding: 14px 20px;
   gap: 20px;
+`;
+
+const StyledBackIcon = styled(BackIcon)`
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.gray10};
 `;
