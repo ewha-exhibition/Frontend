@@ -227,7 +227,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
           <p>예시) 토요일만 4시 마감, 화요일은 휴관</p>
         </ExplainTxt>
         <InputBox
-          max={25}
+          max={35}
           placeholder="예외사항"
           value={data.dateException}
           onChange={(v) => update("dateException", v)}
