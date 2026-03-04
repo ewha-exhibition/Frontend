@@ -293,7 +293,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
           <p>한글만 사용, 최대한 짧게 작성해주세요</p>
           <ul>
             <li>이화여대 아마추어 오케스트라 에세이오스 ESAOS (X)</li>
-            <li>에세이오스 (O)</li>
+            <li>ESAOS (O)</li>
             <li>이화여대 디자인학부 (O)</li>
           </ul>
         </ExplainTxt>

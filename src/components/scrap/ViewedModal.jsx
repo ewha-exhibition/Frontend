@@ -10,9 +10,9 @@ export default function ViewedModal({
   onClose,
 }) {
   const navigate = useNavigate();
-  const toReview = () =>{
+  const toReview = () => {
     navigate(`/createReview/${exhibitionId}`);
-  }
+  };
 
   return (
     <Overlay role="dialog" aria-modal="true" onClick={onClose}>
@@ -50,7 +50,7 @@ const Overlay = styled.div`
 
 const Dialog = styled.div`
   width: calc(100% - 40px);
-  max-width: 640px;
+  max-width: 500px;
   background: #ffffff;
   border-radius: 12px;
   overflow: hidden;
