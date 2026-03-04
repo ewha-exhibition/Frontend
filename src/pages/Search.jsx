@@ -2,15 +2,16 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import EventList from "../components/home/EventList.jsx";
+import NeedLogin from "../components/home/NeedLogin.jsx";
 import SearchIcon from "../assets/icons/Search.svg?react";
 import BackIcon from "../assets/icons/ChevronLeft.svg?react";
 import Nothing from "../assets/icons/Nothing.svg?react";
 import useSearchExhibitions from "../utils/hooks/useSearchExhibitions";
 import { toggleScrap } from "../utils/apis/toggleScrap";
+import { axiosInstance } from "../utils/apis/axiosInstance";
 export default function Search() {
   const location = useLocation();
   const initialKeyword = location.state?.keyword || "";
-  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   const [keywordInput, setKeywordInput] = useState(initialKeyword);
@@ -37,16 +38,27 @@ export default function Search() {
     navigate(-1);
   };
 
-  const handleScrapClick = (id, scraped, fetchData) => {
-    if (!login) {
+  const handleScrapClick = async (id, currentScraped) => {
+    if (!sessionStorage.getItem("accessToken")) {
       setShowLoginModal(true);
-      return;
+      throw new Error("login required");
     }
-    toggleScrap(fetchData, id, scraped);
-    window.location.reload();
+
+    const success = await toggleScrap(axiosInstance, id, currentScraped);
+    if (!success) {
+      alert("스크랩 처리에 실패했습니다.");
+      throw new Error("scrap failed");
+    }
   };
+
   return (
     <Container>
+      {showLoginModal && (
+        <NeedLogin onClose={() => setShowLoginModal(false)}>
+          <p>카카오톡으로 간편 로그인하고</p>
+          <p>모든 기능을 이용해보세요!</p>
+        </NeedLogin>
+      )}
       <SearchBarWrapper>
         <BackIcon height={14} width={24} onClick={goBack} />
         <SearchBar>
@@ -84,7 +96,9 @@ export default function Search() {
             onGoing={item.open}
             scraped={item.scrap}
             onClick={() => navigate(`/detail/${item.exhibitionId}`)}
-            onScrapClick={handleScrapClick}
+            onScrapClick={(currentScraped) =>
+              handleScrapClick(item.exhibitionId, currentScraped)
+            }
           />
         ))}
       </ResultList>
