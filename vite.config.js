@@ -3,7 +3,10 @@ import react from "@vitejs/plugin-react-swc";
 import svgr from "vite-plugin-svgr";
 import { VitePWA } from "vite-plugin-pwa";
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  esbuild: {
+    drop: command === "build" ? ["console", "debugger"] : [],
+  },
   plugins: [
     svgr(),
     react(),
@@ -48,4 +51,4 @@ export default defineConfig({
       },
     }),
   ],
-});
+}));

@@ -135,6 +135,12 @@ export default function BookingBar({
 
   const handleOpenLink = () => {
     if (!link) return;
+    try {
+      const { protocol } = new URL(link);
+      if (!["http:", "https:"].includes(protocol)) return;
+    } catch {
+      return;
+    }
     window.open(link, "_blank", "noopener, noreferrer");
   };
 
