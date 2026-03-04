@@ -227,6 +227,7 @@ const Content = styled.div`
   position: relative;
   display: grid;
   grid-template-rows: auto auto 1fr;
+  grid-template-columns: minmax(0, 1fr);
 `;
 const TopTenHeadline = styled.div`
   display: flex;
@@ -234,6 +235,8 @@ const TopTenHeadline = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
+  width: 100%;
+  box-sizing: border-box;
 
   h6 {
     ${({ theme }) => theme.textStyles.titleSemiBold};
@@ -340,6 +343,8 @@ const EventWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 0px 20px;
+  width: 100%;
+  box-sizing: border-box;
 `;
 const CategoryWrapper = styled.div`
   display: flex;
