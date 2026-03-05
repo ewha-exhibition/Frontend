@@ -14,8 +14,8 @@ import ClockIcon from "../../assets/icons/Clock.svg?react";
 function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
   const fileInputRef = useRef(null);
   const { uploadToS3 } = useS3Upload();
-  const [isFree, setIsFree] = useState(false);
-  const [noTicket, setNoTicket] = useState(false);
+  const [isFree, setIsFree] = useState(data.isFree ?? false);
+  const [noTicket, setNoTicket] = useState(data.noTicket ?? false);
 
   // 시간 입력 모달
   const [isStartTimeOpen, setIsStartTimeOpen] = useState(false);
@@ -91,6 +91,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
   // 체크박스 변경 핸들러 수정
   const handleNoTicketChange = (checked) => {
     setNoTicket(checked);
+    update("noTicket", checked);
     if (checked) {
       update("link", "");
     }
@@ -242,6 +243,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
             checked={isFree}
             onChange={(checked) => {
               setIsFree(checked);
+              update("isFree", checked);
               update("price", checked ? "무료" : "");
             }}
             required={true}
@@ -269,7 +271,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
             checked={noTicket}
             onChange={(checked) => {
               setNoTicket(checked);
-
+              update("noTicket", checked);
               update("link", checked ? "" : data.link);
             }}
           />
