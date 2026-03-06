@@ -1,5 +1,5 @@
 import styled from "styled-components";
-
+import { useNavigate } from "react-router-dom";
 import useCustomFetch from "../../utils/hooks/useCustomFetch";
 
 import Bookmark from "../../assets/icons/Bookmark.svg?react";
@@ -19,6 +19,8 @@ function Scraped({
   onDelete,
   onViewedChange,
 }) {
+  const navigate = useNavigate();
+
   function formatDate(dateString) {
     return dateString.replace(/-/g, ".");
   }
@@ -35,12 +37,15 @@ function Scraped({
   const onGoing = checkOnGoing(endDate);
   //console.log(onGoing);
 
+  const handleMoveDetail = () => {
+    navigate(`/detail/${exhibitionId}`);
+  };
 
   return (
     <Component>
       <Container>
-        <img src={poster} alt={title} />
-        <TextArea>
+        <img src={poster} alt={title} onClick={handleMoveDetail}/>
+        <TextArea onClick={handleMoveDetail}>
           <div className="titleBox">{title}</div>
           <p>{place}</p>
           <p>
@@ -107,6 +112,7 @@ const Br = styled.div`
 const TextArea = styled.div`
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 
   .titleBox {
     width: 190px;

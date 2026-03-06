@@ -70,6 +70,8 @@ export default function EditExhibition() {
           price: data.price === "무료" ? "무료" : data.price.toString(),
           link: data.link || "",
           clubName: data.clubName || "",
+          isFree: data.price === "무료",
+          noTicket: !data.link,
           content: data.content || "",
           images:
             data.images?.map((img) => ({ id: img.id, url: img.imageUrl })) ||
@@ -303,7 +305,7 @@ export default function EditExhibition() {
         </Step>
       </Header>
       {originalData ? (
-        <Content>
+        <Content $step={step}>
           {step === 1 ? (
             <>
               <EnrollStepOne
@@ -398,7 +400,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 16px 20px 105px 20px;
+  margin: ${({ $step }) => ($step === 2 ? "0" : "16px 20px 105px 20px")};
 `;
 
 const NextButton = styled.button`

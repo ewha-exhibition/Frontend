@@ -167,18 +167,19 @@ export default function EnrollStepTwo({
 
 const Container = styled.div`
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
 
   /* 헤더가 fixed(46px)라서 그만큼 위를 비워줘야 함 */
   padding-top: 46px;
+  /* BottomBar가 fixed(76px)라서 그만큼 아래를 비워줘야 함 */
+  padding-bottom: 76px;
 `;
 
 const WritingBox = styled.div`
   width: 100%;
-  height: calc(100vh - 76px); /* BottomBar 높이 제외 */
-  padding-bottom: 100px; /* InfoBox + 여유 공간 */
+  flex: 1;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -186,14 +187,15 @@ const WritingBox = styled.div`
 
 const TextArea = styled.textarea`
   width: 100%;
-  min-height: 100px;
-  padding: 13px 20px;
+  /* 헤더(46) + 바텀바(76) + InfoBox 영역(120) 제외한 높이를 최솟값으로 */
+  min-height: calc(100vh - 46px - 76px - 120px);
+  padding: 16px 20px;
   box-sizing: border-box;
   border: none;
   outline: none;
   resize: none;
   overflow-y: hidden;
-  line-height: 1.5;
+  line-height: 1.6;
 
   ${({ theme }) => theme.textStyles.body1Regular};
   color: ${({ theme }) => theme.colors.gray10};
@@ -204,19 +206,19 @@ const PictureList = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  margin: 16px 0;
+  padding: 0 20px 16px;
 `;
 
 const InfoBox = styled.div`
   width: 100%;
   background-color: ${({ theme }) => theme.colors.gray1};
-  padding: 15px 20px;
-  margin-top: 20px;
+  padding: 14px 20px;
   border-radius: 6px;
 
   p {
     ${({ theme }) => theme.textStyles.body2Regular};
     color: ${({ theme }) => theme.colors.gray7};
+    line-height: 1.7;
   }
 `;
 

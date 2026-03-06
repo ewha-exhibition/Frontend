@@ -37,6 +37,8 @@ export default function EnrollEvent() {
     price: "",
     link: "",
     clubName: "",
+    isFree: false,
+    noTicket: false,
   });
 
   // Step2 데이터
@@ -211,7 +213,7 @@ export default function EnrollEvent() {
           <Label $active={step === 2}>상세설명</Label>
         </Step>
       </Header>
-      <Content>
+      <Content $step={step}>
         {step === 1 && (
           <>
             <EnrollStepOne
@@ -306,7 +308,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 16px 20px 105px 20px;
+  margin: ${({ $step }) => ($step === 2 ? "0" : "16px 20px 105px 20px")};
 `;
 
 const NextButton = styled.button`
