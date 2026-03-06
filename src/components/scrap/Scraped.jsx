@@ -44,7 +44,7 @@ function Scraped({
   return (
     <Component>
       <Container>
-        <img src={poster} alt={title} />
+        <img src={poster} alt={title} onClick={handleMoveDetail}/>
         <TextArea onClick={handleMoveDetail}>
           <div className="titleBox">{title}</div>
           <p>{place}</p>
@@ -112,6 +112,7 @@ const Br = styled.div`
 const TextArea = styled.div`
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 
   .titleBox {
     width: 190px;
