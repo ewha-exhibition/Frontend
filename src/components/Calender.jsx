@@ -7,12 +7,17 @@ import LeftIcon from "../assets/icons/ChevronLeft.svg?react";
 import RightIcon from "../assets/icons/ChevronRight.svg?react";
 import CalendarIcon from "../assets/icons/Calender.svg?react";
 
+// iOS Safari는 "2025.03.07" 형식을 파싱하지 못하므로 수동 파싱
+const parseDate = (str) => {
+  if (!str) return null;
+  const parts = str.split(/[.\-]/);
+  return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+};
+
 export default function Calender({ startDate, endDate, onChange }) {
   // 부모에서 받은 날짜를 초기값으로 설정
-  const [tempStart, setTempStart] = useState(
-    startDate ? new Date(startDate) : null,
-  );
-  const [tempEnd, setTempEnd] = useState(endDate ? new Date(endDate) : null);
+  const [tempStart, setTempStart] = useState(parseDate(startDate));
+  const [tempEnd, setTempEnd] = useState(parseDate(endDate));
 
   const [isSelectingPeriod, setIsSelectingPeriod] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
