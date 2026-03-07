@@ -377,7 +377,7 @@ const BtnArea = styled.div`
   gap: 8px;
   margin-top: 8px;
 `;
-const Button = styled.div`
+const Button = styled.button`
   display: flex;
   width: 78px;
   height: 32px;
