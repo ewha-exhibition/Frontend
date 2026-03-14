@@ -95,6 +95,8 @@ const TabItem = styled.div`
   font-size: ${({ theme }) => theme.font.fontSize.title15};
   font-weight: ${({ theme }) => theme.font.fontWeight.semiBold};
 
+  cursor: pointer;
+
   &.active {
     color: ${({ theme }) => theme.colors.gray10};
     border-bottom: 1.5px solid black;

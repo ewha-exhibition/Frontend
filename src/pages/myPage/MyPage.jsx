@@ -156,6 +156,7 @@ const TabList = styled.div`
   flex-direction: column;
   gap: 14px;
   margin: 20px 0;
+  cursor: pointer;
 `;
 const TabItem = styled.div`
   padding: 0px 20px 0px 20px;
