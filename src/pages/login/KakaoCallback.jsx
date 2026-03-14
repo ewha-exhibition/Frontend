@@ -37,18 +37,18 @@ function KakaoCallback() {
             withCredentials: true,
           },
         );
-        console.log("res:", response);
+        //console.log("res:", response);
         const memberId = response?.data.data.memberId;
         const nickname = response?.data.data.nickname;
 
-        sessionStorage.setItem("memberId", memberId);
-        sessionStorage.setItem("nickname", nickname);
+        localStorage.setItem("memberId", memberId);
+        localStorage.setItem("nickname", nickname);
 
         const accessToken = response?.data.data.accessToken;
-        sessionStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("accessToken", accessToken);
 
         const refreshToken = response?.data.data.refreshToken;
-        sessionStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("refreshToken", refreshToken);
 
         {
           /*
@@ -57,7 +57,7 @@ function KakaoCallback() {
         );
         //console.log(token);
         const accessToken = token?.data.data.accessToken;
-        sessionStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("accessToken", accessToken);
 
          */
         }

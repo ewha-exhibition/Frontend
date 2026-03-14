@@ -56,7 +56,7 @@ export default function Home() {
 
   // currentScraped: EventList가 클릭 직전에 넘겨주는 현재 상태값
   const handleScrapClick = async (id, currentScraped) => {
-    if (!sessionStorage.getItem("accessToken")) {
+    if (!localStorage.getItem("accessToken")) {
       setShowLoginModal(true);
       throw new Error("login required");
     }

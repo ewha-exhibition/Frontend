@@ -2,15 +2,15 @@ import { useState, useEffect } from "react";
 
 const useLogin = () => {
   const [isLogin, setIsLogin] = useState(
-    !!sessionStorage.getItem("accessToken") ||
-      !!sessionStorage.getItem("refreshToken"),
+    !!localStorage.getItem("accessToken") ||
+      !!localStorage.getItem("refreshToken"),
   );
 
   useEffect(() => {
     const handleStorageChange = () => {
       setIsLogin(
-        !!sessionStorage.getItem("accessToken") ||
-          !!sessionStorage.getItem("refreshToken"),
+        !!localStorage.getItem("accessToken") ||
+          !!localStorage.getItem("refreshToken"),
       );
     };
 

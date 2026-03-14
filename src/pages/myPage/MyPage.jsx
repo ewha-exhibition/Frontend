@@ -15,7 +15,7 @@ import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
 function MyPage() {
   const theme = useTheme();
   const login = useLogin();
-  const nickname = sessionStorage.getItem("nickname");
+  const nickname = localStorage.getItem("nickname");
 
   const {
     data: myWatchedData,

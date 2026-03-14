@@ -14,7 +14,7 @@ import EnrollStepTwo from "./EnrollStepTwo";
 export default function EnrollEvent() {
   const navigate = useNavigate();
 
-  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
+  const [login, setLogin] = useState(!!localStorage.getItem("accessToken"));
 
   const [step, setStep] = useState(1);
   const [isNextActive, setIsNextActive] = useState(false);

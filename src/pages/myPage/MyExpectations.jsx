@@ -74,7 +74,7 @@ function MyExpectations() {
       const res = await fetchData(`/cheers/${targetPostId}`, "DELETE");
 
       if (res && res.status === 200) {
-        console.log("삭제 성공:", res);
+        //console.log("삭제 성공:", res);
         setIsOpen(false);
         setTargetPostId(null);
         window.location.reload();
@@ -84,7 +84,7 @@ function MyExpectations() {
     }
   };
 
-  console.log(items);
+  //console.log(items);
 
   return (
     <Container>

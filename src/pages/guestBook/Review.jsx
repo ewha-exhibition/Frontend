@@ -10,7 +10,7 @@ function Review() {
   const [pageNow, setPageNow] = useState(0);
   const [items, setItems] = useState([]);
   const [hasMore, setHasMore] = useState(true);
-  
+
   const observerRef = useRef(null);
   const isRequesting = useRef(false);
 
@@ -19,7 +19,7 @@ function Review() {
     error,
     loading,
   } = useCustomFetch(`/guestbooks/reviews?pageNum=${pageNow}&limit=10`);
-  console.log(items);
+  //console.log(items);
 
   useEffect(() => {
     if (error) {
