@@ -15,7 +15,7 @@ import ChevronRight from "../../assets/icons/ChevronRight.svg?react";
 function MyPage() {
   const theme = useTheme();
   const login = useLogin();
-  const nickname = sessionStorage.getItem("nickname");
+  const nickname = localStorage.getItem("nickname");
 
   const {
     data: myWatchedData,
@@ -156,6 +156,7 @@ const TabList = styled.div`
   flex-direction: column;
   gap: 14px;
   margin: 20px 0;
+  cursor: pointer;
 `;
 const TabItem = styled.div`
   padding: 0px 20px 0px 20px;

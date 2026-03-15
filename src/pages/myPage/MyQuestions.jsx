@@ -29,7 +29,7 @@ function MyQuestions() {
     error,
     loading,
   } = useCustomFetch(`/questions?pageNum=${pageNow}&limit=10`);
-  console.log(items);
+  ////console.log(items);
 
   useEffect(() => {
     if (error) {
@@ -75,7 +75,7 @@ function MyQuestions() {
       const res = await fetchData(`/questions/${targetPostId}`, "DELETE");
 
       if (res && res.status === 200) {
-        console.log("삭제 성공:", res);
+        //console.log("삭제 성공:", res);
         setIsOpen(false);
         setTargetPostId(null);
         window.location.reload();

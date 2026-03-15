@@ -33,11 +33,11 @@ function EnterCode() {
       );
 
       if (error) {
-        console.log("초대코드 요청 오류:", error?.response.data);
+        //console.log("초대코드 요청 오류:", error?.response.data);
         setIsOpen(true);
         return;
       }
-      console.log("응답 데이터:", data);
+      //console.log("응답 데이터:", data);
       setDoneModalOpen(true);
     } catch (err) {
       console.error("예상치 못한 에러:", err);

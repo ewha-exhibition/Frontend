@@ -11,7 +11,7 @@ export default function PhotoViewer({
   urlLength,
 }) {
   //console.log("pics2:", imageUrls);
-  console.log(imageUrls);
+  //console.log(imageUrls);
   const startX = useRef(null);
   const endX = useRef(null);
 

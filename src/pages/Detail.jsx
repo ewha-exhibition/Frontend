@@ -42,7 +42,7 @@ export default function Detail() {
   const textareaRef = useRef(null);
 
   // 2. State Management (상태 관리)
-  const [login, setLogin] = useState(!!sessionStorage.getItem("accessToken"));
+  const [login, setLogin] = useState(!!localStorage.getItem("accessToken"));
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [exhibition, setExhibition] = useState(null);
   const [isLoading, setIsLoading] = useState(true);

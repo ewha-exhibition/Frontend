@@ -31,7 +31,7 @@ function MyReviews() {
     error,
     loading,
   } = useCustomFetch(`/reviews?pageNum=${pageNow}&limit=10`);
-  console.log(myReviewData);
+  //console.log(myReviewData);
 
   useEffect(() => {
     if (error) {
@@ -85,7 +85,7 @@ function MyReviews() {
     }
   };
 
-  console.log(items);
+  //console.log(items);
 
   return (
     <Container>
