@@ -141,6 +141,7 @@ const BookmarkWrapper = styled.div`
   position: absolute;
   top: 12px;
   right: 0;
+  cursor: pointer;
 `;
 
 const BtnArea = styled.div`

@@ -50,7 +50,7 @@ function CreateReview() {
 
     const uploadPromises = urls.map((url, idx) => {
       const file = files[idx];
-      console.log("업로드중인 링크:", url);
+      //console.log("업로드중인 링크:", url);
       return uploadImageToS3(file, url);
     });
 
@@ -78,7 +78,7 @@ function CreateReview() {
       const res = await fetchData(`/reviews/${exhibitionId}`, "POST", payload);
 
       if (res && res.status === 200) {
-        console.log("리뷰 업로드 성공:", res);
+        //console.log("리뷰 업로드 성공:", res);
         setIsOpen(true);
       } else {
         console.error("리뷰 업로드 실패:", res);

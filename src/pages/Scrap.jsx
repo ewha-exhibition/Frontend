@@ -20,7 +20,7 @@ function Scrap() {
     error,
     loading,
   } = useCustomFetch(`/scraps?pageNum=1&limit=10`);
-  console.log(scrapData?.data.exhibitions);
+  //console.log(scrapData?.data.exhibitions);
 
   const { fetchData } = useCustomFetch();
 
@@ -29,7 +29,7 @@ function Scrap() {
       const response = await fetchData(`/scraps/${id}`, "DELETE", null);
 
       if (response?.status === 200) {
-        console.log("북마크 삭제 완료");
+        //console.logog("북마크 삭제 완료");
         window.location.reload();
       } else {
         console.error("삭제 실패:", response);

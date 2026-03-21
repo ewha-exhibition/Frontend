@@ -39,7 +39,7 @@ export default function Search() {
   };
 
   const handleScrapClick = async (id, currentScraped) => {
-    if (!sessionStorage.getItem("accessToken")) {
+    if (!localStorage.getItem("accessToken")) {
       setShowLoginModal(true);
       throw new Error("login required");
     }

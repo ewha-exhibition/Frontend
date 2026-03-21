@@ -28,7 +28,7 @@ function MyShow() {
     error,
     loading,
   } = useCustomFetch(`/hosts?pageNum=${pageNow}&limit=10`);
-  console.log(myShowData?.data);
+  //console.log(myShowData?.data);
 
   useEffect(() => {
     if (error) {
