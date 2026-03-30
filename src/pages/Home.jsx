@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import MenuTrigger from "../components/menu/MenuTrigger.jsx";
@@ -50,7 +50,25 @@ export default function Home() {
 
   //카테고리 별 최신 공연
   const [category, setCategory] = useState("");
-  const { exhibitions: fetchedList } = useLatestExhibitions(category, 0, 10);
+  const {
+    exhibitions: fetchedList,
+    loading: listLoading,
+    hasMore,
+    loadMore,
+  } = useLatestExhibitions(category);
+
+  const observerRef = useRef();
+  const lastItemRef = useCallback(
+    (node) => {
+      if (listLoading) return;
+      if (observerRef.current) observerRef.current.disconnect();
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) loadMore();
+      });
+      if (node) observerRef.current.observe(node);
+    },
+    [listLoading, hasMore, loadMore],
+  );
 
   const [showLoginModal, setShowLoginModal] = useState(false);
 
@@ -138,22 +156,26 @@ export default function Home() {
           </CategoryWrapper>
 
           <EventListWrapper>
-            {fetchedList.map((item) => (
-              <EventList
-                key={item.exhibitionId}
-                id={item.exhibitionId}
-                title={item.exhibitionName}
-                date={item.duration}
-                place={item.place}
-                poster={item.posterUrl}
-                onGoing={item.open}
-                scraped={item.scrap}
-                onClick={() => navigate(`/detail/${item.exhibitionId}`)}
-                onScrapClick={(currentScraped) =>
-                  handleScrapClick(item.exhibitionId, currentScraped)
-                }
-              />
-            ))}
+            {fetchedList.map((item, index) => {
+              const isLast = index === fetchedList.length - 1;
+              return (
+                <div key={item.exhibitionId} ref={isLast ? lastItemRef : null}>
+                  <EventList
+                    id={item.exhibitionId}
+                    title={item.exhibitionName}
+                    date={item.duration}
+                    place={item.place}
+                    poster={item.posterUrl}
+                    onGoing={item.open}
+                    scraped={item.scrap}
+                    onClick={() => navigate(`/detail/${item.exhibitionId}`)}
+                    onScrapClick={(currentScraped) =>
+                      handleScrapClick(item.exhibitionId, currentScraped)
+                    }
+                  />
+                </div>
+              );
+            })}
           </EventListWrapper>
         </EventWrapper>
       </Content>
@@ -163,7 +185,6 @@ export default function Home() {
 }
 
 //NOTE: Header, Search, Content(Top10, EventList)
-
 const Container = styled.div`
   position: relative;
   width: 100%;
@@ -174,7 +195,6 @@ const Container = styled.div`
 `;
 
 const Header = styled.div`
-  /* ✅ 변경: fixed -> sticky */
   position: sticky;
   top: 0;
   width: 100%;
@@ -284,16 +304,6 @@ const Overlay = styled.div`
     rgba(0, 0, 0, 0) 43.65%
   );
 `;
-const WhiteBookmark = styled(BookmarkIcon)`
-  width: 16px;
-  height: 19px;
-  color: white;
-`;
-const WhiteBookmarkOL = styled(BookmarkOLIcon)`
-  width: 16px;
-  height: 19px;
-  color: white;
-`;
 
 const Bar = styled.div`
   position: absolute;
@@ -384,4 +394,16 @@ const EventListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 95%;
+`;
+
+//NOTE: 임시 삭제
+const WhiteBookmark = styled(BookmarkIcon)`
+  width: 16px;
+  height: 19px;
+  color: white;
+`;
+const WhiteBookmarkOL = styled(BookmarkOLIcon)`
+  width: 16px;
+  height: 19px;
+  color: white;
 `;
