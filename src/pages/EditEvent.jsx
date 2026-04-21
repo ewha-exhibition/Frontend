@@ -45,7 +45,7 @@ export default function EditExhibition() {
         const startDate = periodParts[0];
         const rawEndDate = periodParts[1] || "";
         const endDate =
-          rawEndDate && !rawEndDate.includes(".")
+          rawEndDate && rawEndDate.split(".").length < 3
             ? `${startDate.split(".")[0]}.${rawEndDate}`
             : rawEndDate;
         const durationParts = data.duration?.split(" - ") || ["", ""];

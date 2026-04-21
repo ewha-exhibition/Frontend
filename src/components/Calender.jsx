@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, forwardRef } from "react";
 import DatePicker from "react-datepicker";
 import { ko } from "date-fns/locale";
 import { styled, createGlobalStyle } from "styled-components";
@@ -7,19 +7,39 @@ import LeftIcon from "../assets/icons/ChevronLeft.svg?react";
 import RightIcon from "../assets/icons/ChevronRight.svg?react";
 import CalendarIcon from "../assets/icons/Calender.svg?react";
 
+// 완료 버튼을 눌러야 input에 표시되는 커스텀 input
+const ConfirmedInput = forwardRef(({ displayValue, onClick }, ref) => (
+  <input
+    ref={ref}
+    readOnly
+    value={displayValue || ""}
+    placeholder="-"
+    onClick={onClick}
+  />
+));
+ConfirmedInput.displayName = "ConfirmedInput";
+
 // iOS Safari는 "2025.03.07" 형식을 파싱하지 못하므로 수동 파싱
 const parseDate = (str) => {
   if (!str) return null;
   const parts = str.split(/[.\-]/);
-  return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+  const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+  return isNaN(d.getTime()) ? null : d;
 };
 
 export default function Calender({ startDate, endDate, onChange }) {
+  const parsedEnd = parseDate(endDate);
+  const isPeriod = !!parsedEnd && endDate !== startDate;
+
   // 부모에서 받은 날짜를 초기값으로 설정
   const [tempStart, setTempStart] = useState(parseDate(startDate));
-  const [tempEnd, setTempEnd] = useState(parseDate(endDate));
+  const [tempEnd, setTempEnd] = useState(isPeriod ? parsedEnd : null);
 
-  const [isSelectingPeriod, setIsSelectingPeriod] = useState(false);
+  // 완료 버튼을 눌렀을 때만 input에 표시되는 확정 날짜
+  const [confirmedStart, setConfirmedStart] = useState(parseDate(startDate));
+  const [confirmedEnd, setConfirmedEnd] = useState(isPeriod ? parsedEnd : null);
+
+  const [isSelectingPeriod, setIsSelectingPeriod] = useState(isPeriod);
   const [isOpen, setIsOpen] = useState(false);
   const datePickerRef = useRef(null);
 
@@ -41,20 +61,20 @@ export default function Calender({ startDate, endDate, onChange }) {
   };
 
   // 날짜 문자열 포맷 함수
-  const formatDate = (d) =>
-    d
-      ? `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(
-          2,
-          "0",
-        )}.${String(d.getDate()).padStart(2, "0")}`
-      : "";
+  const formatDate = (d) => {
+    if (!d || isNaN(d.getTime())) return "";
+    return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
+  };
 
   // 선택 완료 → 부모에게 전달
   const handleSubmit = () => {
+    const finalEnd = isSelectingPeriod ? tempEnd : null;
+    setConfirmedStart(tempStart);
+    setConfirmedEnd(finalEnd);
     if (onChange) {
-      onChange(formatDate(tempStart), tempEnd ? formatDate(tempEnd) : null);
+      onChange(formatDate(tempStart), finalEnd ? formatDate(finalEnd) : null);
     }
-    setIsOpen(false); // State를 false로 변경하여 닫음
+    setIsOpen(false);
   };
 
   return (
@@ -81,10 +101,22 @@ export default function Calender({ startDate, endDate, onChange }) {
               </NavButton>
             </Header>
           )}
-          // 현재 선택된 날짜 표시
+          // 캘린더 내부 하이라이트용 (temp 사용)
           selected={tempStart}
           startDate={tempStart}
           endDate={tempEnd}
+          // 완료 버튼을 눌러야 input에 표시
+          customInput={
+            <ConfirmedInput
+              displayValue={
+                confirmedStart
+                  ? confirmedEnd
+                    ? `${formatDate(confirmedStart)} - ${formatDate(confirmedEnd)}`
+                    : formatDate(confirmedStart)
+                  : ""
+              }
+            />
+          }
           selectsRange={isSelectingPeriod}
           onChange={handleChange}
           dateFormat="yyyy.MM.dd"
@@ -92,6 +124,7 @@ export default function Calender({ startDate, endDate, onChange }) {
           placeholderText="-"
           showIcon={false}
           shouldCloseOnSelect={false}
+          onClickOutside={() => setIsOpen(false)}
         >
           <FooterContainer>
             <SelectPeriodButton
@@ -346,7 +379,8 @@ const SelectPeriodButton = styled.button`
 `;
 const CompleteButton = styled.button`
   padding: 8px 12px;
-  background: none;
-  color: ${({ theme }) => theme.colors.gray9};
+  border-radius: 3px;
+  background: ${({ theme }) => theme.colors.Primary50};
+  color: ${({ theme }) => theme.colors.white};
   ${({ theme }) => theme.textStyles.label2Medium};
 `;
