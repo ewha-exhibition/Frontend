@@ -32,7 +32,22 @@ export default function EnrollStepTwo({
   const handleImageUpload = async (e) => {
     const fileList = e.target.files;
     if (!fileList || fileList.length === 0) return;
-    const files = Array.from(fileList);
+
+    // iOS Safari에서 FileList의 모든 항목이 첫 번째 파일을 가리키는 버그 대응:
+    // 비동기 작업 전에 각 파일의 바이너리 데이터를 즉시 읽어 독립적인 File 객체 생성
+    const files = await Promise.all(
+      Array.from(fileList).map(
+        (file) =>
+          new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+              const blob = new Blob([ev.target.result], { type: file.type });
+              resolve(new File([blob], file.name, { type: file.type }));
+            };
+            reader.readAsArrayBuffer(file);
+          }),
+      ),
+    );
 
     // 로컬 미리보기 즉시 표시
     const localUrls = files.map((file) => URL.createObjectURL(file));

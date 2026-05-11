@@ -355,6 +355,7 @@ const CommentContent = styled.div`
     word-break: break-word;
     white-space: pre-wrap;
     align-self: center;
+    font-size: 14px
   }
 `;
 const ReplyWrapper = styled.div`
