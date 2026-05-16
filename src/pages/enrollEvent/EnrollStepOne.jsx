@@ -10,6 +10,7 @@ import useS3Upload from "../../utils/hooks/useS3Upload";
 //아이콘
 import CameraIcon from "../../assets/icons/Camera.svg?react";
 import ClockIcon from "../../assets/icons/Clock.svg?react";
+import XIcon from "../../assets/icons/X.svg?react";
 
 function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
   const fileInputRef = useRef(null);
@@ -61,6 +62,16 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
       hasClubName;
     setIsNextActive?.(isValid);
   }, [data, isFree, noTicket, setIsNextActive]);
+
+  // 포스터 삭제
+  const handlePosterDelete = () => {
+    if (data.posterPreviewUrl?.startsWith("blob:")) {
+      URL.revokeObjectURL(data.posterPreviewUrl);
+    }
+    update("posterPreviewUrl", "");
+    update("posterUrl", "");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
   // 포스터 업로드
   const handlePosterChange = async (e) => {
@@ -147,13 +158,24 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
           </UploadBox>
         )}
 
-        {/* 2. 미리보기가 있을 때: 이미지 + 수정 오버레이 보이기 */}
+        {/* 2. 미리보기가 있을 때: 이미지 + 삭제 버튼 보이기 */}
         {data.posterPreviewUrl && (
-          <PosterPreview
-            src={data.posterPreviewUrl}
-            onClick={() => fileInputRef.current?.click()}
-            alt="poster-preview"
-          />
+          <PosterWrapper>
+            <PosterPreview
+              src={data.posterPreviewUrl}
+              onClick={() => fileInputRef.current?.click()}
+              alt="poster-preview"
+            />
+            <DeletePosterButton
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePosterDelete();
+              }}
+            >
+              <XIcon width={18} height={18} />
+            </DeletePosterButton>
+          </PosterWrapper>
         )}
         <HiddenInput
           type="file"
@@ -446,9 +468,26 @@ const HiddenInput = styled.input`
   display: none;
 `;
 
-const PosterPreview = styled.img`
+const PosterWrapper = styled.div`
+  position: relative;
+  width: fit-content;
   margin-top: 12px;
+`;
+
+const PosterPreview = styled.img`
   width: 150px;
   border-radius: 8px;
   object-fit: cover;
+  display: block;
+`;
+
+const DeletePosterButton = styled.button`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  cursor: pointer;
+  z-index: 1;
+  color: black;
+  display: flex;
 `;

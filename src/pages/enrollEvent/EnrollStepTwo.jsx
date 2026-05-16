@@ -7,6 +7,9 @@ import PreviewIcon from "../../assets/icons/Eyes.svg?react";
 import CameraIcon from "../../assets/icons/Camera.svg?react";
 import useS3Upload from "../../utils/hooks/useS3Upload";
 
+const isIOS =
+  /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
 export default function EnrollStepTwo({
   text,
   setText,
@@ -33,27 +36,11 @@ export default function EnrollStepTwo({
     const fileList = e.target.files;
     if (!fileList || fileList.length === 0) return;
 
-    // iOS Safari에서 FileList의 모든 항목이 첫 번째 파일을 가리키는 버그 대응:
-    // 비동기 작업 전에 각 파일의 바이너리 데이터를 즉시 읽어 독립적인 File 객체 생성
-    const files = await Promise.all(
-      Array.from(fileList).map(
-        (file) =>
-          new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-              const blob = new Blob([ev.target.result], { type: file.type });
-              resolve(new File([blob], file.name, { type: file.type }));
-            };
-            reader.readAsArrayBuffer(file);
-          }),
-      ),
-    );
+    const files = Array.from(fileList);
 
-    // 로컬 미리보기 즉시 표시
     const localUrls = files.map((file) => URL.createObjectURL(file));
     setPictures((prev) => [...prev, ...localUrls]);
 
-    // S3 업로드 후 로컬 URL 교체
     files.forEach(async (file, i) => {
       const s3Url = await uploadToS3(file, "/exhibition/images");
       if (s3Url) {
@@ -122,7 +109,7 @@ export default function EnrollStepTwo({
           <HiddenInput
             ref={fileInputRef}
             type="file"
-            multiple
+            multiple={!isIOS}
             accept="image/*"
             onChange={handleImageUpload}
           />

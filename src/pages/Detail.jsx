@@ -316,7 +316,20 @@ export default function Detail() {
         {!exhibition?.host ? (
           <TopBar title={null} icon={"Link"} onClick={handleShare} />
         ) : (
-          <TopBar title={null} icon={"Menu"} onClick={openMenu} />
+          <TopBar
+            title={null}
+            icon={"Menu"}
+            onClick={openMenu}
+            menuSlot={
+              <HostMenu
+                isOpen={menuState}
+                closeHostMenu={closeMenu}
+                handleShare={handleShare}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+              />
+            }
+          />
         )}
 
         <Header>
@@ -451,14 +464,6 @@ export default function Detail() {
           scrapCount={exhibition.scrapCount}
           link={exhibition?.link}
         />
-        <HostMenu
-          isOpen={menuState}
-          closeHostMenu={closeMenu}
-          handleShare={handleShare}
-          handleEdit={handleEdit}
-          handleDelete={handleDelete}
-        />
-
         <ConfirmModal
           isOpen={modalState.isOpen}
           type={modalState.type}
