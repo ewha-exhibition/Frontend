@@ -5,10 +5,10 @@ import { useNavigate } from "react-router-dom";
 import Topbar from "../../components/Topbar";
 import usePostExhibition from "../../utils/hooks/usePostExhibition";
 import NeedLogin from "../../components/home/NeedLogin";
+import CheckModal from "../../components/myPage/CheckModal";
 import EnrollStepOne from "./EnrollStepOne";
 import EnrollStepTwo from "./EnrollStepTwo";
 
-//TODO: 등록 성공 모달
 //TODO: 등록하기 버튼 색 변경
 
 export default function EnrollEvent() {
@@ -20,6 +20,7 @@ export default function EnrollEvent() {
   const [isNextActive, setIsNextActive] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const { createExhibition } = usePostExhibition();
 
@@ -167,8 +168,7 @@ export default function EnrollEvent() {
       const res = await createExhibition(body);
 
       if (res?.success) {
-        alert("등록 성공!");
-        navigate("/");
+        setShowSuccessModal(true);
       } else {
         // 서버가 주는 에러 메시지 확인
         console.error("서버 에러 응답:", res);
@@ -185,6 +185,13 @@ export default function EnrollEvent() {
 
   return (
     <Container>
+      {showSuccessModal && (
+        <CheckModal
+          message={"공연이 등록되었습니다!"}
+          onClose={() => setShowSuccessModal(false)}
+          link="/"
+        />
+      )}
       {!login && (
         <NeedLogin onClose={() => navigate("/")}>
           <p>카카오톡으로 간편 로그인하고</p>

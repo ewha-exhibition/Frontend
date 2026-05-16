@@ -52,13 +52,11 @@ const Backdrop = styled.div`
   background-color: transparent;
   z-index: 110;
   cursor: default;
-  position: absolute;
-  inset: 0;
 `;
 const MenuContainer = styled.div`
   position: absolute;
   width: 251px;
-  right: 20px;
+  right: 0;
   top: 46px;
   background-color: white;
   border-radius: 8px;

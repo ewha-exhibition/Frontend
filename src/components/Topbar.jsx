@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ChevronLeftIcon from "../assets/icons/ChevronLeft.svg?react";
 import Link from "../assets/icons/Link.svg?react";
 import DotsMenu from "../assets/icons/DotsMenu.svg?react";
-function Topbar({ title, icon, onClick, disabled }) {
+function Topbar({ title, icon, onClick, disabled, menuSlot }) {
   const navigate = useNavigate();
   const goBack = () => {
     if (icon === "EnrollEvent") return;
@@ -23,6 +23,7 @@ function Topbar({ title, icon, onClick, disabled }) {
           등록하기
         </TextButton>
       )}
+      {menuSlot}
     </Container>
   );
 }
