@@ -83,6 +83,7 @@ const Container = styled.div`
     border-radius: 3px;
     object-fit: contain;
     background-color: ${({ theme }) => theme.colors.gray2};
+    cursor: pointer;
   }
 `;
 const Br = styled.div`
@@ -91,6 +92,7 @@ const Br = styled.div`
   border-bottom: 1.2px solid ${({ theme }) => theme.colors.gray2};
 `;
 const TextArea = styled.div`
+  cursor: pointer;
   display: flex;
   flex: 1 1 0%;
   flex-direction: column;
@@ -120,6 +122,7 @@ const TextArea = styled.div`
   }
 `;
 const BookmarkWrapper = styled.div`
+  cursor: pointer;
   position: absolute;
   top: 12px;
   right: 0;

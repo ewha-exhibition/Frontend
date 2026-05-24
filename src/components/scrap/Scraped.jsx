@@ -44,7 +44,7 @@ function Scraped({
   return (
     <Component>
       <Container>
-        <img src={poster} alt={title} onClick={handleMoveDetail}/>
+        <img src={poster} alt={title} onClick={handleMoveDetail} />
         <TextArea onClick={handleMoveDetail}>
           <div className="titleBox">{title}</div>
           <p>{place}</p>
@@ -97,6 +97,7 @@ const Container = styled.div`
   gap: 12px 20px;
 
   img {
+    cursor: pointer;
     width: 92px;
     height: 130px;
     border-radius: 3px;

@@ -50,7 +50,7 @@ const Overlay = styled.div`
 
 const Dialog = styled.div`
   width: calc(100% - 40px);
-  max-width: 640px;
+  max-width: 380px;
   background: #ffffff;
   border-radius: 12px;
   overflow: hidden;

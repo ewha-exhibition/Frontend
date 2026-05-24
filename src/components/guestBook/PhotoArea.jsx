@@ -119,6 +119,7 @@ const OneImg = styled.div`
   height: 100%;
 
   img {
+    cursor: pointer;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -134,6 +135,7 @@ const TwoImg = styled.div`
   height: 100%;
 
   img {
+    cursor: pointer;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -151,6 +153,7 @@ const ThreeImg = styled.div`
   .left {
     flex: 1;
     img {
+      cursor: pointer;
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -166,6 +169,7 @@ const ThreeImg = styled.div`
     gap: 7px;
 
     img {
+      cursor: pointer;
       width: 100%;
       height: 50%;
       object-fit: cover;
@@ -187,6 +191,7 @@ const FourImg = styled.div`
     gap: 7px;
 
     img {
+      cursor: pointer;
       width: 100%;
       height: 50%;
       object-fit: cover;
@@ -201,6 +206,7 @@ const FourImg = styled.div`
     gap: 7px;
 
     img {
+      cursor: pointer;
       width: 100%;
       height: 50%;
       object-fit: cover;

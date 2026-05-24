@@ -15,8 +15,8 @@ import XIcon from "../../assets/icons/X.svg?react";
 function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
   const fileInputRef = useRef(null);
   const { uploadToS3 } = useS3Upload();
-  const [isFree, setIsFree] = useState(data.isFree ?? false);
-  const [noTicket, setNoTicket] = useState(data.noTicket ?? false);
+  const [isFree, setIsFree] = useState(data?.isFree ?? false);
+  const [noTicket, setNoTicket] = useState(data?.noTicket ?? false);
 
   // 시간 입력 모달
   const [isStartTimeOpen, setIsStartTimeOpen] = useState(false);
@@ -32,24 +32,24 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
   useEffect(() => {
     if (!isEdit) return;
     // 가격
-    setIsFree(data.price === "무료");
+    setIsFree(data?.price === "무료");
 
     // 링크
-    setNoTicket(!data.link || data.link === "");
-  }, [isEdit, data.price, data.link]);
+    setNoTicket(!data?.link || data?.link === "");
+  }, [isEdit, data?.price, data?.link]);
   //입력값 검사
   useEffect(() => {
     const safeStr = (val) => String(val || "").trim();
 
-    const hasCategory = !!data.category;
-    const hasName = safeStr(data.exhibitionName) !== "";
-    const hasPlace = safeStr(data.place) !== "";
-    const hasDate = !!data.startDate;
-    const hasStartTime = !!data.startTime;
-    const hasClubName = safeStr(data.clubName) !== "";
+    const hasCategory = !!data?.category;
+    const hasName = safeStr(data?.exhibitionName) !== "";
+    const hasPlace = safeStr(data?.place) !== "";
+    const hasDate = !!data?.startDate;
+    const hasStartTime = !!data?.startTime;
+    const hasClubName = safeStr(data?.clubName) !== "";
 
-    const hasPrice = isFree || safeStr(data.price) !== "";
-    const hasLink = noTicket || safeStr(data.link) !== "";
+    const hasPrice = isFree || safeStr(data?.price) !== "";
+    const hasLink = noTicket || safeStr(data?.link) !== "";
 
     const isValid =
       hasCategory &&
@@ -79,8 +79,8 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
     if (!file) return;
 
     // 이전 미리보기 blob URL 해제
-    if (data.posterPreviewUrl?.startsWith("blob:")) {
-      URL.revokeObjectURL(data.posterPreviewUrl);
+    if (data?.posterPreviewUrl?.startsWith("blob:")) {
+      URL.revokeObjectURL(data?.posterPreviewUrl);
     }
 
     // 미리보기
@@ -123,7 +123,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
           {["공연", "전시", "기타"].map((c) => (
             <Button
               key={c}
-              $active={data.category === c}
+              $active={data?.category === c}
               onClick={() => update("category", c)}
             >
               {c}
@@ -137,7 +137,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
         <Label>공연/전시 이름 *</Label>
         <InputBox
           max={38}
-          value={data.exhibitionName}
+          value={data?.exhibitionName}
           onChange={(v) => update("exhibitionName", v)}
           required={true}
         />
@@ -151,31 +151,20 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
         </ExplainTxt>
 
         {/* 1. 미리보기가 없을 때: 업로드 버튼 보이기 */}
-        {!data.posterPreviewUrl && (
+        {!data?.posterPreviewUrl && (
           <UploadBox onClick={() => fileInputRef.current?.click()}>
             <CameraIcon width={24} height={24} />
             첨부
           </UploadBox>
         )}
 
-        {/* 2. 미리보기가 있을 때: 이미지 + 삭제 버튼 보이기 */}
-        {data.posterPreviewUrl && (
-          <PosterWrapper>
-            <PosterPreview
-              src={data.posterPreviewUrl}
-              onClick={() => fileInputRef.current?.click()}
-              alt="poster-preview"
-            />
-            <DeletePosterButton
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handlePosterDelete();
-              }}
-            >
-              <XIcon width={18} height={18} />
-            </DeletePosterButton>
-          </PosterWrapper>
+        {/* 2. 미리보기가 있을 때: 이미지 + 수정 오버레이 보이기 */}
+        {data?.posterPreviewUrl && (
+          <PosterPreview
+            src={data?.posterPreviewUrl}
+            onClick={() => fileInputRef.current?.click()}
+            alt="poster-preview"
+          />
         )}
         <HiddenInput
           type="file"
@@ -198,7 +187,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
         <InputBox
           max={25}
           placeholder="장소명"
-          value={data.place}
+          value={data?.place}
           onChange={(v) => update("place", v)}
           required={true}
         />
@@ -208,8 +197,8 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
       <Section>
         <Label>일시 *</Label>
         <Calender
-          startDate={data.startDate}
-          endDate={data.endDate}
+          startDate={data?.startDate}
+          endDate={data?.endDate}
           onChange={(start, end) => {
             update("startDate", start);
             update("endDate", end);
@@ -223,7 +212,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
           <Label>시작 시간 *</Label>
           <InputBox
             placeholder="-"
-            value={data.startTime}
+            value={data?.startTime}
             Icon={ClockIcon}
             onClick={() => setIsStartTimeOpen(true)}
             readOnly={true} // 키보드 입력 방지
@@ -234,7 +223,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
           <Label>끝나는 시간</Label>
           <InputBox
             placeholder="-"
-            value={data.endTime}
+            value={data?.endTime}
             Icon={ClockIcon}
             onClick={() => setIsEndTimeOpen(true)}
             readOnly={true}
@@ -252,7 +241,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
         <InputBox
           max={35}
           placeholder="예외사항"
-          value={data.dateException}
+          value={data?.dateException}
           onChange={(v) => update("dateException", v)}
         />
       </Section>
@@ -275,7 +264,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
 
         {!isFree && (
           <InputBox
-            value={data.price || ""}
+            value={data?.price || ""}
             type="number"
             onChange={(v) => update("price", v)}
             unit="원"
@@ -294,7 +283,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
             onChange={(checked) => {
               setNoTicket(checked);
               update("noTicket", checked);
-              update("link", checked ? "" : data.link);
+              update("link", checked ? "" : data?.link);
             }}
           />
 
@@ -303,7 +292,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
 
         {!noTicket && (
           <InputBox
-            value={data.link}
+            value={data?.link}
             onChange={(v) => update("link", v)}
             textAlign="right"
           />
@@ -324,7 +313,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
         <InputBox
           max={23}
           placeholder="최대한 짧게 작성해주세요"
-          value={data.clubName}
+          value={data?.clubName}
           onChange={(v) => update("clubName", v)}
           required={true}
         />

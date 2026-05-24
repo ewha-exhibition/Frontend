@@ -40,6 +40,7 @@ export default function TabBar() {
 }
 
 const NavBar = styled.div`
+  cursor: pointer;
   position: fixed;
   bottom: 0;
   left: 50%;
