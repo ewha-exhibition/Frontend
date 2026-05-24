@@ -8,6 +8,7 @@ import ClockIcon from "../../assets/icons/Clock.svg?react";
 import MenuIcon from "../../assets/icons/Menu.svg?react";
 
 export default function PreviewModeDetail({ detail }) {
+  console.log(detail)
   const categories = [
     { key: "detail", label: "상세정보" },
     { key: "question", label: "질문 (1)" },
@@ -17,38 +18,38 @@ export default function PreviewModeDetail({ detail }) {
   return (
     <Container>
       <Header>
-        <img className="img" src={detail.posterUrl} alt={detail.title} />
-        <h1 className="h1">{detail.title}</h1>
+        <img className="img" src={detail?.posterUrl} alt={detail?.title} />
+        <h1 className="h1">{detail?.title}</h1>
 
         <Summary>
           <div className="div">
             <img className="svgIcon" src={locationIcon} alt="장소" />
-            <p className="p">{detail.place}</p>
+            <p className="p">{detail?.place}</p>
           </div>
 
           <div className="div">
             <img className="svgIcon" src={ticketIcon} alt="가격" />
-            <p className="p">{detail.price}</p>
+            <p className="p">{detail?.price}</p>
           </div>
 
           <div className="div">
             <img className="svgIcon" src={userIcon} alt="주최" />
-            <p className="p">{detail.clubName}</p>
+            <p className="p">{detail?.clubName}</p>
           </div>
 
           <div className="div">
             <CalenderIcon width={18} height={18} color="#57B190" alt="날짜" />
-            <p className="p">{formatPeriod(detail.period)}</p>
+            <p className="p">{formatPeriod(detail?.period)}</p>
           </div>
 
           <div className="div">
             <ClockIcon width={18} height={18} color="#57B190" alt="시간" />
-            <p className="p">{detail.duration}</p>
+            <p className="p">{detail?.duration}</p>
           </div>
-          {detail.dateException && (
+          {detail?.dateException && (
             <div className="div">
               <StyledMenuIcon alt="예외사항" />
-              <p className="p">{detail.dateException}</p>
+              <p className="p">{detail?.dateException}</p>
             </div>
           )}
         </Summary>
@@ -66,10 +67,10 @@ export default function PreviewModeDetail({ detail }) {
       <Content>
         {/* 상세 */}
         <DetailSection>
-          <p className="p">{detail.content}</p>
+          <p className="p">{detail?.content}</p>
 
-          {detail.images?.map((img, idx) => (
-            <img className="img" key={idx} src={img} alt={`preview-${idx}`} />
+          {detail?.images?.map((img, idx) => (
+            <img className="img" key={idx} src={img.previewUrl} alt={`preview-${idx}`} />
           ))}
         </DetailSection>
       </Content>
