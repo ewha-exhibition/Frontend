@@ -6,6 +6,7 @@ import {
   getExhibitionApi,
   updateExhibitionApi,
 } from "../utils/apis/exhibition";
+import CheckModal from "../components/myPage/CheckModal";
 import EnrollStepOne from "./enrollEvent/EnrollStepOne";
 import EnrollStepTwo from "./enrollEvent/EnrollStepTwo";
 
@@ -16,6 +17,7 @@ export default function EditExhibition() {
   const [isNextActive, setIsNextActive] = useState(false);
   const [originalData, setOriginalData] = useState(null); //원본 데이터 저장
   const [previewMode, setPreviewMode] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const [stepOneData, setStepOneData] = useState({
     category: "공연",
@@ -45,7 +47,7 @@ export default function EditExhibition() {
         const startDate = periodParts[0];
         const rawEndDate = periodParts[1] || "";
         const endDate =
-          rawEndDate && !rawEndDate.includes(".")
+          rawEndDate && rawEndDate.split(".").length < 3
             ? `${startDate.split(".")[0]}.${rawEndDate}`
             : rawEndDate;
         const durationParts = data.duration?.split(" - ") || ["", ""];
@@ -223,8 +225,7 @@ export default function EditExhibition() {
     try {
       const res = await updateExhibitionApi(id, patchBody);
       if (res) {
-        alert("수정 완료!");
-        navigate(`/detail/${id}`);
+        setShowSuccessModal(true);
       }
     } catch (error) {
       console.error("수정 실패:", error);
@@ -287,6 +288,13 @@ export default function EditExhibition() {
 
   return (
     <Container>
+      {showSuccessModal && (
+        <CheckModal
+          message={"수정이 완료되었습니다!"}
+          onClose={() => setShowSuccessModal(false)}
+          link={`/detail/${id}`}
+        />
+      )}
       {step == 1 ? (
         <Topbar icon={null} />
       ) : (

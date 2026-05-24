@@ -7,6 +7,9 @@ import Preview from "../../components/enrollEvent/Preview";
 import PreviewIcon from "../../assets/icons/Eyes.svg?react";
 import CameraIcon from "../../assets/icons/Camera.svg?react";
 
+const isIOS =
+  /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
 export default function EnrollStepTwo({
   text,
   setText,

@@ -14,7 +14,6 @@ import CodeModal from "../../components/myPage/CodeModal";
 import EnrollStepOne from "./EnrollStepOne";
 import EnrollStepTwo from "./EnrollStepTwo";
 
-//TODO: 등록 성공 모달
 //TODO: 등록하기 버튼 색 변경
 
 export default function EnrollEvent() {
@@ -29,6 +28,7 @@ export default function EnrollEvent() {
   const [isNextActive, setIsNextActive] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const [text, setText] = useState("");
   const [pictures, setPictures] = useState([]);
