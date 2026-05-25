@@ -136,7 +136,7 @@ function EnrollStepOne({ data, setData, setIsNextActive, isEdit = false }) {
       <Section>
         <Label>공연/전시 이름 *</Label>
         <InputBox
-          max={38}
+          max={45}
           value={data?.exhibitionName}
           onChange={(v) => update("exhibitionName", v)}
           required={true}
