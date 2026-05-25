@@ -7,6 +7,8 @@ import Preview from "../../components/enrollEvent/Preview";
 import PreviewIcon from "../../assets/icons/Eyes.svg?react";
 import CameraIcon from "../../assets/icons/Camera.svg?react";
 
+const isIOS =
+  /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
 export default function EnrollStepTwo({
   text,
@@ -36,19 +38,13 @@ export default function EnrollStepTwo({
     const fileList = e.target.files;
     if (!fileList || fileList.length === 0) return;
 
-    // iOS Safari FileList 중복 제거 (같은 파일이 여러 번 포함되는 WebKit 버그 대응)
-    const seen = new Set();
-    const uniqueFiles = Array.from(fileList).filter((file) => {
-      const key = `${file.name}-${file.size}-${file.lastModified}`;
-      return seen.has(key) ? false : seen.add(key);
-    });
-
-    if (pictures.length + uniqueFiles.length > 10) {
+    // 최대 10장 제한 처리 (선택 사항이지만 안전장치로 추가)
+    if (pictures.length + fileList.length > 10) {
       alert("사진은 최대 10장까지 첨부 가능합니다.");
       return;
     }
 
-    const newFiles = uniqueFiles.map((file) => ({
+    const newFiles = Array.from(fileList).map((file) => ({
       id: `${file.name}-${Date.now()}-${Math.random()}`, // 고유 키값 생성
       previewUrl: URL.createObjectURL(file), // <img src="..." /> 에 들어갈 임시 Blob 주소
       file: file, // 최종 업로드 시 사용할 원본 File 객체
