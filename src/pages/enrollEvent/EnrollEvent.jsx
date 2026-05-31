@@ -94,7 +94,7 @@ export default function EnrollEvent() {
       e.preventDefault();
     }
 
-    if (isSubmitting || !text.trim()) return;
+    if (isSubmitting) return;
     setIsSubmitting(true);
 
     let finalPayload = null;
