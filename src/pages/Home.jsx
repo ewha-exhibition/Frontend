@@ -11,6 +11,7 @@ import SearchIcon from "../assets/icons/Search.svg?react";
 import BookmarkIcon from "../assets/icons/Bookmark.svg?react";
 import BookmarkOLIcon from "../assets/icons/BookmarkOL.svg?react";
 import Logo from "../assets/icons/Logo.svg?react";
+import InstagramIcon from "../assets/icons/Instagram.svg?react";
 
 //API
 import useRankingExhibitions from "../utils/hooks/useRankingExhibitions";
@@ -180,6 +181,23 @@ export default function Home() {
         </EventWrapper>
       </Content>
       <TabBar />
+      {/*푸터*/}
+      <Footer>
+        <FooterLeft>
+          <Logo />
+        </FooterLeft>
+        <FooterRight>
+          <FooterText style={{ opacity: 0.7 }}>
+            문의 및 소식 : instagram
+          </FooterText>
+          <FooterAccount>
+            <FooterIconPlaceholder>
+              <InstagramIcon />
+            </FooterIconPlaceholder>
+            <FooterText style={{ letterSpacing: "-0.14px", color: "#FFFFFF" }}>greenknock.ewha</FooterText>
+          </FooterAccount>
+        </FooterRight>
+      </Footer>
     </Container>
   );
 }
@@ -394,6 +412,55 @@ const EventListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 95%;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background-color: #00664f;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
+const FooterLeft = styled.div`
+  width: 80px;
+  height: 20px;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+const FooterRight = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+`;
+
+const FooterText = styled.span`
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 130%;
+  color: ${({ theme }) => theme.colors.white};
+`;
+
+const FooterAccount = styled.div`
+  color: ${({ theme }) => theme.colors.white};
+  font-size: 14px;
+  font-weight: 400;
+
+  display: flex;
+  align-items: center;
+  gap: 3px;
+`;
+
+const FooterIconPlaceholder = styled.div`
+  width: 16px;
+  height: 16px;
 `;
 
 //NOTE: 임시 삭제
